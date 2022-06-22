@@ -20,7 +20,7 @@ public class UserProfile : Controller
     [HttpGet]
     public async Task<ActionResult<UserProfileDTO>> GetProfile()
     {
-        var guid = (await _userService.GetUser())!.Id;
+        var guid = _userService.GetUserGuid();
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
         var userProfile = new UserProfileDTO
         {
@@ -61,7 +61,7 @@ public class UserProfile : Controller
             return BadRequest("filloutCorrectly");
         }
 
-        var guid = (await _userService.GetUser())!.Id;
+        var guid = _userService.GetUserGuid();
         if (await _dataContext.Users.AnyAsync(usr => usr.Username == request.Username && usr.Id != guid))
         {
             return BadRequest("usernameTaken");
@@ -90,7 +90,7 @@ public class UserProfile : Controller
     [HttpPut]
     public async Task<ActionResult> ChangePassword(UserChangePasswordDTO request)
     {
-        var guid = (await _userService.GetUser())!.Id;
+        var guid = _userService.GetUserGuid();
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
 
         using var hmacVerify = new HMACSHA512(user.PasswordSalt);
