@@ -17,4 +17,8 @@ public class DataContext : DbContext
     public virtual DbSet<TogetherConnection> TogetherConnections { get; set; }
     public virtual DbSet<TogetherSwipe> TogetherSwipes { get; set; }
     public virtual DbSet<TogetherMessage> TogetherMessages { get; set; }
+    public virtual DbSet<Group> Groups { get; set; }
+    public virtual DbSet<GroupMember> GroupMembers { get; set; }
+    public virtual DbSet<GroupFile> GroupFiles { get; set; }
+    public virtual DbSet<LearnzFile> LearnzFiles { get; set; }
 }
