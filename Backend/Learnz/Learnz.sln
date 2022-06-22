@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learnz", "Learnz.csproj", "{F02A1251-37F9-45EE-9AC8-1A78404378CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F02A1251-37F9-45EE-9AC8-1A78404378CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F02A1251-37F9-45EE-9AC8-1A78404378CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F02A1251-37F9-45EE-9AC8-1A78404378CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F02A1251-37F9-45EE-9AC8-1A78404378CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF6534E5-ADF7-4C1E-9109-34158DB5BA23}
+	EndGlobalSection
+EndGlobal
