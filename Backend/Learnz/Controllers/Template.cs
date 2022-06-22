@@ -5,7 +5,7 @@ namespace Learnz.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 public class Template : Controller
 {
     private readonly DataContext _dataContext;

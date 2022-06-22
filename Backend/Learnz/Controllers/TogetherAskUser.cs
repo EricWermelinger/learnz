@@ -5,7 +5,7 @@ namespace Learnz.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 public class TogetherAskUser : Controller
 {
     private readonly DataContext _dataContext;
@@ -61,7 +61,7 @@ public class TogetherAskUser : Controller
             return BadRequest("alreadyAsked");
         }
 
-        _dataContext.TogetherAsk.Add(newAsk);
+        await _dataContext.TogetherAsk.AddAsync(newAsk);
         await _dataContext.SaveChangesAsync();
 
         return Ok();
@@ -76,12 +76,13 @@ public class TogetherAskUser : Controller
         await _dataContext.SaveChangesAsync();
         if (request.Answer)
         {
-            _dataContext.TogetherConnections.Add(new TogetherConnection
+            await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
             {
                 Id = Guid.NewGuid(),
                 UserId1 = request.UserId,
                 UserId2 = guid ?? Guid.NewGuid()
             });
+            await _dataContext.SaveChangesAsync();
         }
         return Ok();
     }

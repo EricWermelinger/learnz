@@ -5,7 +5,7 @@ namespace Learnz.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 public class TogetherConnectUser : Controller
 {
     private readonly DataContext _dataContext;
@@ -24,7 +24,7 @@ public class TogetherConnectUser : Controller
                                                                .Select(cnc => cnc.UserId1 == guid ? cnc.UserId2 : cnc.UserId1)
                                                                .ToListAsync();
         var users = await _dataContext.Users.Where(usr => connectedUserIds.Contains(usr.Id))
-                                            .Select(usr => new TogetherUserProfileDTO
+                                            .Select(usr => new TogetherOverviewUserProfileDTO
                                             {
                                                 UserId = usr.Id,
                                                 Username = usr.Username,
@@ -39,6 +39,22 @@ public class TogetherConnectUser : Controller
                                                 BadSubject3 = usr.BadSubject3
                                             })
                                             .ToListAsync();
-        return Ok(users);
+        var messages = await _dataContext.TogetherMessages.Where(msg => msg.Sender == guid || msg.Receiver == guid)
+            .ToListAsync();
+
+        foreach (var user in users)
+        {
+            var message = messages.Where(msg => msg.Sender == user.UserId || msg.Receiver == user.UserId)
+                .OrderByDescending(msg => msg.Date)
+                .FirstOrDefault();
+            if (message != null)
+            {
+                user.LastMessage = message.Message;
+                user.LastMessageDateSent = message.Date;
+                user.LastMessageSentByMe = message.Sender == guid;
+            }
+        }
+
+        return Ok(users.OrderBy(usr => usr.LastMessageDateSent).ToList());
     }
 }

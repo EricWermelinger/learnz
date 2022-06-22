@@ -5,7 +5,7 @@ namespace Learnz.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 public class TogetherSwipeUser : Controller
 {
     private readonly DataContext _dataContext;
@@ -70,10 +70,10 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult> Swipe(TogetherSwipeDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => (swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice));
+        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice);
         if (!exists)
         {
-            _dataContext.TogetherSwipes.Add(new TogetherSwipe
+            await _dataContext.TogetherSwipes.AddAsync(new TogetherSwipe
             {
                 Id = Guid.NewGuid(),
                 UserId1 = guid ?? Guid.NewGuid(),
@@ -86,7 +86,7 @@ public class TogetherSwipeUser : Controller
                                                     .CountAsync();
             if (counts == 2)
             {
-                _dataContext.TogetherConnections.Add(new TogetherConnection
+                await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
                 {
                     Id = Guid.NewGuid(),
                     UserId1 = guid ?? Guid.NewGuid(),
