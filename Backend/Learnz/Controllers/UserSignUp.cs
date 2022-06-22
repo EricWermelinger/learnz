@@ -70,7 +70,7 @@ public class UserSignUp : Controller
         user.RefreshToken = token.RefreshToken;
         user.RefreshExpires = token.RefreshExpires;
 
-        _dataContext.Users.Add(user);
+        await _dataContext.Users.AddAsync(user);
         await _dataContext.SaveChangesAsync();
 
         return Ok(token);
