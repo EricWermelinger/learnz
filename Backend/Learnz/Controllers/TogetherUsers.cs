@@ -25,7 +25,7 @@ public class TogetherUsers : Controller
                                       {
                                           UserId = usr.Id,
                                           Username = usr.Username,
-                                          ProfileImage = usr.ProfileImage,
+                                          ProfileImagePath = usr.ProfileImage.Path,
                                           Grade = usr.Grade,
                                           Information = usr.Information,
                                           GoodSubject1 = usr.GoodSubject1,

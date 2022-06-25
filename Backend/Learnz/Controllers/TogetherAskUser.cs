@@ -27,7 +27,7 @@ public class TogetherAskUser : Controller
                                                          UserId = usr.Id,
                                                          Username = usr.Username,
                                                          Grade = usr.Grade,
-                                                         ProfileImage = usr.ProfileImage,
+                                                         ProfileImagePath = usr.ProfileImage.Path,
                                                          Information = usr.Information,
                                                          GoodSubject1 = usr.GoodSubject1,
                                                          GoodSubject2 = usr.GoodSubject2,

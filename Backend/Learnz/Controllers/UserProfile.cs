@@ -18,18 +18,18 @@ public class UserProfile : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<UserProfileDTO>> GetProfile()
+    public async Task<ActionResult<UserProfileGetDTO>> GetProfile()
     {
         var guid = _userService.GetUserGuid();
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
-        var userProfile = new UserProfileDTO
+        var userProfile = new UserProfileGetDTO
         {
             Username = user.Username,
             Firstname = user.Firstname,
             Lastname = user.Lastname,
             Birthdate = user.Birthdate,
             Grade = user.Grade,
-            ProfileImage = user.ProfileImage,
+            ProfileImagePath = user.ProfileImage.Path,
             Information = user.Information,
             GoodSubject1 = user.GoodSubject1,
             GoodSubject2 = user.GoodSubject2,
@@ -42,7 +42,7 @@ public class UserProfile : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> EditProfile(UserProfileDTO request)
+    public async Task<ActionResult> EditProfile(UserProfileUploadDTO request)
     {
         if (request == null
             || request.Username == "" || request.Firstname == "" || request.Lastname == "" || request.Information == "")
@@ -73,7 +73,7 @@ public class UserProfile : Controller
         user.Lastname = request.Lastname;
         user.Birthdate = request.Birthdate;
         user.Grade = request.Grade;
-        user.ProfileImage = request.ProfileImage;
+        user.ProfileImageId = request.ProfileImageId;
         user.Information = request.Information;
         user.GoodSubject1 = request.GoodSubject1;
         user.GoodSubject2 = request.GoodSubject2;

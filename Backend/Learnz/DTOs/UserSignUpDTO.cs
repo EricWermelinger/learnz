@@ -8,7 +8,7 @@ public class UserSignUpDTO
     public string Lastname { get; set; }
     public DateTime Birthdate { get; set; }
     public Grade Grade { get; set; }
-    public Guid ProfileImage { get; set; }
+    public Guid ProfileImageId { get; set; }
     public string Information { get; set; }
     public Subject GoodSubject1 { get; set; }
     public Subject GoodSubject2 { get; set; }

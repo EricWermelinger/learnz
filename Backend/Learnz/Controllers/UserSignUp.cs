@@ -51,7 +51,7 @@ public class UserSignUp : Controller
             Lastname = request.Lastname,
             Birthdate = request.Birthdate,
             Grade = request.Grade,
-            ProfileImage = request.ProfileImage,
+            ProfileImageId = request.ProfileImageId,
             Information = request.Information,
             GoodSubject1 = request.GoodSubject1,
             GoodSubject2 = request.GoodSubject2,

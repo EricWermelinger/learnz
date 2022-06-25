@@ -53,7 +53,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImage = usr.User.ProfileImage,
+                                              ProfileImagePath = usr.User.ProfileImage.Path,
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,
