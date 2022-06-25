@@ -20,8 +20,8 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult<TogetherUserProfileDTO?>> GetNextSwipe()
     {
         var user = await _userService.GetUser();
-        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.UserId1 == user.Id || swp.UserId2 == user.Id)
-                                                       .Select(swp => swp.UserId1 == user.Id ? swp.UserId2 : swp.UserId1)
+        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
+                                                       .Select(swp => swp.SwiperUserId == user.Id ? swp.AskedUserId : swp.SwiperUserId)
                                                        .ToListAsync();
         var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id))
                                           .Select(usr => new
@@ -70,19 +70,19 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult> Swipe(TogetherSwipeDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice);
+        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice);
         if (!exists)
         {
             await _dataContext.TogetherSwipes.AddAsync(new TogetherSwipe
             {
                 Id = Guid.NewGuid(),
-                UserId1 = guid ?? Guid.NewGuid(),
-                UserId2 = request.UserId,
+                SwiperUserId = guid ?? Guid.NewGuid(),
+                AskedUserId = request.UserId,
                 Choice = request.Choice
             });
 
-            var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice)
-                                                                || (swp.UserId1 == request.UserId && swp.UserId2 == guid && swp.Choice))
+            var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice)
+                                                                || (swp.SwiperUserId == request.UserId && swp.AskedUserId == guid && swp.Choice))
                                                     .CountAsync();
             if (counts == 2)
             {

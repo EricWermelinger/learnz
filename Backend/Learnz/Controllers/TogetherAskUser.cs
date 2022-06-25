@@ -20,8 +20,8 @@ public class TogetherAskUser : Controller
     public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetOpenAsks()
     {
         var guid = _userService.GetUserGuid();
-        var openAsks = await _dataContext.TogetherAsk.Where(ask => ask.Answer == null && ask.UserId2 == guid)
-                                                     .Select(ask => ask.UserId1)
+        var openAsks = await _dataContext.TogetherAsks.Where(ask => ask.Answer == null && ask.AskedUserId == guid)
+                                                     .Select(ask => ask.InterestedUserId)
                                                      .ToListAsync();
         var users = await _dataContext.Users.Where(usr => openAsks.Contains(usr.Id))
             .Select(usr => new TogetherUserProfileDTO
@@ -50,18 +50,18 @@ public class TogetherAskUser : Controller
         var newAsk = new TogetherAsk
         {
             Id = Guid.NewGuid(),
-            UserId1 = guid ?? Guid.NewGuid(),
-            UserId2 = request.UserId,
+            InterestedUserId = guid ?? Guid.NewGuid(),
+            AskedUserId = request.UserId,
             Answer = null
         };
 
-        var exists = await _dataContext.TogetherAsk.AnyAsync(ask => ask.UserId1 == newAsk.UserId1 && ask.UserId2 == newAsk.UserId2);
+        var exists = await _dataContext.TogetherAsks.AnyAsync(ask => ask.InterestedUserId == newAsk.InterestedUserId && ask.AskedUserId == newAsk.AskedUserId);
         if (exists)
         {
             return BadRequest("alreadyAsked");
         }
 
-        await _dataContext.TogetherAsk.AddAsync(newAsk);
+        await _dataContext.TogetherAsks.AddAsync(newAsk);
         await _dataContext.SaveChangesAsync();
 
         return Ok();
@@ -71,7 +71,7 @@ public class TogetherAskUser : Controller
     public async Task<ActionResult> AnswerAsk(TogetherAskAnswerDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var ask = await _dataContext.TogetherAsk.FirstAsync(ask => ask.UserId1 == request.UserId && ask.UserId2 == guid);
+        var ask = await _dataContext.TogetherAsks.FirstAsync(ask => ask.InterestedUserId == request.UserId && ask.AskedUserId == guid);
         ask.Answer = request.Answer;
         await _dataContext.SaveChangesAsync();
         if (request.Answer)

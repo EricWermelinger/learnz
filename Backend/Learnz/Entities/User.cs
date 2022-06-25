@@ -20,4 +20,17 @@ public class User
     public Subject BadSubject3 { get; set; }
     public DateTime? RefreshExpires { get; set; }
     public string? RefreshToken { get; set; }
+    
+    public ICollection<Group> GroupUsers { get; set; }
+    public ICollection<GroupMember> GroupMembers { get; set; }
+    public ICollection<LearnzFile> LearnzFileCreated { get; set; }
+    public ICollection<LearnzFile> LearnzFileModified { get; set; }
+    public ICollection<TogetherAsk> TogetherAskInterestedUsers { get; set; }
+    public ICollection<TogetherAsk> TogetherAskAskedUsers { get; set; }
+    public ICollection<TogetherConnection> TogetherConnectionUsers1 { get; set; }
+    public ICollection<TogetherConnection> TogetherConnectionUsers2 { get; set; }
+    public ICollection<TogetherMessage> TogetherMessageSenders { get; set; }
+    public ICollection<TogetherMessage> TogetherMessageReceivers { get; set; }
+    public ICollection<TogetherSwipe> TogetherSwipeSwiperUsers { get; set; }
+    public ICollection<TogetherSwipe> TogetherSwipeAskedUsers { get; set; }
 }
