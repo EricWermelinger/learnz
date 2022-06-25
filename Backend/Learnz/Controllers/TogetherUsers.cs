@@ -20,7 +20,7 @@ public class TogetherUsers : Controller
     public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetAllUsers()
     {
         var guid = _userService.GetUserGuid();
-        var users = _dataContext.Users.Where(usr => usr.Id != guid)
+        var users = await _dataContext.Users.Where(usr => usr.Id != guid)
                                       .Select(usr => new TogetherUserProfileDTO
                                       {
                                           UserId = usr.Id,

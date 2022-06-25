@@ -20,26 +20,23 @@ public class TogetherAskUser : Controller
     public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetOpenAsks()
     {
         var guid = _userService.GetUserGuid();
-        var openAsks = await _dataContext.TogetherAsks.Where(ask => ask.Answer == null && ask.AskedUserId == guid)
-                                                     .Select(ask => ask.InterestedUserId)
+        var users = await _dataContext.TogetherAsks.Where(ask => ask.Answer == null && ask.AskedUserId == guid)
+                                                     .Select(ask => ask.InterestedUser)
+                                                     .Select(usr => new TogetherUserProfileDTO
+                                                     {
+                                                         UserId = usr.Id,
+                                                         Username = usr.Username,
+                                                         Grade = usr.Grade,
+                                                         ProfileImage = usr.ProfileImage,
+                                                         Information = usr.Information,
+                                                         GoodSubject1 = usr.GoodSubject1,
+                                                         GoodSubject2 = usr.GoodSubject2,
+                                                         GoodSubject3 = usr.GoodSubject3,
+                                                         BadSubject1 = usr.BadSubject1,
+                                                         BadSubject2 = usr.BadSubject2,
+                                                         BadSubject3 = usr.BadSubject3
+                                                     })
                                                      .ToListAsync();
-        var users = await _dataContext.Users.Where(usr => openAsks.Contains(usr.Id))
-            .Select(usr => new TogetherUserProfileDTO
-            {
-                UserId = usr.Id,
-                Username = usr.Username,
-                Grade = usr.Grade,
-                ProfileImage = usr.ProfileImage,
-                Information = usr.Information,
-                GoodSubject1 = usr.GoodSubject1,
-                GoodSubject2 = usr.GoodSubject2,
-                GoodSubject3 = usr.GoodSubject3,
-                BadSubject1 = usr.BadSubject1,
-                BadSubject2 = usr.BadSubject2,
-                BadSubject3 = usr.BadSubject3
-            })
-            .ToListAsync();
-
         return Ok(users);
     }
 
@@ -50,18 +47,17 @@ public class TogetherAskUser : Controller
         var newAsk = new TogetherAsk
         {
             Id = Guid.NewGuid(),
-            InterestedUserId = guid ?? Guid.NewGuid(),
+            InterestedUserId = guid,
             AskedUserId = request.UserId,
             Answer = null
         };
 
         var exists = await _dataContext.TogetherAsks.AnyAsync(ask => ask.InterestedUserId == newAsk.InterestedUserId && ask.AskedUserId == newAsk.AskedUserId);
-        if (exists)
+        if (!exists)
         {
-            return BadRequest("alreadyAsked");
+            await _dataContext.TogetherAsks.AddAsync(newAsk);
         }
 
-        await _dataContext.TogetherAsks.AddAsync(newAsk);
         await _dataContext.SaveChangesAsync();
 
         return Ok();
@@ -76,13 +72,20 @@ public class TogetherAskUser : Controller
         await _dataContext.SaveChangesAsync();
         if (request.Answer)
         {
-            await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+            var exists = await _dataContext.TogetherConnections.AnyAsync(cnc =>
+                (cnc.UserId1 == guid && cnc.UserId2 == request.UserId) ||
+                (cnc.UserId1 == request.UserId && cnc.UserId2 == guid));
+
+            if (!exists)
             {
-                Id = Guid.NewGuid(),
-                UserId1 = request.UserId,
-                UserId2 = guid ?? Guid.NewGuid()
-            });
-            await _dataContext.SaveChangesAsync();
+                await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+                {
+                    Id = Guid.NewGuid(),
+                    UserId1 = request.UserId,
+                    UserId2 = guid
+                });
+                await _dataContext.SaveChangesAsync();
+            }
         }
         return Ok();
     }

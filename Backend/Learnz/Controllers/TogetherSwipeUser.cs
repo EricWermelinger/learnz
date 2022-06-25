@@ -76,7 +76,7 @@ public class TogetherSwipeUser : Controller
             await _dataContext.TogetherSwipes.AddAsync(new TogetherSwipe
             {
                 Id = Guid.NewGuid(),
-                SwiperUserId = guid ?? Guid.NewGuid(),
+                SwiperUserId = guid,
                 AskedUserId = request.UserId,
                 Choice = request.Choice
             });
@@ -86,12 +86,18 @@ public class TogetherSwipeUser : Controller
                                                     .CountAsync();
             if (counts == 2)
             {
-                await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+                var connectionExists = await _dataContext.TogetherConnections.AnyAsync(cnc =>
+                    (cnc.UserId1 == guid && cnc.UserId2 == request.UserId) ||
+                    (cnc.UserId1 == request.UserId && cnc.UserId2 == guid));
+                if (!connectionExists)
                 {
-                    Id = Guid.NewGuid(),
-                    UserId1 = guid ?? Guid.NewGuid(),
-                    UserId2 = request.UserId
-                });
+                    await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId1 = guid,
+                        UserId2 = request.UserId
+                    });
+                }
             }
         }
         await _dataContext.SaveChangesAsync();
