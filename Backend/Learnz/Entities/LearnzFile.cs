@@ -11,6 +11,7 @@ public class LearnzFile
     public DateTime Modified { get; set; }
     public Guid ModifiedById { get; set; }
     public User ModifiedBy { get; set; }
+    public FilePolicy FilePolicy { get; set; }
     
     public ICollection<Group> GroupImageFiles { get; set; }
     public ICollection<GroupFile> GroupFiles { get; set; }

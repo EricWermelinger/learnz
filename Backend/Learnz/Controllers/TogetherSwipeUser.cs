@@ -23,7 +23,12 @@ public class TogetherSwipeUser : Controller
         var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
                                                        .Select(swp => swp.SwiperUserId == user.Id ? swp.AskedUserId : swp.SwiperUserId)
                                                        .ToListAsync();
-        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id))
+        var alreadyConnection = await _dataContext.TogetherConnections
+            .Where(cnc => cnc.UserId1 == user.Id || cnc.UserId2 == user.Id)
+            .Select(cnc => cnc.UserId1 == user.Id ? cnc.UserId2 : cnc.UserId1)
+            .ToListAsync();
+
+        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
                                           .Select(usr => new
                                           {
                                               User = usr,

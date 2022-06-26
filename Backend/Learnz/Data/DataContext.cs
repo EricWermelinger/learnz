@@ -12,15 +12,15 @@ public class DataContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Group>()
-            .HasOne(g => g.File)
+            .HasOne(g => g.ProfileImage)
             .WithMany(f => f.GroupImageFiles)
-            .HasForeignKey(g => g.FileId)
+            .HasForeignKey(g => g.ProfileImageId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Group>()
-            .HasOne(g => g.User)
+            .HasOne(g => g.Admin)
             .WithMany(u => u.GroupUsers)
-            .HasForeignKey(g => g.UserId)
+            .HasForeignKey(g => g.AdminId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<GroupFile>()
@@ -44,6 +44,18 @@ public class DataContext : DbContext
         modelBuilder.Entity<GroupMember>()
             .HasOne(gm => gm.User)
             .WithMany(u => u.GroupMembers)
+            .HasForeignKey(gm => gm.GroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GroupMessage>()
+            .HasOne(gm => gm.Sender)
+            .WithMany(u => u.GroupMessages)
+            .HasForeignKey(gm => gm.SenderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GroupMessage>()
+            .HasOne(gm => gm.Group)
+            .WithMany(g => g.GroupMessages)
             .HasForeignKey(gm => gm.GroupId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -116,5 +128,6 @@ public class DataContext : DbContext
     public virtual DbSet<Group> Groups { get; set; }
     public virtual DbSet<GroupMember> GroupMembers { get; set; }
     public virtual DbSet<GroupFile> GroupFiles { get; set; }
+    public virtual DbSet<GroupMessage> GroupMessages { get; set; }
     public virtual DbSet<LearnzFile> Files { get; set; }
 }

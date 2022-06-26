@@ -34,4 +34,5 @@ public class User
     public ICollection<TogetherMessage> TogetherMessageReceivers { get; set; }
     public ICollection<TogetherSwipe> TogetherSwipeSwiperUsers { get; set; }
     public ICollection<TogetherSwipe> TogetherSwipeAskedUsers { get; set; }
+    public ICollection<GroupMessage> GroupMessages { get; set; }
 }
