@@ -32,7 +32,6 @@ public class GroupFiles : Controller
             .Where(gf => gf.GroupId == groupId)
             .Select(gf => new FileInfoDTO
             {
-                FileId = gf.FileId,
                 FileNameExternal = gf.File.FileNameExternal,
                 FilePath = gf.File.Path,
                 Created = gf.File.Created,

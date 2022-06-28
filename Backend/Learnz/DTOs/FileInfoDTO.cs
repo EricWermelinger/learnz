@@ -1,7 +1,6 @@
 ﻿namespace Learnz.DTOs;
 public class FileInfoDTO
 {
-    public Guid FileId { get; set; }
     public string FileNameExternal { get; set; }
     public string FilePath { get; set; }
     public DateTime Created { get; set; }

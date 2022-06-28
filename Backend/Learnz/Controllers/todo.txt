@@ -1,6 +1,3 @@
 ﻿todo:
 
-file
-fileupload
-file new version
-file download
+test everything

@@ -18,4 +18,14 @@ public class FilePolicyChecker : IFilePolicyChecker
     {
         return file.CreatedById == userId;
     }
+
+    public bool FileDownloadable(LearnzFile file, Guid userId)
+    {
+        return FileEditable(file, userId);
+    }
+
+    public bool FilePolicyChangeable(LearnzFile file, Guid userId)
+    {
+        return FileDeletable(file, userId);
+    }
 }
