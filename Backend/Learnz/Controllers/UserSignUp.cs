@@ -11,10 +11,13 @@ public class UserSignUp : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IConfiguration _configuration;
-    public UserSignUp(DataContext dataContext, IConfiguration configuration)
+    private readonly IFileAnonymousFinder _fileAnonymousFinder;
+
+    public UserSignUp(DataContext dataContext, IConfiguration configuration, IFileAnonymousFinder fileAnonymousFinder)
     {
         _dataContext = dataContext;
         _configuration = configuration;
+        _fileAnonymousFinder = fileAnonymousFinder;
     }
 
     [HttpPost]
@@ -43,6 +46,13 @@ public class UserSignUp : Controller
             return BadRequest("usernameTaken");
         }
 
+        var profileImageId =
+            await _fileAnonymousFinder.GetFileId(_dataContext, request.ProfileImagePath);
+        if (profileImageId == null)
+        {
+            return BadRequest("fileNotValid");
+        }
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -51,7 +61,7 @@ public class UserSignUp : Controller
             Lastname = request.Lastname,
             Birthdate = request.Birthdate,
             Grade = request.Grade,
-            ProfileImage = request.ProfileImage,
+            ProfileImageId = (Guid)profileImageId,
             Information = request.Information,
             GoodSubject1 = request.GoodSubject1,
             GoodSubject2 = request.GoodSubject2,

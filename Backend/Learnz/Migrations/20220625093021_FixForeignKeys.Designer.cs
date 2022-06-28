@@ -4,6 +4,7 @@ using Learnz.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Learnz.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220625093021_FixForeignKeys")]
+    partial class FixForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,25 +30,25 @@ namespace Learnz.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProfileImageId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
+                    b.HasIndex("FileId");
 
-                    b.HasIndex("ProfileImageId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Groups");
                 });
@@ -91,37 +93,6 @@ namespace Learnz.Migrations
                     b.ToTable("GroupMembers");
                 });
 
-            modelBuilder.Entity("Learnz.Entities.GroupMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsInfoMessage")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("GroupMessages");
-                });
-
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -142,9 +113,6 @@ namespace Learnz.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FilePolicy")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");
 
@@ -162,32 +130,6 @@ namespace Learnz.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.ToTable("Files");
-                });
-
-            modelBuilder.Entity("Learnz.Entities.LearnzFileAnonymous", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FileNameExternal")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileNameInternal")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FilesAnonymous");
                 });
 
             modelBuilder.Entity("Learnz.Entities.TogetherAsk", b =>
@@ -359,21 +301,21 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
-                    b.HasOne("Learnz.Entities.User", "Admin")
-                        .WithMany("GroupUsers")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Learnz.Entities.LearnzFile", "ProfileImage")
+                    b.HasOne("Learnz.Entities.LearnzFile", "File")
                         .WithMany("GroupImageFiles")
-                        .HasForeignKey("ProfileImageId")
+                        .HasForeignKey("FileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Admin");
+                    b.HasOne("Learnz.Entities.User", "User")
+                        .WithMany("GroupUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("ProfileImage");
+                    b.Navigation("File");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Learnz.Entities.GroupFile", b =>
@@ -412,25 +354,6 @@ namespace Learnz.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Learnz.Entities.GroupMessage", b =>
-                {
-                    b.HasOne("Learnz.Entities.Group", "Group")
-                        .WithMany("GroupMessages")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Learnz.Entities.User", "Sender")
-                        .WithMany("GroupMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
@@ -530,10 +453,10 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.User", b =>
                 {
-                    b.HasOne("Learnz.Entities.LearnzFileAnonymous", "ProfileImage")
-                        .WithMany("ProfileImages")
+                    b.HasOne("Learnz.Entities.LearnzFile", "ProfileImage")
+                        .WithMany()
                         .HasForeignKey("ProfileImageId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ProfileImage");
@@ -544,8 +467,6 @@ namespace Learnz.Migrations
                     b.Navigation("GroupFiles");
 
                     b.Navigation("GroupMembers");
-
-                    b.Navigation("GroupMessages");
                 });
 
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
@@ -555,16 +476,9 @@ namespace Learnz.Migrations
                     b.Navigation("GroupImageFiles");
                 });
 
-            modelBuilder.Entity("Learnz.Entities.LearnzFileAnonymous", b =>
-                {
-                    b.Navigation("ProfileImages");
-                });
-
             modelBuilder.Entity("Learnz.Entities.User", b =>
                 {
                     b.Navigation("GroupMembers");
-
-                    b.Navigation("GroupMessages");
 
                     b.Navigation("GroupUsers");
 

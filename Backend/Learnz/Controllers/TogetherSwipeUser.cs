@@ -20,10 +20,15 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult<TogetherUserProfileDTO?>> GetNextSwipe()
     {
         var user = await _userService.GetUser();
-        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.UserId1 == user.Id || swp.UserId2 == user.Id)
-                                                       .Select(swp => swp.UserId1 == user.Id ? swp.UserId2 : swp.UserId1)
+        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
+                                                       .Select(swp => swp.SwiperUserId == user.Id ? swp.AskedUserId : swp.SwiperUserId)
                                                        .ToListAsync();
-        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id))
+        var alreadyConnection = await _dataContext.TogetherConnections
+            .Where(cnc => cnc.UserId1 == user.Id || cnc.UserId2 == user.Id)
+            .Select(cnc => cnc.UserId1 == user.Id ? cnc.UserId2 : cnc.UserId1)
+            .ToListAsync();
+
+        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
                                           .Select(usr => new
                                           {
                                               User = usr,
@@ -53,7 +58,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImage = usr.User.ProfileImage,
+                                              ProfileImagePath = usr.User.ProfileImage.Path,
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,
@@ -70,28 +75,34 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult> Swipe(TogetherSwipeDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice);
+        var exists = await _dataContext.TogetherSwipes.AnyAsync(swp => swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice);
         if (!exists)
         {
             await _dataContext.TogetherSwipes.AddAsync(new TogetherSwipe
             {
                 Id = Guid.NewGuid(),
-                UserId1 = guid ?? Guid.NewGuid(),
-                UserId2 = request.UserId,
+                SwiperUserId = guid,
+                AskedUserId = request.UserId,
                 Choice = request.Choice
             });
 
-            var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.UserId1 == guid && swp.UserId2 == request.UserId && swp.Choice)
-                                                                || (swp.UserId1 == request.UserId && swp.UserId2 == guid && swp.Choice))
+            var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice)
+                                                                || (swp.SwiperUserId == request.UserId && swp.AskedUserId == guid && swp.Choice))
                                                     .CountAsync();
             if (counts == 2)
             {
-                await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+                var connectionExists = await _dataContext.TogetherConnections.AnyAsync(cnc =>
+                    (cnc.UserId1 == guid && cnc.UserId2 == request.UserId) ||
+                    (cnc.UserId1 == request.UserId && cnc.UserId2 == guid));
+                if (!connectionExists)
                 {
-                    Id = Guid.NewGuid(),
-                    UserId1 = guid ?? Guid.NewGuid(),
-                    UserId2 = request.UserId
-                });
+                    await _dataContext.TogetherConnections.AddAsync(new TogetherConnection
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId1 = guid,
+                        UserId2 = request.UserId
+                    });
+                }
             }
         }
         await _dataContext.SaveChangesAsync();

@@ -1,11 +1,12 @@
 ﻿namespace Learnz.Entities;
-public class TogetherMessage
+public class GroupMessage
 {
     public Guid Id { get; set; }
     public Guid SenderId { get; set; }
     public User Sender { get; set; }
-    public Guid ReceiverId { get; set; }
-    public User Receiver { get; set; }
+    public Guid GroupId { get; set; }
+    public Group Group { get; set; }
     public string Message { get; set; }
     public DateTime Date { get; set; }
+    public bool IsInfoMessage { get; set; }
 }

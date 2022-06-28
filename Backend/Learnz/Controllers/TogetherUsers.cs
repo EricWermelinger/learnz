@@ -20,12 +20,12 @@ public class TogetherUsers : Controller
     public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetAllUsers()
     {
         var guid = _userService.GetUserGuid();
-        var users = _dataContext.Users.Where(usr => usr.Id != guid)
+        var users = await _dataContext.Users.Where(usr => usr.Id != guid)
                                       .Select(usr => new TogetherUserProfileDTO
                                       {
                                           UserId = usr.Id,
                                           Username = usr.Username,
-                                          ProfileImage = usr.ProfileImage,
+                                          ProfileImagePath = usr.ProfileImage.Path,
                                           Grade = usr.Grade,
                                           Information = usr.Information,
                                           GoodSubject1 = usr.GoodSubject1,

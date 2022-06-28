@@ -11,25 +11,30 @@ public class UserProfile : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public UserProfile(DataContext dataContext, IUserService userService)
+    private readonly IFilePolicyChecker _filePolicyChecker;
+    private readonly IFileFinder _fileFinder;
+
+    public UserProfile(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IFileFinder fileFinder)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _filePolicyChecker = filePolicyChecker;
+        _fileFinder = fileFinder;
     }
 
     [HttpGet]
-    public async Task<ActionResult<UserProfileDTO>> GetProfile()
+    public async Task<ActionResult<UserProfileGetDTO>> GetProfile()
     {
         var guid = _userService.GetUserGuid();
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
-        var userProfile = new UserProfileDTO
+        var userProfile = new UserProfileGetDTO
         {
             Username = user.Username,
             Firstname = user.Firstname,
             Lastname = user.Lastname,
             Birthdate = user.Birthdate,
             Grade = user.Grade,
-            ProfileImage = user.ProfileImage,
+            ProfileImagePath = user.ProfileImage.Path,
             Information = user.Information,
             GoodSubject1 = user.GoodSubject1,
             GoodSubject2 = user.GoodSubject2,
@@ -42,7 +47,7 @@ public class UserProfile : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> EditProfile(UserProfileDTO request)
+    public async Task<ActionResult> EditProfile(UserProfileUploadDTO request)
     {
         if (request == null
             || request.Username == "" || request.Firstname == "" || request.Lastname == "" || request.Information == "")
@@ -67,13 +72,20 @@ public class UserProfile : Controller
             return BadRequest("usernameTaken");
         }
 
+        var profileImageId =
+            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        if (profileImageId == null)
+        {
+            return BadRequest("fileNotValid");
+        }
+
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
         user.Username = request.Username;
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.Birthdate = request.Birthdate;
         user.Grade = request.Grade;
-        user.ProfileImage = request.ProfileImage;
+        user.ProfileImageId = (Guid)profileImageId;
         user.Information = request.Information;
         user.GoodSubject1 = request.GoodSubject1;
         user.GoodSubject2 = request.GoodSubject2;

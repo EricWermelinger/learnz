@@ -10,7 +10,8 @@ public class User
     public string Lastname { get; set; }
     public DateTime Birthdate { get; set; }
     public Grade Grade { get; set; }
-    public Guid ProfileImage { get; set; }
+    public Guid ProfileImageId { get; set; }
+    public LearnzFileAnonymous ProfileImage { get; set; }
     public string Information { get; set; }
     public Subject GoodSubject1 { get; set; }
     public Subject GoodSubject2 { get; set; }
@@ -20,4 +21,18 @@ public class User
     public Subject BadSubject3 { get; set; }
     public DateTime? RefreshExpires { get; set; }
     public string? RefreshToken { get; set; }
+    
+    public ICollection<Group> GroupUsers { get; set; }
+    public ICollection<GroupMember> GroupMembers { get; set; }
+    public ICollection<LearnzFile> LearnzFileCreated { get; set; }
+    public ICollection<LearnzFile> LearnzFileModified { get; set; }
+    public ICollection<TogetherAsk> TogetherAskInterestedUsers { get; set; }
+    public ICollection<TogetherAsk> TogetherAskAskedUsers { get; set; }
+    public ICollection<TogetherConnection> TogetherConnectionUsers1 { get; set; }
+    public ICollection<TogetherConnection> TogetherConnectionUsers2 { get; set; }
+    public ICollection<TogetherMessage> TogetherMessageSenders { get; set; }
+    public ICollection<TogetherMessage> TogetherMessageReceivers { get; set; }
+    public ICollection<TogetherSwipe> TogetherSwipeSwiperUsers { get; set; }
+    public ICollection<TogetherSwipe> TogetherSwipeAskedUsers { get; set; }
+    public ICollection<GroupMessage> GroupMessages { get; set; }
 }
