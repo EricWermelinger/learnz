@@ -11,7 +11,7 @@ public class User
     public DateTime Birthdate { get; set; }
     public Grade Grade { get; set; }
     public Guid ProfileImageId { get; set; }
-    public LearnzFile ProfileImage { get; set; }
+    public LearnzFileAnonymous ProfileImage { get; set; }
     public string Information { get; set; }
     public Subject GoodSubject1 { get; set; }
     public Subject GoodSubject2 { get; set; }

@@ -10,10 +10,15 @@ public class GroupInfo : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public GroupInfo(DataContext dataContext, IUserService userService)
+    private readonly IFileFinder _fileFinder;
+    private readonly IFilePolicyChecker _filePolicyChecker;
+
+    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _fileFinder = fileFinder;
+        _filePolicyChecker = filePolicyChecker;
     }
 
     [HttpGet]
@@ -53,6 +58,13 @@ public class GroupInfo : Controller
         var existingGroup = await _dataContext.Groups.FirstOrDefaultAsync(g => g.Id == request.GroupId);
         var timestamp = DateTime.UtcNow;
 
+        var profileImageId =
+            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        if (profileImageId == null)
+        {
+            return BadRequest("fileNotValid");
+        }
+
         if (existingGroup == null)
         {
             await _dataContext.Groups.AddAsync(new Group
@@ -61,7 +73,7 @@ public class GroupInfo : Controller
                 AdminId = guid,
                 Description = request.Description,
                 Name = request.Name,
-                ProfileImageId = request.ProfileImageId
+                ProfileImageId = (Guid)profileImageId
             });
             await _dataContext.SaveChangesAsync();
             var members = await _dataContext.Users.Where(u => request.Members.Contains(u.Id)).ToListAsync();
@@ -88,7 +100,7 @@ public class GroupInfo : Controller
         {
             existingGroup.Description = request.Description;
             existingGroup.Name = request.Name;
-            existingGroup.ProfileImageId = request.ProfileImageId;
+            existingGroup.ProfileImageId = (Guid)profileImageId;
             var existingMember =
                 await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId).ToListAsync();
             var addedMembers = await _dataContext.Users.Where(u =>

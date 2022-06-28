@@ -11,10 +11,15 @@ public class UserProfile : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public UserProfile(DataContext dataContext, IUserService userService)
+    private readonly IFilePolicyChecker _filePolicyChecker;
+    private readonly IFileFinder _fileFinder;
+
+    public UserProfile(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IFileFinder fileFinder)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _filePolicyChecker = filePolicyChecker;
+        _fileFinder = fileFinder;
     }
 
     [HttpGet]
@@ -67,13 +72,20 @@ public class UserProfile : Controller
             return BadRequest("usernameTaken");
         }
 
+        var profileImageId =
+            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        if (profileImageId == null)
+        {
+            return BadRequest("fileNotValid");
+        }
+
         var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
         user.Username = request.Username;
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.Birthdate = request.Birthdate;
         user.Grade = request.Grade;
-        user.ProfileImageId = request.ProfileImageId;
+        user.ProfileImageId = (Guid)profileImageId;
         user.Information = request.Information;
         user.GoodSubject1 = request.GoodSubject1;
         user.GoodSubject2 = request.GoodSubject2;

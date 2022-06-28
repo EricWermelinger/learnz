@@ -60,7 +60,7 @@ public class FileUploadDownload : Controller
                 Guid fileId = Guid.NewGuid();
                 
                 string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string fileNameInternal = fileId.ToString().Replace("-", "") + fileNameExternal.Split(".")[^1];
+                string fileNameInternal = fileId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
                 string folderName = _configuration["Files:Folder"];
                 string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
 

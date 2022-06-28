@@ -118,6 +118,12 @@ public class DataContext : DbContext
             .WithMany(u => u.TogetherSwipeAskedUsers)
             .HasForeignKey(ts => ts.AskedUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.ProfileImage)
+            .WithMany(lfa => lfa.ProfileImages)
+            .HasForeignKey(u => u.ProfileImageId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -130,4 +136,5 @@ public class DataContext : DbContext
     public virtual DbSet<GroupFile> GroupFiles { get; set; }
     public virtual DbSet<GroupMessage> GroupMessages { get; set; }
     public virtual DbSet<LearnzFile> Files { get; set; }
+    public virtual DbSet<LearnzFileAnonymous> FilesAnonymous { get; set; }
 }
