@@ -15,6 +15,7 @@ import { TextEditorComponent } from './Framework/text-editor/text-editor.compone
 import { TextEditorActionBarComponent } from './Framework/text-editor/text-editor-action-bar.component';
 import { ErrorHandlingDialogComponent } from './Framework/error-handling-dialog/error-handling-dialog.component';
 import { ErrorHandlerInterceptor } from './Framework/API/error-handler.interceptor';
+import { LoginComponent } from './Pages/login/login.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -27,6 +28,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     LanguageLookupComponent,
     TextEditorComponent,
     TextEditorActionBarComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
