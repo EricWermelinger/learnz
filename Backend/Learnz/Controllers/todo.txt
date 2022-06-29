@@ -1,5 +1,34 @@
 ﻿todo:
 
+create
 create set (overview without questions)
 create questions (upsert) check for added & deleted
+
+learn
+get sets
+get previous results
+start session
+get questions (all / only hard ones)
+answer question
+get result
+
+challenge
+get open challenges
+open new challenge
+join challenge
+start challenge
+get question
+answer question
+get result
+goto next question
+get next question
+
+test
+get test
+start test
+get questions
+answer question
+finish try
+get result
+
 test everything
