@@ -29,7 +29,7 @@ public class FileUploadDownload : Controller
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == filePath && _filePolicyChecker.FileDownloadable(f, guid));
         if (file == null)
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.FileNotAccessible);
         }
 
         var fileDTO = new FileInfoDTO
@@ -91,11 +91,11 @@ public class FileUploadDownload : Controller
                 };
                 return Ok(fileDto);
             }
-            return BadRequest("noFileProvided");
+            return BadRequest(ErrorKeys.FileNotProvided);
         }
         catch (Exception ex)
         {
-            return BadRequest("fileUploadUnsuccessful");
+            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
     }
 
@@ -114,7 +114,7 @@ public class FileUploadDownload : Controller
                 var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.FileNameInternal.ToLower() == fileName.ToLower() && _filePolicyChecker.FileEditable(f, guid));
                 if (dbFile == null)
                 {
-                    return BadRequest("fileNotFound");
+                    return BadRequest(ErrorKeys.FileNotFound);
                 }
                 dbFile.Modified = timeStamp;
                 dbFile.ModifiedById = guid;
@@ -128,11 +128,11 @@ public class FileUploadDownload : Controller
                 await _dataContext.SaveChangesAsync();
                 return Ok();
             }
-            return BadRequest("noFileProvided");
+            return BadRequest(ErrorKeys.FileNotProvided);
         }
         catch (Exception ex)
         {
-            return BadRequest("fileUploadUnsuccessful");
+            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
     }
 }

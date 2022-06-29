@@ -6,7 +6,8 @@ import { endpoints } from 'src/app/Config/endpoints';
 import { ApiService } from './api.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TokenService } from './token.service';
-import { TokenDTO } from 'src/app/DTOs/TokenDTO';
+import { UserRefreshTokenDTO } from 'src/app/DTOs/User/UserRefreshTokenDTO';
+import { TokenDTO } from 'src/app/DTOs/User/TokenDTO';
 
 @Injectable()
 export class ErrorHandlerInterceptor implements HttpInterceptor {
@@ -40,15 +41,15 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         }
 
         if (error.status === 401) {
-          return this.api.callApi<TokenDTO>(endpoints.Login,  {
-            refresh: this.tokenService.getRefreshToken(),
-          } as TokenDTO, 'POST').pipe(
+          return this.api.callApi<TokenDTO>(endpoints.Refresh,  {
+            refreshToken: this.tokenService.getRefreshToken(),
+          } as UserRefreshTokenDTO, 'POST').pipe(
             tap(token => {
-              this.tokenService.setToken(token.access);
-              this.tokenService.setRefreshToken(token.refresh);
+              this.tokenService.setToken(token.token);
+              this.tokenService.setRefreshToken(token.refreshToken);
               this.tokenService.setExpired(token.refreshExpires);
             }),
-            switchMap(token => next.handle(this.cloneRequest(request, token.access))),
+            switchMap(token => next.handle(this.cloneRequest(request, token.token))),
           );
         } else {
           return this.errorHandler.handleError({

@@ -1,7 +1,37 @@
 {
     "login":{
         "login":"Login",
-        "email":"Mail",
+        "username":"Username",
         "password":"Password"
+    },
+    "Subject":{
+        "Mathematics":"Mathematics",
+        "Physics":"Physics",
+        "Biology":"Biology",
+        "Chemistry":"Chemistry",
+        "History":"History",
+        "Geography":"Geography",
+        "German":"German",
+        "French":"French",
+        "English":"English",
+        "Italian":"Italian",
+        "Latin":"Latin",
+        "Music":"Music",
+        "Sport":"Sport",
+        "Drawing":"Drawing"
+    },
+    "Grade":{
+        "Grade1":"Grade 1",
+        "Grade2":"Grade 2",
+        "Grade3":"Grade 3",
+        "Grade4":"Grade 4",
+        "Grade5":"Grade 5",
+        "Grade6":"Grade 6",
+        "Grade7":"Grade 7",
+        "Grade8":"Grade 8",
+        "Grade9":"Grade 9",
+        "Grade10":"Grade 10",
+        "Grade11":"Grade 11",
+        "Grade12":"Grade 12"
     }
 }

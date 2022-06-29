@@ -27,7 +27,7 @@ public class GroupInfo : Controller
         var guid = _userService.GetUserGuid();
         if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == groupId && gm.UserId == guid)))
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.AccessBlocked);
         }
 
         var group = await _dataContext.Groups
@@ -62,7 +62,7 @@ public class GroupInfo : Controller
             await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
         if (profileImageId == null)
         {
-            return BadRequest("fileNotValid");
+            return BadRequest(ErrorKeys.FileNotValid);
         }
 
         if (existingGroup == null)

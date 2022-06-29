@@ -26,31 +26,31 @@ public class UserSignUp : Controller
         if (request == null
             || request.Username == "" || request.Password == "" || request.Firstname == "" || request.Lastname == "" || request.Information == "")
         {
-            return BadRequest("filloutCorrectly");
+            return BadRequest(ErrorKeys.FillFormCorrectly);
         }
 
         List<Subject> differentSubjects = new List<Subject> { request.GoodSubject1, request.GoodSubject2, request.GoodSubject3, request.BadSubject1, request.BadSubject2, request.BadSubject3 };
         if (differentSubjects.Distinct().ToList().Count != 6)
         {
-            return BadRequest("filloutCorrectly");
+            return BadRequest(ErrorKeys.FillFormCorrectly);
         }
 
         if (request.Birthdate > DateTime.UtcNow || request.Birthdate.Year < 1900)
         {
-            return BadRequest("filloutCorrectly");
+            return BadRequest(ErrorKeys.FillFormCorrectly);
         }
 
         var usernameTaken = await _dataContext.Users.AnyAsync(usr => usr.Username == request.Username);
         if (usernameTaken)
         {
-            return BadRequest("usernameTaken");
+            return BadRequest(ErrorKeys.UsernameTaken);
         }
 
         var profileImageId =
             await _fileAnonymousFinder.GetFileId(_dataContext, request.ProfileImagePath);
         if (profileImageId == null)
         {
-            return BadRequest("fileNotValid");
+            return BadRequest(ErrorKeys.FileNotValid);
         }
 
         var user = new User

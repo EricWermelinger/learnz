@@ -56,7 +56,7 @@ public class FileTest : Controller
         }
         catch (Exception ex)
         {
-            return BadRequest("fileUploadUnsuccessful");
+            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
     }
 }

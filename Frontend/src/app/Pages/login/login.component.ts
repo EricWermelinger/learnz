@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { endpoints } from 'src/app/Config/endpoints';
-import { LoginDTO } from 'src/app/DTOs/LoginDTO';
-import { TokenDTO } from 'src/app/DTOs/TokenDTO';
+import { TokenDTO } from 'src/app/DTOs/User/TokenDTO';
+import { UserLoginDTO } from 'src/app/DTOs/User/UserLoginDTO';
+import { UserRefreshTokenDTO } from 'src/app/DTOs/User/UserRefreshTokenDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 import { ErrorHandlingService } from 'src/app/Framework/API/error-handling.service';
 import { TokenService } from 'src/app/Framework/API/token.service';
@@ -18,7 +19,7 @@ import { FormGroupTyped } from 'src/app/Material/types';
 })
 export class LoginComponent {
 
-  form: FormGroupTyped<LoginDTO>;
+  form: FormGroupTyped<UserLoginDTO>;
   loginWrong: boolean = false;
 
   constructor(
@@ -30,38 +31,34 @@ export class LoginComponent {
     private darkThemeService: DarkThemeService,
   ) {
     this.form = this.formBuilder.group({
-      email: ['', Validators.email],
-      password: '',
-    }) as FormGroupTyped<LoginDTO>;
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    }) as FormGroupTyped<UserLoginDTO>;
 
     if (this.tokenService.isExpired()) {
       this.tokenService.removeToken();
       this.tokenService.removeRefreshToken();
       this.errorHandler.redirectToLogin();
     }
-    const refresh = this.tokenService.getRefreshToken();
-    if (refresh) {
-      this.api.callApi<TokenDTO>(endpoints.Login, {
-        refresh
-      }, 'PUT').subscribe(token => {
-        this.tokenService.setToken(token.access);
-        this.tokenService.setRefreshToken(token.refresh);
-        this.tokenService.setExpired(token.refreshExpires);
-        this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
-      });
-    }
-
+    const refreshToken = this.tokenService.getRefreshToken();
     this.darkThemeService.setDarkTheme(this.darkThemeService.getDarkTheme());
+    if (refreshToken) {
+      this.api.callApi<TokenDTO>(endpoints.Refresh, {
+        refreshToken
+      } as UserRefreshTokenDTO, 'POST').subscribe(token => this.setToken(token));
+    }
   }
 
   login() {
     this.api.callApi<TokenDTO>(endpoints.Login, {
       ...this.form.value
-    }, 'POST').subscribe(token => {
-      this.tokenService.setToken(token.access);
-      this.tokenService.setRefreshToken(token.refresh);
-      this.tokenService.setExpired(token.refreshExpires);
-      this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
-    });
+    }, 'POST').subscribe(token => this.setToken(token));
+  }
+
+  setToken(token: TokenDTO) {
+    this.tokenService.setToken(token.token);
+    this.tokenService.setRefreshToken(token.refreshToken);
+    this.tokenService.setExpired(token.refreshExpires);
+    this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
   }
 }

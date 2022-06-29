@@ -1,3 +1,4 @@
 export const endpoints = {
-    Login: 'userLogin'
+    Login: 'userLogin',
+    Refresh: 'userRefreshToken',
 }
