@@ -7,7 +7,8 @@ public class FilePolicyChecker : IFilePolicyChecker
         {
             case FilePolicy.Everyone:
                 return true;
-            case FilePolicy.OnlySelf:
+            case FilePolicy.Private:
+            case FilePolicy.OnlySelfEditable:
                 return file.CreatedById == userId;
             default:
                 return false;
@@ -16,16 +17,42 @@ public class FilePolicyChecker : IFilePolicyChecker
 
     public bool FileDeletable(LearnzFile file, Guid userId)
     {
-        return file.CreatedById == userId;
+        switch (file.FilePolicy)
+        {
+            case FilePolicy.Everyone:
+            case FilePolicy.OnlySelfEditable:
+            case FilePolicy.Private:
+                return file.CreatedById == userId;
+            default:
+                return false;
+        }
     }
 
     public bool FileDownloadable(LearnzFile file, Guid userId)
     {
-        return FileEditable(file, userId);
+        switch (file.FilePolicy)
+        {
+            case FilePolicy.Everyone:
+            case FilePolicy.OnlySelfEditable:
+                return true;
+            case FilePolicy.Private:
+                return file.CreatedById == userId;
+            default:
+                return false;
+        }
     }
 
     public bool FilePolicyChangeable(LearnzFile file, Guid userId)
     {
-        return FileDeletable(file, userId);
+        switch (file.FilePolicy)
+        {
+            case FilePolicy.Everyone:
+            case FilePolicy.OnlySelfEditable:
+                return true;
+            case FilePolicy.Private:
+                return file.CreatedById == userId;
+            default:
+                return false;
+        }
     }
 }

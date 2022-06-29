@@ -1,6 +1,7 @@
 ﻿namespace Learnz.Entities;
 public enum FilePolicy
 {
-    OnlySelf = 1,
-    Everyone = 2
+    Private = 1,
+    OnlySelfEditable = 2,
+    Everyone = 3
 }
