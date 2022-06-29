@@ -73,7 +73,7 @@ public class FileUploadDownload : Controller
                     ModifiedById = guid,
                     FileNameExternal = fileNameExternal,
                     FileNameInternal = fileNameInternal,
-                    FilePolicy = FilePolicy.OnlySelf,
+                    FilePolicy = FilePolicy.Private,
                     Path = path
                 };
                 

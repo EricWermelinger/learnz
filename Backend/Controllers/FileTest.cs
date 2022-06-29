@@ -28,7 +28,7 @@ public class FileTest : Controller
             DateTime timeStamp = DateTime.UtcNow;
             Guid fileId = Guid.NewGuid();
 
-            string physicalPath = @"C:\src\learnz\Backend\Learnz\Ressources\mock\Statik Kapitel 2 bis 4 (1).pdf";
+            string physicalPath = @"C:\src\learnz\Backend\Ressources\mock\Statik Kapitel 2 bis 4 (1).pdf";
             string fileNameExternal = physicalPath.Split("\\")[^1];
             string fileNameInternal = fileId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
             string folderName = _configuration["Files:Folder"];

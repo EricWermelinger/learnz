@@ -4,6 +4,7 @@ using Learnz.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Learnz.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220629064219_CreateEntitiesCreateQuestions")]
+    partial class CreateEntitiesCreateQuestions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,287 @@ namespace Learnz.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionDistribute");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionDistributeAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LeftSide")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionDistributeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RightSide")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionDistributeId");
+
+                    b.ToTable("CreateQuestionDistributeAnswer");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Digits")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionMathematic");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematicVariable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Digits")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Display")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Interval")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Max")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Min")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("QuestionMathematicId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionMathematicId");
+
+                    b.ToTable("CreateQuestionMathematicVariable");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionMultipleChoice");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoiceAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRight")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("QuestionMultipleChoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionMultipleChoiceId");
+
+                    b.ToTable("CreateQuestionMultipleChoiceAnswer");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionOpenQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionOpenQuestion");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionTextField", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionTextField");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionTrueFalse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Answer")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionTrueFalse");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionWord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LanguageSubjectMain")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageSubjectSecond")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("CreateQuestionWord");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateSet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ModifiedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SetPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectMain")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SubjectSecond")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("CreateSet");
+                });
 
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
@@ -357,10 +640,139 @@ namespace Learnz.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionDistributes")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionDistributeAnswer", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateQuestionDistribute", "QuestionDistribute")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionDistributeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuestionDistribute");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematic", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionMathematics")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematicVariable", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateQuestionMathematic", "QuestionMathematic")
+                        .WithMany("Variables")
+                        .HasForeignKey("QuestionMathematicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuestionMathematic");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoice", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionMultipleChoices")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoiceAnswer", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateQuestionMultipleChoice", "QuestionMultipleChoice")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionMultipleChoiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuestionMultipleChoice");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionOpenQuestion", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionOpenQuestions")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionTextField", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionTextFields")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionTrueFalse", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionTrueFalses")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionWord", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("QuestionWords")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateSet", b =>
+                {
+                    b.HasOne("Learnz.Entities.User", "CreatedBy")
+                        .WithMany("CreateSetCreated")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "ModifiedBy")
+                        .WithMany("CreateSetModified")
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
                     b.HasOne("Learnz.Entities.User", "Admin")
-                        .WithMany("GroupUsers")
+                        .WithMany("GroupAdmin")
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -539,6 +951,38 @@ namespace Learnz.Migrations
                     b.Navigation("ProfileImage");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematic", b =>
+                {
+                    b.Navigation("Variables");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoice", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.CreateSet", b =>
+                {
+                    b.Navigation("QuestionDistributes");
+
+                    b.Navigation("QuestionMathematics");
+
+                    b.Navigation("QuestionMultipleChoices");
+
+                    b.Navigation("QuestionOpenQuestions");
+
+                    b.Navigation("QuestionTextFields");
+
+                    b.Navigation("QuestionTrueFalses");
+
+                    b.Navigation("QuestionWords");
+                });
+
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
                     b.Navigation("GroupFiles");
@@ -562,11 +1006,15 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.User", b =>
                 {
+                    b.Navigation("CreateSetCreated");
+
+                    b.Navigation("CreateSetModified");
+
+                    b.Navigation("GroupAdmin");
+
                     b.Navigation("GroupMembers");
 
                     b.Navigation("GroupMessages");
-
-                    b.Navigation("GroupUsers");
 
                     b.Navigation("LearnzFileCreated");
 

@@ -19,7 +19,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<Group>()
             .HasOne(g => g.Admin)
-            .WithMany(u => u.GroupUsers)
+            .WithMany(u => u.GroupAdmin)
             .HasForeignKey(g => g.AdminId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -123,6 +123,78 @@ public class DataContext : DbContext
             .HasOne(u => u.ProfileImage)
             .WithMany(lfa => lfa.ProfileImages)
             .HasForeignKey(u => u.ProfileImageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateSet>()
+            .HasOne(cs => cs.CreatedBy)
+            .WithMany(u => u.CreateSetCreated)
+            .HasForeignKey(cs => cs.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateSet>()
+            .HasOne(cs => cs.ModifiedBy)
+            .WithMany(u => u.CreateSetModified)
+            .HasForeignKey(cs => cs.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionDistribute>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionDistributes)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionDistributeAnswer>()
+            .HasOne(cqa => cqa.QuestionDistribute)
+            .WithMany(cqd => cqd.Answers)
+            .HasForeignKey(cqa => cqa.QuestionDistributeId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<CreateQuestionMathematic>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionMathematics)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionMathematicVariable>()
+            .HasOne(qmv => qmv.QuestionMathematic)
+            .WithMany(cqm => cqm.Variables)
+            .HasForeignKey(qmv => qmv.QuestionMathematicId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionMultipleChoice>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionMultipleChoices)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionMultipleChoiceAnswer>()
+            .HasOne(qma => qma.QuestionMultipleChoice)
+            .WithMany(cqm => cqm.Answers)
+            .HasForeignKey(qma => qma.QuestionMultipleChoiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionOpenQuestion>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionOpenQuestions)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionTextField>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionTextFields)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionTrueFalse>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionTrueFalses)
+            .HasForeignKey(cqd => cqd.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateQuestionWord>()
+            .HasOne(cqd => cqd.Set)
+            .WithMany(cs => cs.QuestionWords)
+            .HasForeignKey(cqd => cqd.SetId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
