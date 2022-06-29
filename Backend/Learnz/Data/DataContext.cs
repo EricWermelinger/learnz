@@ -19,7 +19,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<Group>()
             .HasOne(g => g.Admin)
-            .WithMany(u => u.GroupUsers)
+            .WithMany(u => u.GroupAdmin)
             .HasForeignKey(g => g.AdminId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -123,6 +123,18 @@ public class DataContext : DbContext
             .HasOne(u => u.ProfileImage)
             .WithMany(lfa => lfa.ProfileImages)
             .HasForeignKey(u => u.ProfileImageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateSet>()
+            .HasOne(cs => cs.CreatedBy)
+            .WithMany(u => u.CreateSetCreated)
+            .HasForeignKey(cs => cs.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CreateSet>()
+            .HasOne(cs => cs.ModifiedBy)
+            .WithMany(u => u.CreateSetModified)
+            .HasForeignKey(cs => cs.ModifiedById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
