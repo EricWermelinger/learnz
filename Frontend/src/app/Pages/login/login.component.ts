@@ -43,14 +43,14 @@ export class LoginComponent {
     const refreshToken = this.tokenService.getRefreshToken();
     this.darkThemeService.setDarkTheme(this.darkThemeService.getDarkTheme());
     if (refreshToken) {
-      this.api.callApi<TokenDTO>(endpoints.Refresh, {
+      this.api.callApi<TokenDTO>(endpoints.UserRefreshToken, {
         refreshToken
       } as UserRefreshTokenDTO, 'POST').subscribe(token => this.setToken(token));
     }
   }
 
   login() {
-    this.api.callApi<TokenDTO>(endpoints.Login, {
+    this.api.callApi<TokenDTO>(endpoints.UserLogin, {
       ...this.form.value
     }, 'POST').subscribe(token => this.setToken(token));
   }

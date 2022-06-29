@@ -11,4 +11,5 @@ public static class ErrorKeys
     public static string InvalidLogin = "invalidLogin";
     public static string UsernameTaken = "usernameTaken";
     public static string PasswordNotMatch = "passwordNotMatch";
+    public static string UnknownError = "unknownError";
 }

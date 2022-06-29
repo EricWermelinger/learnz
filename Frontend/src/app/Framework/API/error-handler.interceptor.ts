@@ -34,14 +34,21 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(error => {
-        if (this.tokenService.isExpired() || (error.url as string).split('/').some(u => u === endpoints.Login)) {
+        if (this.tokenService.isExpired()) {
           this.tokenService.removeToken();
           this.tokenService.removeRefreshToken();
           this.errorHandler.redirectToLogin();
         }
 
+        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin)) {
+          return this.errorHandler.handleError({
+            error,
+            request
+          });
+        }
+
         if (error.status === 401) {
-          return this.api.callApi<TokenDTO>(endpoints.Refresh,  {
+          return this.api.callApi<TokenDTO>(endpoints.UserRefreshToken,  {
             refreshToken: this.tokenService.getRefreshToken(),
           } as UserRefreshTokenDTO, 'POST').pipe(
             tap(token => {

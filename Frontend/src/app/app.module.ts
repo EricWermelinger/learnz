@@ -16,6 +16,8 @@ import { TextEditorActionBarComponent } from './Framework/text-editor/text-edito
 import { ErrorHandlingDialogComponent } from './Framework/error-handling-dialog/error-handling-dialog.component';
 import { ErrorHandlerInterceptor } from './Framework/API/error-handler.interceptor';
 import { LoginComponent } from './Pages/login/login.component';
+import { ToastrModule } from 'ngx-toastr';
+import { CustomToastyComponent } from './Framework/custom-toasty/custom-toasty.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -24,6 +26,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    CustomToastyComponent,
     ErrorHandlingDialogComponent,
     LanguageLookupComponent,
     TextEditorComponent,
@@ -46,6 +49,14 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    ToastrModule.forRoot({
+      toastComponent: CustomToastyComponent,
+      timeOut: 3000,
+      maxOpened: 5,
+      newestOnTop: true,
+      preventDuplicates: true,
+      positionClass: 'toast-bottom-right',
+  }),
   ],
   providers: [
     {
