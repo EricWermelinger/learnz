@@ -18,6 +18,8 @@ import { ErrorHandlerInterceptor } from './Framework/API/error-handler.intercept
 import { LoginComponent } from './Pages/login/login.component';
 import { ToastrModule } from 'ngx-toastr';
 import { CustomToastyComponent } from './Framework/custom-toasty/custom-toasty.component';
+import { SignUpComponent } from './Pages/sign-up/sign-up.component';
+import { FileUploadComponent } from './Framework/file-upload/file-upload.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -32,6 +34,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TextEditorComponent,
     TextEditorActionBarComponent,
     LoginComponent,
+    SignUpComponent,
+    FileUploadComponent,
   ],
   imports: [
     BrowserModule,

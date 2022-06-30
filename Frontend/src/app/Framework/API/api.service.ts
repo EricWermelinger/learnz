@@ -17,6 +17,11 @@ export class ApiService {
     return request as Observable<T>;
   }
 
+  callFileUpload(endpoint: string, formData: FormData) {
+    const requestEndpoint = `${environment.URL_API}${endpoint}`;
+    return this.http.post(requestEndpoint, formData, {reportProgress: true, observe: 'events'});
+  }
+
   private buildRequest(endpoint: string, payload: any, method: HttpMethods) {
     const requestEndpoint = `${environment.URL_API}${endpoint}`;
 

@@ -4,6 +4,11 @@
         "username":"Username",
         "password":"Password"
     },
+    "fileUpload":{
+        "uploadSuccessful":"Upload Successful",
+        "uploadFile":"Upload File",
+        "uploading":"Uploading"
+    },
     "errorBackend":{
         "fileUploadUnsuccessful":"File upload unsuccessful",
         "fileUploadUnsuccessful_title":"Upload unsuccessful",

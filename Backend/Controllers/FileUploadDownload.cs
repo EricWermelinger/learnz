@@ -102,6 +102,7 @@ public class FileUploadDownload : Controller
     [HttpPut]
     public async Task<ActionResult> UpdateFile()
     {
+        // todo check same filetype
         try
         {
             IFormFile file = Request.Form.Files[0];

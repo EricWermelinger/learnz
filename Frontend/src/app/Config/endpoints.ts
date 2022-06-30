@@ -1,6 +1,7 @@
 export const endpoints = {
     // FileChangePolicy: 'fileChangePolicy',
     // FileUploadDownload: 'fileUploadDownload',
+    FileUploadAnonymous: 'fileUploadAnonymous',
     // GroupFiles: 'groupFiles',
     // GroupInfo: 'groupInfo',
     // GroupLeave: 'groupLeave',
