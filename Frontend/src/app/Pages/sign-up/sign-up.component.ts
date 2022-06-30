@@ -8,8 +8,13 @@ import { SignUpService } from './sign-up.service';
 })
 export class SignUpComponent {
 
+  filePath = '';
+
   constructor(
     private signUpService: SignUpService,
   ) { }
 
+  uploadFinished = (event: any) => { 
+    this.filePath = event.path; 
+  }
 }

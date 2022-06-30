@@ -1,4 +1,4 @@
 <input type="file" #file class="hidden" (change)="uploadFile(file.files)">
-<button type="button" (click)="file.click()">{{ 'fileUpload.uploadFile' | translate }}</button>
+<button mat-flat-button color="primary" type="button" (click)="file.click()">{{ 'fileUpload.uploadFile' | translate }}</button>
 <div *ngIf="progress > 0">{{ progress }}%</div>
 <div *ngIf="message">{{ message | translate }}</div>
