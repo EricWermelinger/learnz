@@ -36,6 +36,7 @@ public class UserProfile : Controller
             Grade = user.Grade,
             ProfileImagePath = user.ProfileImage.Path,
             Information = user.Information,
+            Language = user.Language,
             GoodSubject1 = user.GoodSubject1,
             GoodSubject2 = user.GoodSubject2,
             GoodSubject3 = user.GoodSubject3,

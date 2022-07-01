@@ -1,1 +1,52 @@
-<app-file-upload (onUploadFinished)="uploadFinished($event)" [isAnonymous]="true"></app-file-upload>
+<form [formGroup]="formGroup">
+    <h1>{{ 'signup.signup' | translate }}</h1>
+    <mat-form-field>
+        <input matInput type="text" formControlName="username" [placeholder]="'signup.username' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="password" formControlName="password" [placeholder]="'signup.password' | translate">
+    </mat-form-field>
+    <app-language-lookup></app-language-lookup>
+    <mat-form-field>
+        <input matInput type="text" formControlName="firstname" [placeholder]="'signup.firstname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" formControlName="lastname" [placeholder]="'signup.lastname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signup.birthdate' | translate }}</mat-label>
+        <input matInput formControlName="birthdate" [matDatepicker]="picker">
+        <mat-hint>dd.MM.yyyy</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <app-grade-dropdown [formControlName]="'grade'"></app-grade-dropdown>
+    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()"></app-file-upload>
+    <div>
+        <mat-label>{{ 'signUp.goodSubject1' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'goodSubject1'"></app-subject-dropdown>
+    </div>
+    <div>
+        <mat-label>{{ 'signUp.goodSubject2' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'goodSubject2'"></app-subject-dropdown>
+    </div>
+    <div>
+        <mat-label>{{ 'signUp.goodSubject3' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'goodSubject3'"></app-subject-dropdown>
+    </div>
+    <div>
+        <mat-label>{{ 'signUp.badSubject1' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'badSubject1'"></app-subject-dropdown>
+    </div>
+    <div>
+        <mat-label>{{ 'signUp.badSubject2' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'badSubject2'"></app-subject-dropdown>
+    </div>
+    <div>
+        <mat-label>{{ 'signUp.badSubject3' }}</mat-label>
+        <app-subject-dropdown [formControlName]="'badSubject3'"></app-subject-dropdown>
+    </div>
+    <button mat-flat-button color="primary" type="submit" (click)="signUp()" [disabled]="!formGroup.valid || !formGroup.dirty">
+        {{ 'signUp.signUp' | translate }}
+    </button>
+</form>

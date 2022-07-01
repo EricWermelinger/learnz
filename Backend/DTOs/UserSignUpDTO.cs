@@ -10,6 +10,7 @@ public class UserSignUpDTO
     public Grade Grade { get; set; }
     public string ProfileImagePath { get; set; }
     public string Information { get; set; }
+    public Language Language { get; set; }
     public Subject GoodSubject1 { get; set; }
     public Subject GoodSubject2 { get; set; }
     public Subject GoodSubject3 { get; set; }

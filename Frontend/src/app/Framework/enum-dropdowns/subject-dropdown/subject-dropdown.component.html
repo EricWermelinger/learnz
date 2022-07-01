@@ -1,0 +1,6 @@
+<mat-form-field>
+    <mat-label>{{ 'Subject.Subject' | translate }}</mat-label>
+    <mat-select [formControlName]="formControlName" [value]="value">
+        <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+    </mat-select>
+</mat-form-field>

@@ -35,9 +35,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(error => {
         if (this.tokenService.isExpired()) {
-          this.tokenService.removeToken();
-          this.tokenService.removeRefreshToken();
-          this.errorHandler.redirectToLogin();
+          this.tokenService.clearToken();
         }
 
         if ((error.url as string).split('/').some(u => u === endpoints.UserLogin)) {
@@ -52,9 +50,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
             refreshToken: this.tokenService.getRefreshToken(),
           } as UserRefreshTokenDTO, 'POST').pipe(
             tap(token => {
-              this.tokenService.setToken(token.token);
-              this.tokenService.setRefreshToken(token.refreshToken);
-              this.tokenService.setExpired(token.refreshExpires);
+              this.tokenService.patchToken(token, true);
             }),
             switchMap(token => next.handle(this.cloneRequest(request, token.token))),
           );

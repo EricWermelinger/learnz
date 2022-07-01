@@ -63,6 +63,7 @@ public class UserSignUp : Controller
             Grade = request.Grade,
             ProfileImageId = (Guid)profileImageId,
             Information = request.Information,
+            Language = request.Language,
             GoodSubject1 = request.GoodSubject1,
             GoodSubject2 = request.GoodSubject2,
             GoodSubject3 = request.GoodSubject3,

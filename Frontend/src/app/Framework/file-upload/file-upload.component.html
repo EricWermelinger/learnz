@@ -8,7 +8,7 @@
         </button>
     </div>
     <ng-template #fileUpload>
-        <input type="file" #file class="hidden" (change)="uploadFile(file.files)">
+        <input type="file" #file class="hidden" (change)="uploadFile(file.files)" [accept]="fileTypes">
         <button mat-flat-button color="primary" type="button" (click)="file.click()">{{ 'fileUpload.uploadFile' | translate }}</button>
     </ng-template>
     <div *ngIf="progress > 0" class="center space">

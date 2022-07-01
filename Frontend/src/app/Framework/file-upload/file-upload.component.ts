@@ -1,5 +1,6 @@
-import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
+import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { endpoints } from 'src/app/Config/endpoints';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
 import { ApiService } from '../API/api.service';
@@ -7,15 +8,26 @@ import { ApiService } from '../API/api.service';
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.scss']
+  styleUrls: ['./file-upload.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi:true,
+      useExisting: FileUploadComponent
+    },
+    {
+      provide: NG_VALIDATORS,
+      multi: true,
+      useExisting: FileUploadComponent
+    }
+  ],
 })
-export class FileUploadComponent {
+export class FileUploadComponent implements ControlValueAccessor, Validator {
 
   progress: number = 0;
   message: string = '';
   _filePath: string = '';
   _externalFileName: string = '';
-  @Output() public onUploadFinished = new EventEmitter();
   @Input() set filePath(filePath: string) {
     this._filePath = filePath;
   }
@@ -23,6 +35,7 @@ export class FileUploadComponent {
     this._externalFileName = externalFileName;
   }
   @Input() isAnonymous: boolean = false;
+  @Input() fileTypes: string = '';
   
   constructor(
     private api: ApiService,
@@ -32,7 +45,6 @@ export class FileUploadComponent {
     if (files.length === 0) {
       return;
     }
-
     this.message = 'fileUpload.uploading';
     let fileToUpload = <File>files[0];
     const formData = new FormData();
@@ -44,16 +56,15 @@ export class FileUploadComponent {
       } else if (event.type === HttpEventType.Response) {
         this.message = 'fileUpload.uploadSuccessful';
         const body = (event.body as FilePathDTO);
-        this._filePath = body.path;
+        this.updateValue(body.path);
         this._externalFileName = body.externalFileName;
         this.progress = 0;
-        this.onUploadFinished.emit(this._filePath);
       }
     });
   }
 
   removeFile() {
-    this._filePath = '';
+    this.updateValue('');
     this._externalFileName = '';
     this.message = '';
     this.progress = 0;
@@ -88,5 +99,39 @@ export class FileUploadComponent {
   private sanitizePercent(loaded: number, total: number): number {
     const percent = Math.round(loaded * 100 / total);
     return percent === 100 ? 99 : percent;
+  }
+
+  touched = false;
+  disabled = false;
+  onChange = (value: any) => {};
+  onTouched = () => {};
+  writeValue(value: string): void {
+    this._filePath = value;
+  }
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+  updateValue(value: string) {
+    this.markAsTouched();
+    if (!this.disabled) {
+      this._filePath = value;
+      this.onChange(value);
+    }
+  }
+  markAsTouched() {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
+  }
+  setDisabledState(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
+  validate(control: AbstractControl<any, any>): ValidationErrors | null {
+    return !!this.filePath ? null : { required: true };
   }
 }

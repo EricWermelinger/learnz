@@ -47,7 +47,7 @@ export class LanguagesService {
 
   selectableLanguages() {
     // todo translate manually with excel helper to languages in json files
-    return languages.filter(l => l.key === 'en-GB');
+    return languages.filter(l => l.key === 'en-GB' || l.key === 'de-DE');
   }
 
   getSelectedLanguage(): string {
@@ -56,6 +56,11 @@ export class LanguagesService {
 
   allLanguages() {
     return languages;
+  }
+
+  getLanguageIndex(language: string): number {
+    const lang = languages.findIndex(l => l.key === language);
+    return lang === -1 ? 1 : lang + 1;
   }
 }
 

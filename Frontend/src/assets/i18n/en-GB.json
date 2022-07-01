@@ -1,8 +1,29 @@
 {
+    "framework":{
+        "save":"Save",
+        "cancel":"Cancel"
+    },
     "login":{
         "login":"Login",
         "username":"Username",
         "password":"Password"
+    },
+    "signUp": {
+        "signUp":"Sign Up",
+        "username":"Username",
+        "firstname":"Firstname",
+        "lastname":"Lastname",
+        "birthdate":"Birthdate",
+        "grade":"Grade",
+        "profileImagePath":"Profile Image",
+        "information":"Information",
+        "password":"Password",
+        "goodSubject1":"Best Subject",
+        "goodSubject2":"Second best Subject",
+        "goodSubject3":"Third best Subject",
+        "badSubject1":"Worst Subject",
+        "badSubject2":"Second worst Subject",
+        "badSubject3":"Third worst Subject"
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",
@@ -37,6 +58,7 @@
         "unknownError_title":"Unknown error"
     },
     "Subject":{
+        "Subject":"Subject",
         "Mathematics":"Mathematics",
         "Physics":"Physics",
         "Biology":"Biology",
@@ -53,6 +75,7 @@
         "Drawing":"Drawing"
     },
     "Grade":{
+        "Grade":"Grade",
         "Grade1":"Grade 1",
         "Grade2":"Grade 2",
         "Grade3":"Grade 3",

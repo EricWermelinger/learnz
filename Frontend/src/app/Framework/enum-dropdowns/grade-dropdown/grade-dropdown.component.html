@@ -1,0 +1,6 @@
+<mat-form-field>
+    <mat-label>{{ 'Grade.Grade' | translate }}</mat-label>
+    <mat-select [formControlName]="formControlName" [value]="value">
+        <mat-option *ngFor="let grade of grades" [value]="grade.value">{{ ('Grade.' + grade.key) | translate }}</mat-option>
+    </mat-select>
+</mat-form-field>

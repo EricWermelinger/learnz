@@ -20,6 +20,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { CustomToastyComponent } from './Framework/custom-toasty/custom-toasty.component';
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
 import { FileUploadComponent } from './Framework/file-upload/file-upload.component';
+import { GradeDropdownComponent } from './Framework/enum-dropdowns/grade-dropdown/grade-dropdown.component';
+import { SubjectDropdownComponent } from './Framework/enum-dropdowns/subject-dropdown/subject-dropdown.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -36,6 +38,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     SignUpComponent,
     FileUploadComponent,
+    GradeDropdownComponent,
+    SubjectDropdownComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,43 +1,42 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { appConfig } from 'src/app/Config/appConfig';
+import { appRoutes } from 'src/app/Config/appRoutes';
+import { TokenDTO } from 'src/app/DTOs/User/TokenDTO';
+import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private errorHandler: ErrorHandlingService,
+  ) { }
 
-  setToken(token: string) {
-    localStorage.setItem(appConfig.APPLICATION_TOKEN, token);
+  patchToken(token: TokenDTO, preventNavigate: boolean = false) {
+    this.setToken(token.token);
+    this.setRefreshToken(token.refreshToken);
+    this.setExpired(token.refreshExpires);
+    if (!preventNavigate) {
+      this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
+    }
   }
 
-  setExpired(expires: Date) {
-    localStorage.setItem(appConfig.APPLICATION_EXPIRES, expires.toString());
+  clearToken() {
+    this.removeToken();
+    this.removeRefreshToken();
+    this.removeExpired();
+    this.errorHandler.redirectToLogin();    
   }
 
-  getToken(): string | null {
+  getToken() {
     return localStorage.getItem(appConfig.APPLICATION_TOKEN);
   }
 
-  removeToken() {
-    localStorage.removeItem(appConfig.APPLICATION_TOKEN);
-  }
-
-  setRefreshToken(refreshToken: string) {
-    localStorage.setItem(appConfig.APPLICATION_REFRESH_TOKEN, refreshToken);
-  }
-
-  getRefreshToken(): string | null {
+  getRefreshToken() {
     return localStorage.getItem(appConfig.APPLICATION_REFRESH_TOKEN);
-  }
-
-  removeRefreshToken() {
-    localStorage.removeItem(appConfig.APPLICATION_REFRESH_TOKEN);
-  }
-
-  removeExpired() {
-    localStorage.removeItem(appConfig.APPLICATION_EXPIRES);
   }
 
   isExpired(): boolean {
@@ -57,5 +56,28 @@ export class TokenService {
   setSelectedLanguage(language: string) {
     localStorage.setItem(appConfig.APPLICATION_LANGUAGE, language);
   }
-  
+
+  private setToken(token: string) {
+    localStorage.setItem(appConfig.APPLICATION_TOKEN, token);
+  }
+
+  private setExpired(expires: Date) {
+    localStorage.setItem(appConfig.APPLICATION_EXPIRES, expires.toString());
+  }
+
+  private setRefreshToken(refreshToken: string) {
+    localStorage.setItem(appConfig.APPLICATION_REFRESH_TOKEN, refreshToken);
+  }
+
+  private removeToken() {
+    localStorage.removeItem(appConfig.APPLICATION_TOKEN);
+  }
+
+  private removeRefreshToken() {
+    localStorage.removeItem(appConfig.APPLICATION_REFRESH_TOKEN);
+  }
+
+  private removeExpired() {
+    localStorage.removeItem(appConfig.APPLICATION_EXPIRES);
+  }
 }
