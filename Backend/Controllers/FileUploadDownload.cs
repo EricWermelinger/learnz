@@ -102,9 +102,8 @@ public class FileUploadDownload : Controller
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateFile()
+    public async Task<ActionResult> UpdateFile(FilePathDTO request)
     {
-        // todo check same filetype
         try
         {
             IFormFile file = Request.Form.Files[0];
@@ -112,17 +111,26 @@ public class FileUploadDownload : Controller
             {
                 DateTime timeStamp = DateTime.UtcNow;
                 var guid = _userService.GetUserGuid();
-
-                string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');                
-                var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.FileNameInternal.ToLower() == fileName.ToLower() && _filePolicyChecker.FileEditable(f, guid));
+                
+                var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == request.Path && _filePolicyChecker.FileEditable(f, guid));
                 if (dbFile == null)
                 {
                     return BadRequest(ErrorKeys.FileNotFound);
                 }
+
+                Guid versionId = Guid.NewGuid();
+                string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                string fileNameInternal = versionId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
+                string folderName = _configuration["Files:Folder"];
+                string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
+
+                dbFile.ActualVersionId = versionId;
+                dbFile.FileNameExternal = fileNameExternal;
+                dbFile.FileNameInternal = fileNameInternal;
+                dbFile.Path = path;
                 dbFile.Modified = timeStamp;
                 dbFile.ModifiedById = guid;
 
-                System.IO.File.Delete(dbFile.Path);
                 using (var stream = new FileStream(dbFile.Path, FileMode.Create))
                 {
                     file.CopyTo(stream);
