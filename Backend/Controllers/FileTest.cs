@@ -50,7 +50,8 @@ public class FileTest : Controller
 
             FilePathDTO fileDto = new FilePathDTO
             {
-                Path = dbFile.Path
+                Path = dbFile.Path,
+                ExternalFileName = dbFile.FileNameExternal
             };
             return Ok(fileDto);
         }

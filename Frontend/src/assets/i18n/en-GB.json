@@ -7,7 +7,8 @@
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",
         "uploadFile":"Upload File",
-        "uploading":"Uploading"
+        "uploading":"Uploading",
+        "file":"File"
     },
     "errorBackend":{
         "fileUploadUnsuccessful":"File upload unsuccessful",

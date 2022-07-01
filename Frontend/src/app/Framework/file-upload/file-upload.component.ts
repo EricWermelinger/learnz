@@ -1,6 +1,7 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
+import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
 import { ApiService } from '../API/api.service';
 
 @Component({
@@ -12,7 +13,16 @@ export class FileUploadComponent {
 
   progress: number = 0;
   message: string = '';
+  _filePath: string = '';
+  _externalFileName: string = '';
   @Output() public onUploadFinished = new EventEmitter();
+  @Input() set filePath(filePath: string) {
+    this._filePath = filePath;
+  }
+  @Input() set externalFileName(externalFileName: string) {
+    this._externalFileName = externalFileName;
+  }
+  @Input() isAnonymous: boolean = false;
   
   constructor(
     private api: ApiService,
@@ -27,13 +37,30 @@ export class FileUploadComponent {
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    this.api.callFileUpload(endpoints.FileUploadAnonymous, formData).subscribe((event: any) => {
+    const endpoint = this.isAnonymous ? endpoints.FileUploadAnonymous : endpoints.FileUploadDownload;
+    this.api.callFileUpload(endpoint, formData).subscribe((event: any) => {
       if (event.type === HttpEventType.UploadProgress) {
         this.progress = Math.round(event.loaded * 100 / event.total);
       } else if (event.type === HttpEventType.Response) {
         this.message = 'fileUpload.uploadSuccessful';
-        this.onUploadFinished.emit(event.body);
+        const body = (event.body as FilePathDTO);
+        this._filePath = body.path;
+        this._externalFileName = body.externalFileName;
+        this.onUploadFinished.emit(this._filePath);
       }
     });
+  }
+
+  getDownloadLink(): string {
+    // todo fix link local invalid
+    // todo convert to control
+    return `file:///${this._filePath}`;
+  }
+
+  removeFile() {
+    this._filePath = '';
+    this._externalFileName = '';
+    this.message = '';
+    this.progress = 0;
   }
 }
