@@ -132,6 +132,6 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   }
 
   validate(control: AbstractControl<any, any>): ValidationErrors | null {
-    return !!this.filePath ? null : { required: true };
+    return !!this._filePath ? null : { required: true };
   }
 }

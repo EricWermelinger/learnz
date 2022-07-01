@@ -1,52 +1,82 @@
 <form [formGroup]="formGroup">
-    <h1>{{ 'signup.signup' | translate }}</h1>
+    <h1>{{ 'signUp.signUp' | translate }}</h1>
     <mat-form-field>
-        <input matInput type="text" formControlName="username" [placeholder]="'signup.username' | translate">
+        <input matInput type="text" formControlName="username" [placeholder]="'signUp.username' | translate">
     </mat-form-field>
     <mat-form-field>
-        <input matInput type="password" formControlName="password" [placeholder]="'signup.password' | translate">
-    </mat-form-field>
-    <app-language-lookup></app-language-lookup>
-    <mat-form-field>
-        <input matInput type="text" formControlName="firstname" [placeholder]="'signup.firstname' | translate">
+        <input matInput type="password" formControlName="password" [placeholder]="'signUp.password' | translate">
     </mat-form-field>
     <mat-form-field>
-        <input matInput type="text" formControlName="lastname" [placeholder]="'signup.lastname' | translate">
+        <mat-label>{{ 'languages.languages' | translate }}</mat-label>
+        <mat-select formControlName="languageKey" [value]="selectedLanguage()" (selectionChange)="selectLanguage($event.value)">
+            <mat-option *ngFor="let lang of allLanguages()" [disabled]="isLanguageDisabled(lang.key)" [value]="lang.key">{{ lang.value | translate }}</mat-option>
+        </mat-select>
     </mat-form-field>
     <mat-form-field>
-        <mat-label>{{ 'signup.birthdate' | translate }}</mat-label>
-        <input matInput formControlName="birthdate" [matDatepicker]="picker">
+        <input matInput type="text" formControlName="firstname" [placeholder]="'signUp.firstname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" formControlName="lastname" [placeholder]="'signUp.lastname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.birthdate' | translate }}</mat-label>
+        <input [max]="maxDate" matInput formControlName="birthdate" [matDatepicker]="picker">
         <mat-hint>dd.MM.yyyy</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    <app-grade-dropdown [formControlName]="'grade'"></app-grade-dropdown>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.grade' | translate }}</mat-label>
+        <mat-select formControlName="grade">
+            <mat-option *ngFor="let grade of grades" [value]="grade.value">{{ ('Grade.' + grade.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
     <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()"></app-file-upload>
-    <div>
-        <mat-label>{{ 'signUp.goodSubject1' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'goodSubject1'"></app-subject-dropdown>
-    </div>
-    <div>
-        <mat-label>{{ 'signUp.goodSubject2' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'goodSubject2'"></app-subject-dropdown>
-    </div>
-    <div>
-        <mat-label>{{ 'signUp.goodSubject3' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'goodSubject3'"></app-subject-dropdown>
-    </div>
-    <div>
-        <mat-label>{{ 'signUp.badSubject1' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'badSubject1'"></app-subject-dropdown>
-    </div>
-    <div>
-        <mat-label>{{ 'signUp.badSubject2' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'badSubject2'"></app-subject-dropdown>
-    </div>
-    <div>
-        <mat-label>{{ 'signUp.badSubject3' }}</mat-label>
-        <app-subject-dropdown [formControlName]="'badSubject3'"></app-subject-dropdown>
-    </div>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.information' | translate }}</mat-label>
+        <textarea formControlName="information" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.goodSubject1' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject1">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.goodSubject2' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject2">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.goodSubject3' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject3">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.badSubject1' | translate }}</mat-label>
+        <mat-select formControlName="badSubject1">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.badSubject2' | translate }}</mat-label>
+        <mat-select formControlName="badSubject2">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'signUp.badSubject3' | translate }}</mat-label>
+        <mat-select formControlName="badSubject3">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
     <button mat-flat-button color="primary" type="submit" (click)="signUp()" [disabled]="!formGroup.valid || !formGroup.dirty">
         {{ 'signUp.signUp' | translate }}
     </button>
+    <button mat-flat-button color="secondary" (click)="loginInstead()">
+        {{ 'signUp.loginInstead' | translate }}
+    </button>
+
 </form>

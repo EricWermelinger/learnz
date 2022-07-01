@@ -10,7 +10,6 @@ import { MaterialModule } from './Material/material.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { LanguageLookupComponent } from './Framework/Languages/language-lookup.component';
 import { TextEditorComponent } from './Framework/text-editor/text-editor.component';
 import { TextEditorActionBarComponent } from './Framework/text-editor/text-editor-action-bar.component';
 import { ErrorHandlingDialogComponent } from './Framework/error-handling-dialog/error-handling-dialog.component';
@@ -20,8 +19,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { CustomToastyComponent } from './Framework/custom-toasty/custom-toasty.component';
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
 import { FileUploadComponent } from './Framework/file-upload/file-upload.component';
-import { GradeDropdownComponent } from './Framework/enum-dropdowns/grade-dropdown/grade-dropdown.component';
-import { SubjectDropdownComponent } from './Framework/enum-dropdowns/subject-dropdown/subject-dropdown.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -32,14 +29,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     CustomToastyComponent,
     ErrorHandlingDialogComponent,
-    LanguageLookupComponent,
     TextEditorComponent,
     TextEditorActionBarComponent,
     LoginComponent,
     SignUpComponent,
     FileUploadComponent,
-    GradeDropdownComponent,
-    SubjectDropdownComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,8 +67,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       multi: true
     },
     {
-        provide: MAT_DATE_LOCALE,
-        useValue: 'de-DE'
+      provide: MAT_DATE_LOCALE,
+      useValue: 'de-CH'
     }
   ],
   bootstrap: [AppComponent]

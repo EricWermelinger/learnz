@@ -6,7 +6,8 @@
     "login":{
         "login":"Login",
         "username":"Username",
-        "password":"Password"
+        "password":"Password",
+        "signUpInstead":"Sign up instead"
     },
     "signUp": {
         "signUp":"Sign Up",
@@ -23,7 +24,8 @@
         "goodSubject3":"Third best Subject",
         "badSubject1":"Worst Subject",
         "badSubject2":"Second worst Subject",
-        "badSubject3":"Third worst Subject"
+        "badSubject3":"Third worst Subject",
+        "loginInstead":"Login instead"
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",
@@ -88,5 +90,28 @@
         "Grade10":"Grade 10",
         "Grade11":"Grade 11",
         "Grade12":"Grade 12"
+    },
+    "languages":{
+        "languages":"Language",
+        "english":"English",
+        "arabic":"Arabic",
+        "chinese":"Chinese",
+        "danish":"Danish",
+        "dutch":"Dutch",
+        "finnish":"Finnish",
+        "french":"French",
+        "german":"German",
+        "hindi":"Hindi",
+        "italian":"Italian",
+        "japanese":"Japanese",
+        "korean":"Korean",
+        "polish":"Polish",
+        "portuguese":"Portuguese",
+        "russian":"Russian",
+        "spanish":"Spanish",
+        "swedish":"Swedish",
+        "thai":"Thai",
+        "turkish":"Turkish",
+        "vietnamese":"Vietnamese"
     }
 }
