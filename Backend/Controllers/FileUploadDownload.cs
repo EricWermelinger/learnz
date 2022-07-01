@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
 
 namespace Learnz.Controllers;
@@ -23,7 +24,7 @@ public class FileUploadDownload : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<FileInfoDTO>> GetFileInfo(string filePath)
+    public async Task<ActionResult> FileDownload(string filePath)
     {
         var guid = _userService.GetUserGuid();
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == filePath && _filePolicyChecker.FileDownloadable(f, guid));
@@ -31,20 +32,20 @@ public class FileUploadDownload : Controller
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
-
-        var fileDTO = new FileInfoDTO
+        string path = file.Path;
+        var memory = new MemoryStream();
+        await using (var stream = new FileStream(path, FileMode.Open))
         {
-            FileNameExternal = file.FileNameExternal,
-            FilePath = file.Path,
-            Created = file.Created,
-            CreatedUsername = file.CreatedBy.Username,
-            Modified = file.Modified,
-            ModifiedUsername = file.ModifiedBy.Username,
-            FileFromMe = file.CreatedById == guid,
-            FileEditable = _filePolicyChecker.FileEditable(file, guid),
-            FileDeletable = _filePolicyChecker.FileDeletable(file, guid)
-        };
-        return Ok(fileDTO);
+            await stream.CopyToAsync(memory);
+        }
+        memory.Position = 0;
+        var provider = new FileExtensionContentTypeProvider();
+        string contentType;
+        if (!provider.TryGetContentType(path, out contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+        return File(memory, contentType, path);
     }
 
     [HttpPost]

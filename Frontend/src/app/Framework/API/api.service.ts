@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -19,16 +19,26 @@ export class ApiService {
 
   callFileUpload(endpoint: string, formData: FormData) {
     const requestEndpoint = `${environment.URL_API}${endpoint}`;
-    return this.http.post(requestEndpoint, formData, {reportProgress: true, observe: 'events'});
+    return this.http.post(requestEndpoint, formData, {reportProgress: true, observe: 'events' });
+  }
+
+  callFileDownload(endpoint: string, params: any) {
+    const requestEndpoint = `${environment.URL_API}${endpoint}`;
+    return this.http.post(requestEndpoint, params, {reportProgress: true, observe: 'events', responseType: 'blob' });
   }
 
   private buildRequest(endpoint: string, payload: any, method: HttpMethods) {
     const requestEndpoint = `${environment.URL_API}${endpoint}`;
 
+    let params = {};
+    if ((method === 'GET' || method === 'DELETE') && !!payload) {
+      params = payload;
+    }
+
     let request: any;
     switch (method) {
       case 'GET':
-        request = this.http.get(requestEndpoint, payload);
+        request = this.http.get(requestEndpoint, { params });
         break;
       case 'POST':
         request = this.http.post(requestEndpoint, payload);
@@ -37,9 +47,7 @@ export class ApiService {
         request = this.http.put(requestEndpoint, payload);
         break;
       case 'DELETE':
-        request = this.http.delete(requestEndpoint, {
-          body: payload
-        });
+        request = this.http.delete(requestEndpoint, { params });
         break;
     }
 

@@ -1,4 +1,4 @@
-import { HttpEventType } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
@@ -37,7 +37,7 @@ export class FileUploadComponent {
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    const endpoint = this.isAnonymous ? endpoints.FileUploadAnonymous : endpoints.FileUploadDownload;
+    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
     this.api.callFileUpload(endpoint, formData).subscribe((event: any) => {
       if (event.type === HttpEventType.UploadProgress) {
         this.progress = Math.round(event.loaded * 100 / event.total);
@@ -51,16 +51,32 @@ export class FileUploadComponent {
     });
   }
 
-  getDownloadLink(): string {
-    // todo fix link local invalid
-    // todo convert to control
-    return `file:///${this._filePath}`;
-  }
-
   removeFile() {
     this._filePath = '';
     this._externalFileName = '';
     this.message = '';
     this.progress = 0;
+  }
+
+  downloadFile() {
+    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
+    this.api.callFileDownload(endpoint, { filePath: this._filePath }).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
+        this.message = 'fileUpload.downloadSuccessful';
+        this.download(event);
+      }
+  });
+  }
+
+  private download(data: any) {
+    const downloadedFile = new Blob([data.body], { type: data.body.type });
+    const a = document.createElement('a');
+    a.setAttribute('style', 'display:none;');
+    document.body.appendChild(a);
+    a.download = this._filePath;
+    a.href = URL.createObjectURL(downloadedFile);
+    a.target = '_blank';
+    a.click();
+    document.body.removeChild(a);
   }
 }

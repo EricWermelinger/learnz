@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
 
 namespace Learnz.Controllers;
@@ -7,14 +8,38 @@ namespace Learnz.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class FileUploadAnonymous : Controller
+public class FileUploadDownloadAnonymous : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IConfiguration _configuration;
-    public FileUploadAnonymous(DataContext dataContext, IConfiguration configuration)
+    public FileUploadDownloadAnonymous(DataContext dataContext, IConfiguration configuration)
     {
         _dataContext = dataContext;
         _configuration = configuration;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> FileDownload(string filePath)
+    {
+        var file = await _dataContext.FilesAnonymous.FirstOrDefaultAsync(f => f.Path == filePath);
+        if (file == null)
+        {
+            return BadRequest(ErrorKeys.FileNotAccessible);
+        }
+        string path = file.Path;
+        var memory = new MemoryStream();
+        await using (var stream = new FileStream(path, FileMode.Open))
+        {
+            await stream.CopyToAsync(memory);
+        }
+        memory.Position = 0;
+        var provider = new FileExtensionContentTypeProvider();
+        string contentType;
+        if (!provider.TryGetContentType(path, out contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+        return File(memory, contentType, path);
     }
 
     [HttpPost]
