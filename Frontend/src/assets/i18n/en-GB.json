@@ -9,6 +9,7 @@
         "uploadFile":"Upload File",
         "uploading":"Uploading",
         "downloadSuccessful":"Download Successful",
+        "downloading":"Downloading",
         "file":"File"
     },
     "errorBackend":{

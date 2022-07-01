@@ -40,12 +40,13 @@ export class FileUploadComponent {
     const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
     this.api.callFileUpload(endpoint, formData).subscribe((event: any) => {
       if (event.type === HttpEventType.UploadProgress) {
-        this.progress = Math.round(event.loaded * 100 / event.total);
+        this.progress = this.sanitizePercent(event.loaded, event.total);
       } else if (event.type === HttpEventType.Response) {
         this.message = 'fileUpload.uploadSuccessful';
         const body = (event.body as FilePathDTO);
         this._filePath = body.path;
         this._externalFileName = body.externalFileName;
+        this.progress = 0;
         this.onUploadFinished.emit(this._filePath);
       }
     });
@@ -59,13 +60,17 @@ export class FileUploadComponent {
   }
 
   downloadFile() {
+    this.message = 'fileUpload.downloading';
     const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
     this.api.callFileDownload(endpoint, { filePath: this._filePath }).subscribe((event: any) => {
-      if (event.type === HttpEventType.Response) {
+      if (event.type === HttpEventType.DownloadProgress) {
+        this.progress = this.sanitizePercent(event.loaded, event.total);
+      } else if (event.type === HttpEventType.Response) {
         this.message = 'fileUpload.downloadSuccessful';
+        this.progress = 0;
         this.download(event);
       }
-  });
+    });
   }
 
   private download(data: any) {
@@ -78,5 +83,10 @@ export class FileUploadComponent {
     a.target = '_blank';
     a.click();
     document.body.removeChild(a);
+  }
+
+  private sanitizePercent(loaded: number, total: number): number {
+    const percent = Math.round(loaded * 100 / total);
+    return percent === 100 ? 99 : percent;
   }
 }

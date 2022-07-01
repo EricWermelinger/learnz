@@ -1,8 +1,8 @@
 <div class="file-upload">
     <div *ngIf="_filePath; else fileUpload">
-        <a mat-flat-button class="link-button" [href]="getDownloadLink()" download>
-            {{ (_externalFileName ?? '') == '' ? ('fileUpload.file' | translate) : _externalFileName }}
-        </a>
+        <button mat-flat-button color="primary" type="button" (click)="downloadFile()">
+            {{ !_externalFileName ? ('fileUpload.file' | translate) : _externalFileName }}
+        </button>
         <button mat-icon-button class="space" (click)="removeFile()">
             <mat-icon>delete</mat-icon>
         </button>
@@ -10,9 +10,11 @@
     <ng-template #fileUpload>
         <input type="file" #file class="hidden" (change)="uploadFile(file.files)">
         <button mat-flat-button color="primary" type="button" (click)="file.click()">{{ 'fileUpload.uploadFile' | translate }}</button>
-        <div *ngIf="progress > 0" class="space">{{ progress }}%</div>
     </ng-template>
-    <div class="message space">
-        <div *ngIf="message">{{ message | translate }}</div>
+    <div *ngIf="progress > 0" class="center space">
+        <div class="space">{{ progress }}%</div>
+    </div>
+    <div *ngIf="message" class="center space">
+        <div>{{ message | translate }}</div>
     </div>
 </div>

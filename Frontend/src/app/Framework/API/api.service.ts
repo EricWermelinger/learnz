@@ -24,7 +24,7 @@ export class ApiService {
 
   callFileDownload(endpoint: string, params: any) {
     const requestEndpoint = `${environment.URL_API}${endpoint}`;
-    return this.http.post(requestEndpoint, params, {reportProgress: true, observe: 'events', responseType: 'blob' });
+    return this.http.get(requestEndpoint, { params, reportProgress: true, observe: 'events', responseType: 'blob' });
   }
 
   private buildRequest(endpoint: string, payload: any, method: HttpMethods) {
