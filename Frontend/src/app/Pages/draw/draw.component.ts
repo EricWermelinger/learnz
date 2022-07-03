@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DrawService } from './draw.service';
 
 @Component({
   selector: 'app-draw',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class DrawComponent {
 
-  constructor() { }
+  constructor(
+    private drawService: DrawService,
+  ) { }
 
 }

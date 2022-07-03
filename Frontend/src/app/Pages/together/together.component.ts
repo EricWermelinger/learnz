@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TogetherService } from './together.service';
 
 @Component({
   selector: 'app-together',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class TogetherComponent {
 
-  constructor() { }
+  constructor(
+    private togetherService: TogetherService,
+  ) { }
 
 }

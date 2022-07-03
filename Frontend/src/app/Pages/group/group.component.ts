@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GroupService } from './group.service';
 
 @Component({
   selector: 'app-group',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class GroupComponent {
 
-  constructor() { }
+  constructor(
+    private groupService: GroupService,
+  ) { }
 
 }

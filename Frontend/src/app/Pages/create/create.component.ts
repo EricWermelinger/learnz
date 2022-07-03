@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CreateService } from './create.service';
 
 @Component({
   selector: 'app-create',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class CreateComponent {
 
-  constructor() { }
+  constructor(
+    private createService: CreateService,
+  ) { }
 
 }

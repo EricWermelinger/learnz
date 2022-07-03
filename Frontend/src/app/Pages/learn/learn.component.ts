@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LearnService } from './learn.service';
 
 @Component({
   selector: 'app-learn',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class LearnComponent {
 
-  constructor() { }
+  constructor(
+    private learnService: LearnService,
+  ) { }
 
 }
