@@ -35,3 +35,12 @@ export function getLastDayOfWeek(date: Date) {
 export function addDays(date: Date, days: number): Date {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
+
+export function ignoreUTC(date: any): Date {
+    const d: string = date._i;
+    const day = d.substring(0, 2);
+    const month = d.substring(3, 5);
+    const year = d.substring(6, 10);
+    const newDate = year + '-' + month + '-' + day;
+    return new Date(newDate);
+}

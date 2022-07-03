@@ -7,7 +7,8 @@
         "login":"Login",
         "username":"Username",
         "password":"Password",
-        "signUpInstead":"Sign up instead"
+        "signUpInstead":"Sign up instead",
+        "wrong":"Wrong username or password"
     },
     "signUp": {
         "signUp":"Sign Up",
@@ -25,7 +26,8 @@
         "badSubject1":"Worst Subject",
         "badSubject2":"Second worst Subject",
         "badSubject3":"Third worst Subject",
-        "loginInstead":"Login instead"
+        "loginInstead":"Login instead",
+        "differentSubjects":"Please select different subjects."
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",

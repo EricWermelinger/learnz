@@ -21,7 +21,6 @@
     <mat-form-field>
         <mat-label>{{ 'signUp.birthdate' | translate }}</mat-label>
         <input [max]="maxDate" matInput formControlName="birthdate" [matDatepicker]="picker">
-        <mat-hint>dd.MM.yyyy</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -72,11 +71,13 @@
             <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-error *ngIf="errorVisible$ | async">
+        {{ 'signUp.differentSubjects' | translate }}
+    </mat-error>
     <button mat-flat-button color="primary" type="submit" (click)="signUp()" [disabled]="!formGroup.valid || !formGroup.dirty">
         {{ 'signUp.signUp' | translate }}
     </button>
     <button mat-flat-button color="secondary" (click)="loginInstead()">
         {{ 'signUp.loginInstead' | translate }}
     </button>
-
 </form>

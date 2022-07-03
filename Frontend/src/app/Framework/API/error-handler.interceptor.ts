@@ -38,7 +38,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
           this.tokenService.clearToken();
         }
 
-        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin)) {
+        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin || u === endpoints.UserRefreshToken)) {
           return this.errorHandler.handleError({
             error,
             request

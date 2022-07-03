@@ -42,6 +42,7 @@ export class LoginComponent {
 
   login() {
     this.loginService.login(this.form.value);
+    this.loginWrong = true;
   }
 
   signUpInstead() {
