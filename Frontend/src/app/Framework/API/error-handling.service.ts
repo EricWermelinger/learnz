@@ -25,7 +25,7 @@ export class ErrorHandlingService {
       });
       return ref.afterClosed();
     } else {
-      const error = 'errorBackend.' + (data.error?.error?.error ?? 'unknownError');
+      const error = 'errorBackend.' + (data.error?.error ?? 'unknownError');
       this.displayToastError(error + '_title', error);
       return NEVER;
     }    

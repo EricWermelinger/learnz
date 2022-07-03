@@ -1,8 +1,5 @@
 <form [formGroup]="form">
     <h1>{{ 'login.login' | translate }}</h1>
-    <mat-error *ngIf="loginWrong">
-        {{ 'login.wrong' | translate }}
-    </mat-error>
     <mat-form-field>
         <input matInput type="text" formControlName="username" [placeholder]="'login.username' | translate">
     </mat-form-field>
