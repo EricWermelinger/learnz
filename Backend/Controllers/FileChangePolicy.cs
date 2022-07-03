@@ -25,7 +25,7 @@ public class FileChangePolicy : Controller
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == request.FilePath && _filePolicyChecker.FilePolicyChangeable(f, guid));
         if (file == null)
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.FileNotAccessible);
         }
         file.FilePolicy = (FilePolicy)request.Policy;
         await _dataContext.SaveChangesAsync();

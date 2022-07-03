@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { appRoutes } from 'src/app/Config/appRoutes';
-import { endpoints } from 'src/app/Config/endpoints';
-import { LoginDTO } from 'src/app/DTOs/LoginDTO';
-import { TokenDTO } from 'src/app/DTOs/TokenDTO';
-import { ApiService } from 'src/app/Framework/API/api.service';
-import { ErrorHandlingService } from 'src/app/Framework/API/error-handling.service';
+import { UserLoginDTO } from 'src/app/DTOs/User/UserLoginDTO';
 import { TokenService } from 'src/app/Framework/API/token.service';
 import { DarkThemeService } from 'src/app/Framework/dark-theme/dark-theme.service';
 import { FormGroupTyped } from 'src/app/Material/types';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -18,50 +15,37 @@ import { FormGroupTyped } from 'src/app/Material/types';
 })
 export class LoginComponent {
 
-  form: FormGroupTyped<LoginDTO>;
+  form: FormGroupTyped<UserLoginDTO>;
   loginWrong: boolean = false;
 
   constructor(
-    private api: ApiService,
+    private loginService: LoginService,
     private formBuilder: FormBuilder,
     private tokenService: TokenService,
-    private router: Router,
-    private errorHandler: ErrorHandlingService,
     private darkThemeService: DarkThemeService,
+    private router: Router,
   ) {
     this.form = this.formBuilder.group({
-      email: ['', Validators.email],
-      password: '',
-    }) as FormGroupTyped<LoginDTO>;
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    }) as FormGroupTyped<UserLoginDTO>;
 
     if (this.tokenService.isExpired()) {
-      this.tokenService.removeToken();
-      this.tokenService.removeRefreshToken();
-      this.errorHandler.redirectToLogin();
+      this.tokenService.clearToken();
     }
-    const refresh = this.tokenService.getRefreshToken();
-    if (refresh) {
-      this.api.callApi<TokenDTO>(endpoints.Login, {
-        refresh
-      }, 'PUT').subscribe(token => {
-        this.tokenService.setToken(token.access);
-        this.tokenService.setRefreshToken(token.refresh);
-        this.tokenService.setExpired(token.refreshExpires);
-        this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
-      });
-    }
-
+    const refreshToken = this.tokenService.getRefreshToken();
     this.darkThemeService.setDarkTheme(this.darkThemeService.getDarkTheme());
+    if (refreshToken) {
+     this.loginService.loginByRefreshToken(refreshToken);
+    }
   }
 
   login() {
-    this.api.callApi<TokenDTO>(endpoints.Login, {
-      ...this.form.value
-    }, 'POST').subscribe(token => {
-      this.tokenService.setToken(token.access);
-      this.tokenService.setRefreshToken(token.refresh);
-      this.tokenService.setExpired(token.refreshExpires);
-      this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
-    });
+    this.loginService.login(this.form.value);
+    this.loginWrong = true;
+  }
+
+  signUpInstead() {
+    this.router.navigate([appRoutes.SignUp]);
   }
 }

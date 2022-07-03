@@ -2,6 +2,7 @@
 public class LearnzFile
 {
     public Guid Id { get; set; }
+    public Guid ActualVersionId { get; set; }
     public string FileNameInternal { get; set; }
     public string FileNameExternal { get; set; }
     public string Path { get; set; }

@@ -25,7 +25,7 @@ public class GroupFiles : Controller
         var guid = _userService.GetUserGuid();
         if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == groupId && gm.UserId == guid)))
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.FileNotAccessible);
         }
 
         var files = await _dataContext.GroupFiles
@@ -53,7 +53,7 @@ public class GroupFiles : Controller
         var guid = _userService.GetUserGuid();
         if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == request.GroupId && gm.UserId == guid)))
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.FileNotAccessible);
         }
         
         var addedFiles = await _dataContext.Files
@@ -68,7 +68,7 @@ public class GroupFiles : Controller
         {
             if (!_filePolicyChecker.FileDeletable(file, guid))
             {
-                return BadRequest();
+                return BadRequest(ErrorKeys.FileNotAccessible);
             }
         }
         

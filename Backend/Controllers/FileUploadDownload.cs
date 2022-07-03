@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
 
 namespace Learnz.Controllers;
@@ -23,28 +24,28 @@ public class FileUploadDownload : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<FileInfoDTO>> GetFileInfo(string filePath)
+    public async Task<ActionResult> FileDownload(string filePath)
     {
         var guid = _userService.GetUserGuid();
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == filePath && _filePolicyChecker.FileDownloadable(f, guid));
         if (file == null)
         {
-            return BadRequest();
+            return BadRequest(ErrorKeys.FileNotAccessible);
         }
-
-        var fileDTO = new FileInfoDTO
+        string path = file.Path;
+        var memory = new MemoryStream();
+        await using (var stream = new FileStream(path, FileMode.Open))
         {
-            FileNameExternal = file.FileNameExternal,
-            FilePath = file.Path,
-            Created = file.Created,
-            CreatedUsername = file.CreatedBy.Username,
-            Modified = file.Modified,
-            ModifiedUsername = file.ModifiedBy.Username,
-            FileFromMe = file.CreatedById == guid,
-            FileEditable = _filePolicyChecker.FileEditable(file, guid),
-            FileDeletable = _filePolicyChecker.FileDeletable(file, guid)
-        };
-        return Ok(fileDTO);
+            await stream.CopyToAsync(memory);
+        }
+        memory.Position = 0;
+        var provider = new FileExtensionContentTypeProvider();
+        string contentType;
+        if (!provider.TryGetContentType(path, out contentType))
+        {
+            contentType = "application/octet-stream";
+        }
+        return File(memory, contentType, path);
     }
 
     [HttpPost]
@@ -87,20 +88,21 @@ public class FileUploadDownload : Controller
 
                 FilePathDTO fileDto = new FilePathDTO
                 {
-                    Path = dbFile.Path
+                    Path = dbFile.Path,
+                    ExternalFileName = dbFile.FileNameExternal
                 };
                 return Ok(fileDto);
             }
-            return BadRequest("noFileProvided");
+            return BadRequest(ErrorKeys.FileNotProvided);
         }
         catch (Exception ex)
         {
-            return BadRequest("fileUploadUnsuccessful");
+            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateFile()
+    public async Task<ActionResult> UpdateFile(FilePathDTO request)
     {
         try
         {
@@ -109,17 +111,26 @@ public class FileUploadDownload : Controller
             {
                 DateTime timeStamp = DateTime.UtcNow;
                 var guid = _userService.GetUserGuid();
-
-                string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');                
-                var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.FileNameInternal.ToLower() == fileName.ToLower() && _filePolicyChecker.FileEditable(f, guid));
+                
+                var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == request.Path && _filePolicyChecker.FileEditable(f, guid));
                 if (dbFile == null)
                 {
-                    return BadRequest("fileNotFound");
+                    return BadRequest(ErrorKeys.FileNotFound);
                 }
+
+                Guid versionId = Guid.NewGuid();
+                string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                string fileNameInternal = versionId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
+                string folderName = _configuration["Files:Folder"];
+                string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
+
+                dbFile.ActualVersionId = versionId;
+                dbFile.FileNameExternal = fileNameExternal;
+                dbFile.FileNameInternal = fileNameInternal;
+                dbFile.Path = path;
                 dbFile.Modified = timeStamp;
                 dbFile.ModifiedById = guid;
 
-                System.IO.File.Delete(dbFile.Path);
                 using (var stream = new FileStream(dbFile.Path, FileMode.Create))
                 {
                     file.CopyTo(stream);
@@ -128,11 +139,11 @@ public class FileUploadDownload : Controller
                 await _dataContext.SaveChangesAsync();
                 return Ok();
             }
-            return BadRequest("noFileProvided");
+            return BadRequest(ErrorKeys.FileNotProvided);
         }
         catch (Exception ex)
         {
-            return BadRequest("fileUploadUnsuccessful");
+            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
     }
 }

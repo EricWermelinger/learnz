@@ -31,14 +31,14 @@ export class DarkThemeService {
     document.body.classList.toggle('darkTheme', isDarkTheme);
     this.overlay.getContainerElement().classList.toggle('darkTheme', isDarkTheme);
 
-    const styles: string[] = ['primary', 'primary-brightest', 'accent', 'accent-hover', 'accent-click', 'white', 'grey', 'grey-darker', 'black', 'secondary', 'warn'];
+    const styles: string[] = ['primary', 'accent', 'white', 'grey', 'grey-dark', 'black', 'warn'];
     const setTo: string = isDarkTheme ? 'dark' : 'light';
     let r = document.querySelector(':root') as HTMLElement;
     let computed = getComputedStyle(r);
 
     styles.forEach(style => {
-      let newColor = computed.getPropertyValue(`--teachu-${setTo}-${style}`);
-      r.style.setProperty(`--teachu-${style}`, newColor);
+      let newColor = computed.getPropertyValue(`--learnz-${setTo}-${style}`);
+      r.style.setProperty(`--learnz-${style}`, newColor);
     });
   }
 }

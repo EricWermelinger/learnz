@@ -6,7 +6,8 @@ import { endpoints } from 'src/app/Config/endpoints';
 import { ApiService } from './api.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TokenService } from './token.service';
-import { TokenDTO } from 'src/app/DTOs/TokenDTO';
+import { UserRefreshTokenDTO } from 'src/app/DTOs/User/UserRefreshTokenDTO';
+import { TokenDTO } from 'src/app/DTOs/User/TokenDTO';
 
 @Injectable()
 export class ErrorHandlerInterceptor implements HttpInterceptor {
@@ -33,22 +34,25 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(error => {
-        if (this.tokenService.isExpired() || (error.url as string).split('/').some(u => u === endpoints.Login)) {
-          this.tokenService.removeToken();
-          this.tokenService.removeRefreshToken();
-          this.errorHandler.redirectToLogin();
+        if (this.tokenService.isExpired()) {
+          this.tokenService.clearToken();
+        }
+
+        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin || u === endpoints.UserRefreshToken)) {
+          return this.errorHandler.handleError({
+            error,
+            request
+          });
         }
 
         if (error.status === 401) {
-          return this.api.callApi<TokenDTO>(endpoints.Login,  {
-            refresh: this.tokenService.getRefreshToken(),
-          } as TokenDTO, 'POST').pipe(
+          return this.api.callApi<TokenDTO>(endpoints.UserRefreshToken,  {
+            refreshToken: this.tokenService.getRefreshToken(),
+          } as UserRefreshTokenDTO, 'POST').pipe(
             tap(token => {
-              this.tokenService.setToken(token.access);
-              this.tokenService.setRefreshToken(token.refresh);
-              this.tokenService.setExpired(token.refreshExpires);
+              this.tokenService.patchToken(token, true);
             }),
-            switchMap(token => next.handle(this.cloneRequest(request, token.access))),
+            switchMap(token => next.handle(this.cloneRequest(request, token.token))),
           );
         } else {
           return this.errorHandler.handleError({
