@@ -16,7 +16,6 @@ import { LoginService } from './login.service';
 export class LoginComponent {
 
   form: FormGroupTyped<UserLoginDTO>;
-  loginWrong: boolean = false;
 
   constructor(
     private loginService: LoginService,
@@ -42,7 +41,10 @@ export class LoginComponent {
 
   login() {
     this.loginService.login(this.form.value);
-    this.loginWrong = true;
+    this.form.patchValue({
+      username: '',
+      password: ''
+    });
   }
 
   signUpInstead() {

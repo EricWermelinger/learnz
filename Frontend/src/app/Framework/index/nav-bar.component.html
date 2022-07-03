@@ -1,0 +1,8 @@
+<div class="menu-items">
+    <ng-container *ngIf="routes$ | async as routes">
+        <button *ngFor="let route of routes" (click)="navigate(route.route.navigation)" type="button" mat-flat-button [color]="route.selected ? 'secondary' : 'primary'" >
+            <mat-icon>{{ route.route.icon }}</mat-icon>
+            <span>{{ route.route.key | translate }}</span>
+        </button>
+    </ng-container>
+</div>

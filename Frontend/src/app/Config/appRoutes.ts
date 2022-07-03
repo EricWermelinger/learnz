@@ -3,5 +3,12 @@ export const appRoutes = {
     App: 'app',
     Login: 'login',
     SignUp: 'signUp',
-    Dashboard: 'dashboard'
+    Dashboard: 'dashboard',
+    Together: 'together',
+    Group: 'group',
+    Create: 'create',
+    Learn: 'learn',
+    Challenge: 'challenge',
+    Test: 'test',
+    Draw: 'draw'
 }

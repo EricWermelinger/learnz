@@ -20,6 +20,15 @@ import { CustomToastyComponent } from './Framework/custom-toasty/custom-toasty.c
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
 import { FileUploadComponent } from './Framework/file-upload/file-upload.component';
 import { MatMomentDateModule, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
+import { NavBarComponent } from './Framework/index/nav-bar.component';
+import { DashboardComponent } from './Pages/dashboard/dashboard.component';
+import { TogetherComponent } from './Pages/together/together.component';
+import { GroupComponent } from './Pages/group/group.component';
+import { CreateComponent } from './Pages/create/create.component';
+import { LearnComponent } from './Pages/learn/learn.component';
+import { ChallengeComponent } from './Pages/challenge/challenge.component';
+import { TestComponent } from './Pages/test/test.component';
+import { DrawComponent } from './Pages/draw/draw.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -35,6 +44,15 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     SignUpComponent,
     FileUploadComponent,
+    NavBarComponent,
+    DashboardComponent,
+    TogetherComponent,
+    GroupComponent,
+    CreateComponent,
+    LearnComponent,
+    ChallengeComponent,
+    TestComponent,
+    DrawComponent,
   ],
   imports: [
     BrowserModule,

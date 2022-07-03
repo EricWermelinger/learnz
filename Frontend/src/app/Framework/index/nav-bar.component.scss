@@ -1,0 +1,15 @@
+.menu-items {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+}
+
+button {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    mat-icon {
+        margin-right: 8px;
+    }
+}
