@@ -9,7 +9,7 @@
     </div>
     <ng-template #fileUpload>
         <input type="file" #file class="hidden" (change)="uploadFile(file.files)" [accept]="fileTypes">
-        <button mat-flat-button color="secondary" type="button" (click)="file.click()">{{ 'fileUpload.uploadFile' | translate }}</button>
+        <button mat-flat-button color="secondary" type="button" (click)="file.click()">{{ ('fileUpload.uploadFile' | translate) + (translationKey ? ' ' + (translationKey | translate) : '') }}</button>
     </ng-template>
     <div *ngIf="progress > 0" class="center space">
         <div class="space">{{ progress }}%</div>
