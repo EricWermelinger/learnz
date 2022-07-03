@@ -21,7 +21,6 @@ const routes: Routes = [
     path: appRoutes.App,
     canActivate: [AppGuard],
     children: [
-      { path: '', redirectTo: `${appRoutes.App}/${appRoutes.Dashboard}`, pathMatch: 'full' },
       { path: appRoutes.Dashboard, component: DashboardComponent },
       { path: appRoutes.Together, component: TogetherComponent },
       { path: appRoutes.Group, component: GroupComponent },

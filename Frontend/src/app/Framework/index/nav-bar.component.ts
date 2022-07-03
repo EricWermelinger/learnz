@@ -16,14 +16,14 @@ export class NavBarComponent {
   private routes = [
     { route: appRoutes.Login, key: 'login.login', icon: 'verified_user', navigation: [appRoutes.Login], onLoggedIn: false },
     { route: appRoutes.SignUp, key: 'signUp.signUp', icon: 'account_box', navigation: [appRoutes.SignUp], onLoggedIn: false },
-    { route: appRoutes.Dashboard, key: 'dashboard.dashboard', icon: 'dashboard', navigation: [appRoutes.Dashboard], onLoggedIn: true },
-    { route: appRoutes.Together, key: 'together.together', icon: 'people', navigation: [appRoutes.Together], onLoggedIn: true },
-    { route: appRoutes.Group, key: 'group.group', icon: 'public', navigation: [appRoutes.Group], onLoggedIn: true },
-    { route: appRoutes.Create, key: 'create.create', icon: 'build', navigation: [appRoutes.Create], onLoggedIn: true },
-    { route: appRoutes.Learn, key: 'learn.learn', icon: 'school', navigation: [appRoutes.Learn], onLoggedIn: true },
-    { route: appRoutes.Challenge, key: 'challenge.challenge', icon: 'poll', navigation: [appRoutes.Challenge], onLoggedIn: true },
-    { route: appRoutes.Test, key: 'test.test', icon: 'assignment_turned_in', navigation: [appRoutes.Test], onLoggedIn: true },
-    { route: appRoutes.Draw, key: 'draw.draw', icon: 'edit', navigation: [appRoutes.Draw], onLoggedIn: true },
+    { route: appRoutes.Dashboard, key: 'dashboard.dashboard', icon: 'dashboard', navigation: [appRoutes.App, appRoutes.Dashboard], onLoggedIn: true },
+    { route: appRoutes.Together, key: 'together.together', icon: 'people', navigation: [appRoutes.App, appRoutes.Together], onLoggedIn: true },
+    { route: appRoutes.Group, key: 'group.group', icon: 'public', navigation: [appRoutes.App, appRoutes.Group], onLoggedIn: true },
+    { route: appRoutes.Create, key: 'create.create', icon: 'build', navigation: [appRoutes.App, appRoutes.Create], onLoggedIn: true },
+    { route: appRoutes.Learn, key: 'learn.learn', icon: 'school', navigation: [appRoutes.App, appRoutes.Learn], onLoggedIn: true },
+    { route: appRoutes.Challenge, key: 'challenge.challenge', icon: 'poll', navigation: [appRoutes.App, appRoutes.Challenge], onLoggedIn: true },
+    { route: appRoutes.Test, key: 'test.test', icon: 'assignment_turned_in', navigation: [appRoutes.App, appRoutes.Test], onLoggedIn: true },
+    { route: appRoutes.Draw, key: 'draw.draw', icon: 'edit', navigation: [appRoutes.App, appRoutes.Draw], onLoggedIn: true },
   ] as AppRoute[];
 
   constructor(
