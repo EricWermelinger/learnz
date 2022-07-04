@@ -42,7 +42,8 @@ public class UserProfile : Controller
             GoodSubject3 = user.GoodSubject3,
             BadSubject1 = user.BadSubject1,
             BadSubject2 = user.BadSubject2,
-            BadSubject3 = user.BadSubject3
+            BadSubject3 = user.BadSubject3,
+            DarkTheme = user.DarkTheme
         };
         return Ok(userProfile);
     }
@@ -94,6 +95,7 @@ public class UserProfile : Controller
         user.BadSubject1 = request.BadSubject1;
         user.BadSubject2 = request.BadSubject2;
         user.BadSubject3 = request.BadSubject3;
+        user.DarkTheme = request.DarkTheme;
 
         await _dataContext.SaveChangesAsync();
 

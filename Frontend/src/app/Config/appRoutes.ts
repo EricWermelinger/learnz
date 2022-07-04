@@ -10,5 +10,6 @@ export const appRoutes = {
     Learn: 'learn',
     Challenge: 'challenge',
     Test: 'test',
-    Draw: 'draw'
+    Draw: 'draw',
+    Settings: 'settings'
 }

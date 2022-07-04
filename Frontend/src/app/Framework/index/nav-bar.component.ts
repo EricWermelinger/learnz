@@ -24,6 +24,7 @@ export class NavBarComponent {
     { route: appRoutes.Challenge, key: 'challenge.challenge', icon: 'poll', navigation: [appRoutes.App, appRoutes.Challenge], onLoggedIn: true },
     { route: appRoutes.Test, key: 'test.test', icon: 'assignment_turned_in', navigation: [appRoutes.App, appRoutes.Test], onLoggedIn: true },
     { route: appRoutes.Draw, key: 'draw.draw', icon: 'edit', navigation: [appRoutes.App, appRoutes.Draw], onLoggedIn: true },
+    { route: appRoutes.Settings, key: 'settings.settings', icon: 'settings', navigation: [appRoutes.App, appRoutes.Settings], onLoggedIn: true },
   ] as AppRoute[];
 
   constructor(

@@ -29,6 +29,7 @@ import { LearnComponent } from './Pages/learn/learn.component';
 import { ChallengeComponent } from './Pages/challenge/challenge.component';
 import { TestComponent } from './Pages/test/test.component';
 import { DrawComponent } from './Pages/draw/draw.component';
+import { SettingsComponent } from './Pages/settings/settings.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -53,6 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChallengeComponent,
     TestComponent,
     DrawComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

@@ -13,6 +13,7 @@ export const endpoints = {
     // TogetherConnectUser: 'togetherConnectUser',
     // TogetherSwipeUser: 'togetherSwipeUser',
     // TogetherUsers: 'togetherUsers',
+    // UserDarkTheme: 'userDarkTheme',
     UserLogin: 'userLogin',
     // UserProfile: 'userProfile',
     UserRefreshToken: 'userRefreshToken',

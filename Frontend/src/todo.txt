@@ -1,1 +1,3 @@
-Outline
+todo:
+- sign up add darktheme
+- implement user settings

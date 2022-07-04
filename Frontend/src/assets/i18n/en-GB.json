@@ -52,6 +52,9 @@
     "draw":{
         "draw":"Draw"
     },
+    "settings":{
+        "settings":"Settings"
+    },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",
         "uploadFile":"Upload File",

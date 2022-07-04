@@ -69,7 +69,8 @@ public class UserSignUp : Controller
             GoodSubject3 = request.GoodSubject3,
             BadSubject1 = request.BadSubject1,
             BadSubject2 = request.BadSubject2,
-            BadSubject3 = request.BadSubject3
+            BadSubject3 = request.BadSubject3,
+            DarkTheme = request.DarkTheme
         };
 
         using var hmac = new HMACSHA512();

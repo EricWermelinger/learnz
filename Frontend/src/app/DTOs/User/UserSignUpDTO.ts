@@ -14,4 +14,5 @@
   badSubject1: number;
   badSubject2: number;
   badSubject3: number;
+  darkTheme: boolean;
 }

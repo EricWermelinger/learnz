@@ -15,4 +15,5 @@ public class UserProfileUploadDTO
     public Subject BadSubject1 { get; set; }
     public Subject BadSubject2 { get; set; }
     public Subject BadSubject3 { get; set; }
+    public bool DarkTheme { get; set; }
 }

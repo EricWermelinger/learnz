@@ -9,6 +9,7 @@ import { DrawComponent } from './Pages/draw/draw.component';
 import { GroupComponent } from './Pages/group/group.component';
 import { LearnComponent } from './Pages/learn/learn.component';
 import { LoginComponent } from './Pages/login/login.component';
+import { SettingsComponent } from './Pages/settings/settings.component';
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
 import { TestComponent } from './Pages/test/test.component';
 import { TogetherComponent } from './Pages/together/together.component';
@@ -29,6 +30,7 @@ const routes: Routes = [
       { path: appRoutes.Challenge, component: ChallengeComponent },
       { path: appRoutes.Test, component: TestComponent },
       { path: appRoutes.Draw, component: DrawComponent },
+      { path: appRoutes.Settings, component: SettingsComponent },
     ],
   },
 ];
