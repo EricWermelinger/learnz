@@ -71,6 +71,7 @@
             <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-slide-toggle (change)="setDarkTheme(formGroup.value.darkTheme)" formControlName="darkTheme">{{ 'signUp.darkTheme' | translate }}</mat-slide-toggle>
     <mat-error *ngIf="errorVisible$ | async">
         {{ 'signUp.differentSubjects' | translate }}
     </mat-error>
