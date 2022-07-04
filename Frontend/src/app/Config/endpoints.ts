@@ -15,7 +15,7 @@ export const endpoints = {
     // TogetherUsers: 'togetherUsers',
     UserDarkTheme: 'userDarkTheme',
     UserLogin: 'userLogin',
-    // UserProfile: 'userProfile',
+    UserProfile: 'userProfile', // put
     UserRefreshToken: 'userRefreshToken',
     UserSignUp: 'userSignUp'
 }

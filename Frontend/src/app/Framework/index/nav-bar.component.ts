@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { combineLatest, distinctUntilChanged, filter, interval, map, Observable, startWith, tap } from 'rxjs'
-import { TokenService } from 'src/app/Framework/API/token.service';
+import { Observable, combineLatest, filter, map } from 'rxjs';
+import { AppService } from 'src/app/app.service';
 import { appRoutes } from './../../Config/appRoutes';
 
 @Component({
@@ -28,14 +28,10 @@ export class NavBarComponent {
   ] as AppRoute[];
 
   constructor(
-    private tokenService: TokenService,
+    private app: AppService,
     private router: Router,
   ) {
-    const loggedIn$ = interval(1000).pipe(
-      startWith(false),
-      map(_ => !!this.tokenService.getToken()),
-      distinctUntilChanged(),
-    );
+    const loggedIn$ = this.app.isLoggedIn$();
 
     this.routes$ = combineLatest([
       loggedIn$,

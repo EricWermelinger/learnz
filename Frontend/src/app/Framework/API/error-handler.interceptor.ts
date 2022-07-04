@@ -21,7 +21,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   private cloneRequest(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
     return request.clone({
       setHeaders: {
-        [appConfig.API_HEADER_AUTHORIZATION]: `${token}`
+        [appConfig.API_HEADER_AUTHORIZATION]: `${appConfig.API_HEADER_BEARER} ${token}`
       }
     });
   }

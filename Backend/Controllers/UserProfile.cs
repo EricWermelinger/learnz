@@ -26,7 +26,7 @@ public class UserProfile : Controller
     public async Task<ActionResult<UserProfileGetDTO>> GetProfile()
     {
         var guid = _userService.GetUserGuid();
-        var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
+        var user = await _dataContext.Users.Include(u => u.ProfileImage).FirstAsync(u => u.Id == guid);
         var userProfile = new UserProfileGetDTO
         {
             Username = user.Username,
@@ -35,6 +35,7 @@ public class UserProfile : Controller
             Birthdate = user.Birthdate,
             Grade = user.Grade,
             ProfileImagePath = user.ProfileImage.Path,
+            ProfileImageName = user.ProfileImage.FileNameExternal,
             Information = user.Information,
             Language = user.Language,
             GoodSubject1 = user.GoodSubject1,
@@ -89,6 +90,7 @@ public class UserProfile : Controller
         user.Grade = request.Grade;
         user.ProfileImageId = (Guid)profileImageId;
         user.Information = request.Information;
+        user.Language = request.Language;
         user.GoodSubject1 = request.GoodSubject1;
         user.GoodSubject2 = request.GoodSubject2;
         user.GoodSubject3 = request.GoodSubject3;

@@ -1,1 +1,83 @@
-<h1>{{ 'settings.settings' | translate }}</h1>
+<form [formGroup]="formGroup">
+    <h1>{{ 'settings.settings' | translate }}</h1>
+    <mat-form-field>
+        <input matInput type="text" formControlName="username" [placeholder]="'settings.username' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'languages.languages' | translate }}</mat-label>
+        <mat-select formControlName="languageKey" [value]="selectedLanguage()" (selectionChange)="selectLanguage($event.value)">
+            <mat-option *ngFor="let lang of allLanguages()" [disabled]="isLanguageDisabled(lang.key)" [value]="lang.key">{{ lang.value | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" formControlName="firstname" [placeholder]="'settings.firstname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" formControlName="lastname" [placeholder]="'settings.lastname' | translate">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.birthdate' | translate }}</mat-label>
+        <input [max]="maxDate" matInput formControlName="birthdate" [matDatepicker]="picker">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.grade' | translate }}</mat-label>
+        <mat-select formControlName="grade">
+            <mat-option *ngFor="let grade of grades" [value]="grade.value">{{ ('Grade.' + grade.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.information' | translate }}</mat-label>
+        <textarea formControlName="information" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.goodSubject1' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject1">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.goodSubject2' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject2">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.goodSubject3' | translate }}</mat-label>
+        <mat-select formControlName="goodSubject3">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.badSubject1' | translate }}</mat-label>
+        <mat-select formControlName="badSubject1">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.badSubject2' | translate }}</mat-label>
+        <mat-select formControlName="badSubject2">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'settings.badSubject3' | translate }}</mat-label>
+        <mat-select formControlName="badSubject3">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()" [translationKey]="'settings.profileImagePath'" [externalFileName]="formGroup.value.profileImageName"></app-file-upload>
+    <div class="slide-wrapper">
+        <mat-slide-toggle (change)="setDarkTheme(formGroup.value.darkTheme)" formControlName="darkTheme">{{ 'settings.darkTheme' | translate }}</mat-slide-toggle>
+    </div>    
+    <mat-error *ngIf="errorVisible$ | async">
+        {{ 'settings.differentSubjects' | translate }}
+    </mat-error>
+    <button mat-flat-button color="primary" type="submit" (click)="save()" [disabled]="!formGroup.valid || !formGroup.dirty">
+        {{ 'framework.save' | translate }}
+    </button>
+    <button mat-flat-button color="accent" type="submit" (click)="changePassword()" [disabled]="!formGroup.valid || !formGroup.dirty">
+        {{ 'settings.changePassword' | translate }}
+    </button>
+</form>

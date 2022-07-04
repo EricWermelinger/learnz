@@ -6,6 +6,7 @@
   grade: number;
   profileImagePath: string;
   information: string;
+  language: number;
   goodSubject1: number;
   goodSubject2: number;
   goodSubject3: number;

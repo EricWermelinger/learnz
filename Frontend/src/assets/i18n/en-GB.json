@@ -54,7 +54,23 @@
         "draw":"Draw"
     },
     "settings":{
-        "settings":"Settings"
+        "settings":"Settings",
+        "username":"Username",
+        "firstname":"Firstname",
+        "lastname":"Lastname",
+        "birthdate":"Birthdate",
+        "grade":"Grade",
+        "profileImagePath":"Profile Image",
+        "information":"Information",
+        "goodSubject1":"Best Subject",
+        "goodSubject2":"Second best Subject",
+        "goodSubject3":"Third best Subject",
+        "badSubject1":"Worst Subject",
+        "badSubject2":"Second worst Subject",
+        "badSubject3":"Third worst Subject",
+        "darkTheme":"Dark Theme",
+        "changePassword":"Change Password",
+        "differentSubjects":"Please select different subjects."
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",

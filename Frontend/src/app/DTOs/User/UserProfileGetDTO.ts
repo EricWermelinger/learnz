@@ -5,7 +5,9 @@
   birthdate: Date;
   grade: number;
   profileImagePath: string;
+  profileImageName: string;
   information: string;
+  language: number;
   goodSubject1: number;
   goodSubject2: number;
   goodSubject3: number;

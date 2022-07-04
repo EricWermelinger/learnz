@@ -90,7 +90,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     const a = document.createElement('a');
     a.setAttribute('style', 'display:none;');
     document.body.appendChild(a);
-    a.download = this._filePath;
+    a.download = this._externalFileName;
     a.href = URL.createObjectURL(downloadedFile);
     a.target = '_blank';
     a.click();

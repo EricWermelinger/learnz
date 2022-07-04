@@ -38,6 +38,9 @@ export function addDays(date: Date, days: number): Date {
 
 export function ignoreUTC(date: any): Date {
     const d: string = date._i;
+    if (!d) {
+        return date;
+    }
     const day = d.substring(0, 2);
     const month = d.substring(3, 5);
     const year = d.substring(6, 10);
