@@ -11,14 +11,12 @@ public class UserProfile : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IFilePolicyChecker _filePolicyChecker;
-    private readonly IFileFinder _fileFinder;
+    private readonly IFileAnonymousFinder _fileFinder;
 
-    public UserProfile(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IFileFinder fileFinder)
+    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _filePolicyChecker = filePolicyChecker;
         _fileFinder = fileFinder;
     }
 
@@ -75,8 +73,7 @@ public class UserProfile : Controller
             return BadRequest(ErrorKeys.UsernameTaken);
         }
 
-        var profileImageId =
-            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        var profileImageId = await _fileFinder.GetFileId(_dataContext, request.ProfileImagePath);
         if (profileImageId == null)
         {
             return BadRequest(ErrorKeys.FileNotValid);
