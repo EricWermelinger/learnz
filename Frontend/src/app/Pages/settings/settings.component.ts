@@ -105,6 +105,9 @@ export class SettingsComponent {
 
   allLanguages() { return this.languageService.allLanguages(); }
   selectedLanguage() { return this.languageService.getSelectedLanguage(); }
-  selectLanguage(language: string) { this.languageService.selectLanguage(language); }
+  selectLanguage(language: string) {
+    this.languageService.selectLanguage(language);
+    this.settingsService.saveLanguage(this.languageService.getLanguageIndex(language));
+  }
   isLanguageDisabled(language: string) { return this.languageService.selectableLanguages().filter(l => l.key === language).length === 0; }
 }

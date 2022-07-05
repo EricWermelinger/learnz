@@ -14,6 +14,7 @@ export const endpoints = {
     // TogetherSwipeUser: 'togetherSwipeUser',
     // TogetherUsers: 'togetherUsers',
     UserDarkTheme: 'userDarkTheme',
+    UserLanguage: 'userLanguage',
     UserLogin: 'userLogin',
     UserProfile: 'userProfile', // put
     UserRefreshToken: 'userRefreshToken',

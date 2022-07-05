@@ -6,6 +6,7 @@ import { DarkThemeService } from 'src/app/Framework/dark-theme/dark-theme.servic
 import { endpoints } from 'src/app/Config/endpoints';
 import { UserProfileGetDTO } from 'src/app/DTOs/User/UserProfileGetDTO';
 import { Observable } from 'rxjs';
+import { UserLanguageDTO } from 'src/app/DTOs/User/UserLanguageDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,9 @@ export class SettingsService {
   setDarkTheme(value: UserDarkThemeDTO) {
     this.darkThemeService.setDarkTheme(value.darkTheme);
     this.darkThemeService.applyDarkTheme(value.darkTheme);
+  }
+
+  saveLanguage(language: number) {
+    this.api.callApi(endpoints.UserLanguage, { language } as UserLanguageDTO, 'POST').subscribe();
   }
 }
