@@ -33,7 +33,11 @@
         "dashboard":"Dashboard"
     },
     "together":{
-        "together":"Together"
+        "together":"Together",
+        "ask":"Ask",
+        "chat":"Chat",
+        "connect":"Connect",
+        "swipe":"Swipe"
     },
     "group":{
         "group":"Group"
