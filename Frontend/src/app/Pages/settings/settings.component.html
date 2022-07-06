@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup">
+<form *ngIf="settings$ | async" [formGroup]="formGroup">
     <h1>{{ 'settings.settings' | translate }}</h1>
     <mat-form-field>
         <input matInput type="text" formControlName="username" [placeholder]="'settings.username' | translate">

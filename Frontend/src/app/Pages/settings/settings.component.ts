@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { map, Observable } from 'rxjs';
 import { UserDarkThemeDTO } from 'src/app/DTOs/User/UserDarkThemeDTO';
+import { UserProfileGetDTO } from 'src/app/DTOs/User/UserProfileGetDTO';
 import { UserProfileUploadDTO } from 'src/app/DTOs/User/UserProfileUploadDTO';
 import { getGrades } from 'src/app/Enums/Grade';
 import { getSubjects } from 'src/app/Enums/Subject';
@@ -22,6 +23,7 @@ export class SettingsComponent {
   subjects = getSubjects();
   maxDate = new Date();
   errorVisible$: Observable<boolean>;
+  settings$: Observable<UserProfileGetDTO>;
 
   constructor(
     private settingsService: SettingsService,
@@ -47,22 +49,19 @@ export class SettingsComponent {
       darkTheme: false,
     });
     this.formGroup.addValidators(() => this.validateDifferentSubjects());
-    this.patchValue();
-    this.errorVisible$ = this.formGroup.valueChanges.pipe(
-      map(_ => this.validateDifferentSubjects() !== null),
-    );
-  }
-
-  patchValue() {
-    this.settingsService.getUserProfile().subscribe((user: any) => {
+    this.settings$ = this.settingsService.getUserProfile();
+    this.settings$.subscribe((user: any) => {
       this.formGroup.patchValue(user);
       this.formGroup.patchValue({
         birthdate: user.birthdate,
         languageKey: this.languageService.getLanguageKey(user.language),
       });
     });
+    this.errorVisible$ = this.formGroup.valueChanges.pipe(
+      map(_ => this.validateDifferentSubjects() !== null),
+    );
   }
-  
+
   validateDifferentSubjects() {
     const subjects = [
       this.formGroup.value.goodSubject1,

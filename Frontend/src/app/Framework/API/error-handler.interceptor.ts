@@ -37,14 +37,6 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         if (this.tokenService.isExpired()) {
           this.tokenService.clearToken();
         }
-
-        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin || u === endpoints.UserRefreshToken)) {
-          return this.errorHandler.handleError({
-            error,
-            request
-          });
-        }
-
         if (error.status === 401) {
           return this.api.callApi<TokenDTO>(endpoints.UserRefreshToken,  {
             refreshToken: this.tokenService.getRefreshToken(),
