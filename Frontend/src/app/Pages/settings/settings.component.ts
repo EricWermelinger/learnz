@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
 import { UserDarkThemeDTO } from 'src/app/DTOs/User/UserDarkThemeDTO';
 import { UserProfileGetDTO } from 'src/app/DTOs/User/UserProfileGetDTO';
@@ -9,6 +10,7 @@ import { getSubjects } from 'src/app/Enums/Subject';
 import { ignoreUTC } from 'src/app/Framework/Helpers/DateHelpers';
 import { imageTypes } from 'src/app/Framework/Helpers/FileTypesHelper';
 import { LanguagesService } from 'src/app/Framework/Languages/languages.service';
+import { PasswordChangeDialogComponent } from './password-change-dialog/password-change-dialog.component';
 import { SettingsService } from './settings.service';
 
 @Component({
@@ -29,6 +31,7 @@ export class SettingsComponent {
     private settingsService: SettingsService,
     private languageService: LanguagesService,
     private formBuilder: FormBuilder,
+    private dialog: MatDialog,
   ) {
     this.formGroup = this.formBuilder.group({
       username: ['', Validators.required],
@@ -99,7 +102,7 @@ export class SettingsComponent {
   }
 
   changePassword() {
-    // todo
+    this.dialog.open(PasswordChangeDialogComponent, {});
   }
 
   allLanguages() { return this.languageService.allLanguages(); }

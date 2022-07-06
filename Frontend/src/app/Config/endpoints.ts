@@ -1,5 +1,4 @@
 export const endpoints = {
-    // FileChangePolicy: 'fileChangePolicy',
     // FileInfo: 'fileInfo',
     FileUploadDownload: 'fileUploadDownload', // post / put
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
@@ -16,7 +15,7 @@ export const endpoints = {
     UserDarkTheme: 'userDarkTheme',
     UserLanguage: 'userLanguage',
     UserLogin: 'userLogin',
-    UserProfile: 'userProfile', // put
+    UserProfile: 'userProfile',
     UserRefreshToken: 'userRefreshToken',
     UserSignUp: 'userSignUp'
 }

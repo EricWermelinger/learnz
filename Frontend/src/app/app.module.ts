@@ -30,6 +30,7 @@ import { ChallengeComponent } from './Pages/challenge/challenge.component';
 import { TestComponent } from './Pages/test/test.component';
 import { DrawComponent } from './Pages/draw/draw.component';
 import { SettingsComponent } from './Pages/settings/settings.component';
+import { PasswordChangeDialogComponent } from './Pages/settings/password-change-dialog/password-change-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -55,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestComponent,
     DrawComponent,
     SettingsComponent,
+    PasswordChangeDialogComponent,
   ],
   imports: [
     BrowserModule,

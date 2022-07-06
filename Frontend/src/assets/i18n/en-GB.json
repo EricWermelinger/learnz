@@ -70,7 +70,10 @@
         "badSubject3":"Third worst Subject",
         "darkTheme":"Dark Theme",
         "changePassword":"Change Password",
-        "differentSubjects":"Please select different subjects."
+        "differentSubjects":"Please select different subjects.",
+        "oldPassword":"Old Password",
+        "newPassword":"New Password",
+        "confirmPassword":"Confirm Password"
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",

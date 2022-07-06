@@ -1,4 +1,3 @@
 todo:
-- settings fix
-- reauthenticate at 401 fix
-- password change
+- group
+- together
