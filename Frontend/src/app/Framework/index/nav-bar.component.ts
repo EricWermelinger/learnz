@@ -56,10 +56,15 @@ export class NavBarComponent {
   selectParent(route: AppRoute) {
     const previous = this.routes$.value.filter(r => r.layer === 1);
     let next: AppRoute[] = [];
-    for (const r of previous) {
-      next.push(r);
-      if (r.route === route.route) {
-        next = [...next, ...this.routes.filter(r => r.parent === route.route)];
+    const close = this.routes$.value.some(r => r.parent === route.route && r.layer === 2);
+    if (close) {
+      next = previous.filter(r => r.parent !== route.route);
+    } else {
+      for (const r of previous) {
+        next.push(r);
+        if (r.route === route.route) {
+          next = [...next, ...this.routes.filter(r => r.parent === route.route)];
+        }
       }
     }
     this.routes$.next(next);

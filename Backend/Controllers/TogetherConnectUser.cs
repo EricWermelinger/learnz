@@ -17,7 +17,7 @@ public class TogetherConnectUser : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetConnections()
+    public async Task<ActionResult<List<TogetherOverviewUserProfileDTO>>> GetConnections()
     {
         var guid = _userService.GetUserGuid();
         var users = await _dataContext.TogetherConnections.Where(cnc => cnc.UserId1 == guid || cnc.UserId2 == guid)

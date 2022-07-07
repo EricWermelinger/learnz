@@ -17,10 +17,10 @@ public class TogetherChat : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TogetherChatMessageDTO>>> GetMessages(TogetherGetChatDTO request)
+    public async Task<ActionResult<List<TogetherChatMessageDTO>>> GetMessages(Guid userId)
     {
         var guid = _userService.GetUserGuid();
-        var messages = await _dataContext.TogetherMessages.Where(msg => msg.SenderId == guid || msg.ReceiverId == guid)
+        var messages = await _dataContext.TogetherMessages.Where(msg => (msg.SenderId == guid && msg.ReceiverId == userId) || (msg.ReceiverId == guid && msg.SenderId == userId))
             .Select(msg => new TogetherChatMessageDTO
             {
                 Message = msg.Message,
