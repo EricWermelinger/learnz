@@ -17,7 +17,7 @@ public class TogetherSwipeUser : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<TogetherUserProfileDTO?>> GetNextSwipe()
+    public async Task<ActionResult<TogetherUserProfileDTO>> GetNextSwipe()
     {
         var user = await _userService.GetUser();
         var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
@@ -32,6 +32,7 @@ public class TogetherSwipeUser : Controller
                                           .Select(usr => new
                                           {
                                               User = usr,
+                                              // todo error occurs in scoresubject
                                               ScoreSubject = Enum.GetValues(typeof(Subject)).Cast<Subject>().Select(sbj =>
                                                             user.GoodSubject1 == sbj ? 3 : 0
                                                             + user.GoodSubject2 == sbj ? 2 : 0
@@ -48,7 +49,7 @@ public class TogetherSwipeUser : Controller
                                                         )
                                                 .Sum(scr => scr),
                                               ScoreGrade = Math.Abs((int)usr.Grade - (int)usr.Grade),
-                                              TieBreaker = new Random().Next(100)
+                                              TieBreaker = Guid.NewGuid()
                                           })
                                           .OrderBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
                                           .ThenBy(usr => usr.ScoreGrade)
@@ -68,6 +69,10 @@ public class TogetherSwipeUser : Controller
                                               BadSubject3 = usr.User.BadSubject3
                                           })
                                           .FirstOrDefaultAsync();
+        if (nextSwipe == null)
+        {
+            return BadRequest(ErrorKeys.TogetherNoUserFound);
+        }
         return Ok(nextSwipe);
     }
 

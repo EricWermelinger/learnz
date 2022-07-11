@@ -1,1 +1,26 @@
-<p>together-swipe works!</p>
+<div *ngIf="swipe$ | async as profile" class="page">
+    <div class="buttons">
+        <button (click)="swipe(profile.userId, true)" mat-fab color="primary">
+            <mat-icon>thumb_up</mat-icon>
+        </button>
+        <button (click)="swipe(profile.userId, false)" mat-fab color="primary">
+            <mat-icon>thumb_down</mat-icon>
+        </button>    
+    </div>
+    <div class="profile">
+        <div>{{ profile.username }}</div>
+        <div>{{ profile.grade }}</div>
+        <img [src]="profile.profileImagePath" />
+        <div>{{ profile.information }}</div>
+    </div>
+    <div class="subjects">
+        <mat-icon>mood</mat-icon>
+        <div>{{ profile.goodSubject1 }}</div>
+        <div>{{ profile.goodSubject2 }}</div>
+        <div>{{ profile.goodSubject3 }}</div>
+        <mat-icon>mood_bad</mat-icon>
+        <div>{{ profile.badSubject1 }}</div>
+        <div>{{ profile.badSubject2 }}</div>
+        <div>{{ profile.badSubject3 }}</div>
+    </div>
+</div>

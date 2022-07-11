@@ -108,6 +108,7 @@
         "usernameTaken_title":"Username taken",
         "passwordNotMatch":"Password not match",
         "passwordNotMatch_title":"Password not match",
+        "togetherNoUserFound":"No User found",
         "unknownError":"Unknown error",
         "unknownError_title":"Unknown error"
     },
