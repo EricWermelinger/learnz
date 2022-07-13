@@ -28,30 +28,20 @@ public class TogetherSwipeUser : Controller
             .Select(cnc => cnc.UserId1 == user.Id ? cnc.UserId2 : cnc.UserId1)
             .ToListAsync();
 
-        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
+        var nextPossibilities = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
                                           .Select(usr => new
                                           {
                                               User = usr,
-                                              // todo error occurs in scoresubject
-                                              ScoreSubject = Enum.GetValues(typeof(Subject)).Cast<Subject>().Select(sbj =>
-                                                            user.GoodSubject1 == sbj ? 3 : 0
-                                                            + user.GoodSubject2 == sbj ? 2 : 0
-                                                            + user.GoodSubject3 == sbj ? 1 : 0
-                                                            + usr.GoodSubject1 == sbj ? 3 : 0
-                                                            + usr.GoodSubject2 == sbj ? 2 : 0
-                                                            + usr.GoodSubject3 == sbj ? 1 : 0
-                                                            + user.BadSubject1 == sbj ? -3 : 0
-                                                            + user.BadSubject2 == sbj ? -2 : 0
-                                                            + user.BadSubject3 == sbj ? -1 : 0
-                                                            + usr.BadSubject1 == sbj ? -3 : 0
-                                                            + usr.BadSubject2 == sbj ? -2 : 0
-                                                            + usr.BadSubject3 == sbj ? -1 : 0
-                                                        )
-                                                .Sum(scr => scr),
-                                              ScoreGrade = Math.Abs((int)usr.Grade - (int)usr.Grade),
+                                              ProfileImage = usr.ProfileImage.Path,
+                                              ScoreSubject = CalculateSubjectScore(user, usr),
+                                              ScoreGrade = CalculateGradeScore(user.Grade, usr.Grade),
                                               TieBreaker = Guid.NewGuid()
                                           })
-                                          .OrderBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
+                                          .OrderBy(usr => usr.TieBreaker)
+                                          .Take(10)
+                                          .ToListAsync();
+
+        var nextSwipe = nextPossibilities.OrderBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
                                           .ThenBy(usr => usr.ScoreGrade)
                                           .ThenBy(usr => usr.TieBreaker)
                                           .Select(usr => new TogetherUserProfileDTO
@@ -59,7 +49,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImagePath = usr.User.ProfileImage.Path,
+                                              ProfileImagePath = usr.ProfileImage,
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,
@@ -68,7 +58,7 @@ public class TogetherSwipeUser : Controller
                                               BadSubject2 = usr.User.BadSubject2,
                                               BadSubject3 = usr.User.BadSubject3
                                           })
-                                          .FirstOrDefaultAsync();
+                                          .FirstOrDefault();
         if (nextSwipe == null)
         {
             return BadRequest(ErrorKeys.TogetherNoUserFound);
@@ -112,5 +102,36 @@ public class TogetherSwipeUser : Controller
         }
         await _dataContext.SaveChangesAsync();
         return Ok();
+    }
+
+    private static int CalculateSubjectScore(User userA, User userB)
+    {
+        int score = 0;
+        var subjects = (Subject[])Enum.GetValues(typeof(Subject));
+        foreach (Subject sbj in subjects)
+        {
+            int subjectScore = 0;
+            subjectScore += userA.GoodSubject1 == sbj ? 3 : 0;
+            subjectScore += userA.GoodSubject2 == sbj ? 2 : 0;
+            subjectScore += userA.GoodSubject3 == sbj ? 1 : 0;
+            subjectScore += userB.GoodSubject1 == sbj ? 3 : 0;
+            subjectScore += userB.GoodSubject2 == sbj ? 2 : 0;
+            subjectScore += userB.GoodSubject3 == sbj ? 1 : 0;
+            subjectScore += userA.BadSubject1 == sbj ? -3 : 0;
+            subjectScore += userA.BadSubject2 == sbj ? -2 : 0;
+            subjectScore += userA.BadSubject3 == sbj ? -1 : 0;
+            subjectScore += userB.BadSubject1 == sbj ? -3 : 0;
+            subjectScore += userB.BadSubject2 == sbj ? -2 : 0;
+            subjectScore += userB.BadSubject3 == sbj ? -1 : 0;
+            score += Math.Abs(subjectScore);
+        }
+        return score;
+    }
+
+    private static int CalculateGradeScore(Grade gradeA, Grade gradeB)
+    {
+        int a = (int)gradeA;
+        int b = (int)gradeB;
+        return Math.Abs(a - b);
     }
 }
