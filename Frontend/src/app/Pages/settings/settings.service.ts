@@ -23,7 +23,7 @@ export class SettingsService {
   }
 
   save(value: UserProfileUploadDTO) {
-    this.api.callApi(endpoints.UserProfile, value, 'POST').subscribe();
+    return this.api.callApi(endpoints.UserProfile, value, 'POST');
   }
 
   setDarkTheme(value: UserDarkThemeDTO) {

@@ -90,7 +90,7 @@ export class SettingsComponent {
       language: this.languageService.getLanguageIndex(this.formGroup.value.languageKey),
       birthdate: ignoreUTC(this.formGroup.value.birthdate),
     } as UserProfileUploadDTO;
-    this.settingsService.save(value);
+    this.settingsService.save(value).subscribe(_ => this.formGroup.markAsPristine());
   }
 
   setDarkTheme(darkTheme: boolean) {
