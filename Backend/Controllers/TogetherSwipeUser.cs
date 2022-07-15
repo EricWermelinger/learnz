@@ -22,9 +22,13 @@ public class TogetherSwipeUser : Controller
     public async Task<ActionResult<TogetherUserProfileDTO>> GetNextSwipe()
     {
         var user = await _userService.GetUser();
-        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
-                                                       .Select(swp => swp.SwiperUserId == user.Id ? swp.AskedUserId : swp.SwiperUserId)
+        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id)
+                                                       .Select(swp => swp.AskedUserId)
                                                        .ToListAsync();
+        var openSwipes = await _dataContext.TogetherSwipes.Where(swp => swp.AskedUserId == user.Id && swp.Choice)
+                                                        .Select(swp => swp.SwiperUserId)
+                                                        .Where(swp => !alreadySwiped.Contains(swp))
+                                                        .ToListAsync();
         var alreadyConnection = await _dataContext.TogetherConnections
             .Where(cnc => cnc.UserId1 == user.Id || cnc.UserId2 == user.Id)
             .Select(cnc => cnc.UserId1 == user.Id ? cnc.UserId2 : cnc.UserId1)
@@ -38,13 +42,16 @@ public class TogetherSwipeUser : Controller
                                               ProfileImage = usr.ProfileImage.Path,
                                               ScoreSubject = CalculateSubjectScore(user, usr),
                                               ScoreGrade = CalculateGradeScore(user.Grade, usr.Grade),
-                                              TieBreaker = Guid.NewGuid()
+                                              TieBreaker = Guid.NewGuid(),
+                                              OpenSwipe = openSwipes.Contains(usr.Id) ? 1 : 0,
                                           })
-                                          .OrderBy(usr => usr.TieBreaker)
+                                          .OrderByDescending(usr => usr.OpenSwipe)
+                                          .ThenByDescending(usr => usr.TieBreaker)
                                           .Take(10)
                                           .ToListAsync();
 
-        var nextSwipe = nextPossibilities.OrderBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
+        var nextSwipe = nextPossibilities.OrderByDescending(usr => usr.OpenSwipe)
+                                          .ThenBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
                                           .ThenBy(usr => usr.ScoreGrade)
                                           .ThenBy(usr => usr.TieBreaker)
                                           .Select(usr => new TogetherUserProfileDTO
@@ -83,6 +90,8 @@ public class TogetherSwipeUser : Controller
                 AskedUserId = request.UserId,
                 Choice = request.Choice
             });
+
+            await _dataContext.SaveChangesAsync();
 
             var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice)
                                                                 || (swp.SwiperUserId == request.UserId && swp.AskedUserId == guid && swp.Choice))
