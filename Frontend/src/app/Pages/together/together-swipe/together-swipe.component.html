@@ -8,19 +8,31 @@
         </button>    
     </div>
     <div class="profile">
-        <div>{{ profile.username }}</div>
-        <div>{{ profile.grade }}</div>
+        <div class="username">{{ profile.username }}</div>
+        <div class="grade">{{ translateGrade(profile.grade) | translate }}</div>
         <img [src]="profile.profileImagePath" />
-        <div>{{ profile.information }}</div>
+        <div class="information">{{ profile.information }}</div>
     </div>
-    <div class="subjects">
-        <mat-icon>mood</mat-icon>
-        <div>{{ profile.goodSubject1 }}</div>
-        <div>{{ profile.goodSubject2 }}</div>
-        <div>{{ profile.goodSubject3 }}</div>
-        <mat-icon>mood_bad</mat-icon>
-        <div>{{ profile.badSubject1 }}</div>
-        <div>{{ profile.badSubject2 }}</div>
-        <div>{{ profile.badSubject3 }}</div>
+    <div class="good-bad">
+        <div class="group">
+            <div class="icon-wrapper">
+                <mat-icon class="mat-icon">mood</mat-icon>
+            </div>
+            <div class="subjects">
+                <div>{{ translateSubject(profile.goodSubject1) | translate }}</div>
+                <div>{{ translateSubject(profile.goodSubject2) | translate }}</div>
+                <div>{{ translateSubject(profile.goodSubject3) | translate }}</div>
+            </div>
+        </div>
+        <div class="group">
+            <div class="icon-wrapper">
+                <mat-icon class="mat-icon">mood_bad</mat-icon>
+            </div>
+            <div class="subjects">
+                <div>{{ translateSubject(profile.badSubject1) | translate }}</div>
+                <div>{{ translateSubject(profile.badSubject2) | translate }}</div>
+                <div>{{ translateSubject(profile.badSubject3) | translate }}</div>
+            </div>
+        </div>
     </div>
 </div>
