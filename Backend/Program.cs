@@ -74,7 +74,8 @@ builder.Services.AddCors(options =>
         corsOrigin,
         builder => builder.WithOrigins(frontEnd)
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -96,7 +97,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<LearnzHub>("/learnzsocket");
+    endpoints.MapHub<LearnzHub>("/ws/learnzsocket");
 });
 
 app.Run();

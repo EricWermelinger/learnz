@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -11,11 +12,16 @@ public class TogetherSwipeUser : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IPathToImageConverter _pathToImageConverter;
-    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
+    private readonly IHubContext<LearnzHub> _learnzHub;
+    private readonly HubService _hubService;
+
+    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
         _pathToImageConverter = pathToImageConverter;
+        _learnzHub = learnzHub;
+        _hubService = new HubService(_learnzHub);
     }
 
     [HttpGet]
@@ -110,6 +116,26 @@ public class TogetherSwipeUser : Controller
                         UserId2 = request.UserId
                     });
                 }
+
+                var connectedUsers = await _dataContext.Users.Select(usr => new TogetherUserProfileDTO
+                                                                        {
+                                                                            UserId = usr.Id,
+                                                                            Username = usr.Username,
+                                                                            Grade = usr.Grade,
+                                                                            ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                                            Information = usr.Information,
+                                                                            GoodSubject1 = usr.GoodSubject1,
+                                                                            GoodSubject2 = usr.GoodSubject2,
+                                                                            GoodSubject3 = usr.GoodSubject3,
+                                                                            BadSubject1 = usr.BadSubject1,
+                                                                            BadSubject2 = usr.BadSubject2,
+                                                                            BadSubject3 = usr.BadSubject3
+                                                                        })
+                                                                        .Where(usr => usr.UserId == guid || usr.UserId == request.UserId)
+                                                                        .ToListAsync();
+                
+                await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[0], connectedUsers[1].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[1], connectedUsers[0].UserId);
             }
         }
         await _dataContext.SaveChangesAsync();

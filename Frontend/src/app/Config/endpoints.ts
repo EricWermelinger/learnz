@@ -17,5 +17,7 @@ export const endpoints = {
     UserLogin: 'userLogin',
     UserProfile: 'userProfile',
     UserRefreshToken: 'userRefreshToken',
-    UserSignUp: 'userSignUp'
+    UserSignUp: 'userSignUp',
+    WebSocket: 'learnzsocket',
+    WebSocketConnections: 'webSocketConnections',
 }
