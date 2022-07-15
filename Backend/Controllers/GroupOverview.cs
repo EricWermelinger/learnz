@@ -10,10 +10,12 @@ public class GroupOverview : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public GroupOverview(DataContext dataContext, IUserService userService)
+    private readonly IPathToImageConverter _pathToImageConverter;
+    public GroupOverview(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -25,7 +27,7 @@ public class GroupOverview : Controller
             {
                 GroupId = grp.Id,
                 GroupName = grp.Name,
-                ProfileImagePath = grp.ProfileImage.Path,
+                ProfileImagePath = _pathToImageConverter.PathToImage(grp.ProfileImage.Path),
                 LastMessage = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Message
                     : null,

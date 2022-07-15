@@ -12,12 +12,14 @@ public class UserProfile : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IFileAnonymousFinder _fileFinder;
+    private readonly IPathToImageConverter _pathToImageConverter;
 
-    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder)
+    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
         _fileFinder = fileFinder;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -32,7 +34,7 @@ public class UserProfile : Controller
             Lastname = user.Lastname,
             Birthdate = user.Birthdate,
             Grade = user.Grade,
-            ProfileImagePath = user.ProfileImage.Path,
+            ProfileImagePath = _pathToImageConverter.PathToImage(user.ProfileImage.Path),
             ProfileImageName = user.ProfileImage.FileNameExternal,
             Information = user.Information,
             Language = user.Language,

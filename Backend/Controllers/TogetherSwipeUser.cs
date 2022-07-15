@@ -10,10 +10,12 @@ public class TogetherSwipeUser : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TogetherSwipeUser(DataContext dataContext, IUserService userService)
+    private readonly IPathToImageConverter _pathToImageConverter;
+    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -29,6 +31,7 @@ public class TogetherSwipeUser : Controller
             .ToListAsync();
 
         var nextPossibilities = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
+                                          .Where(usr => usr.Id != user.Id)
                                           .Select(usr => new
                                           {
                                               User = usr,
@@ -49,7 +52,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImagePath = usr.ProfileImage,
+                                              ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage),
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,

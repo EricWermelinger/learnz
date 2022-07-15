@@ -10,10 +10,12 @@ public class TogetherUsers : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TogetherUsers(DataContext dataContext, IUserService userService)
+    private readonly IPathToImageConverter _pathToImageConverter;
+    public TogetherUsers(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -25,7 +27,7 @@ public class TogetherUsers : Controller
                                       {
                                           UserId = usr.Id,
                                           Username = usr.Username,
-                                          ProfileImagePath = usr.ProfileImage.Path,
+                                          ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
                                           Grade = usr.Grade,
                                           Information = usr.Information,
                                           GoodSubject1 = usr.GoodSubject1,

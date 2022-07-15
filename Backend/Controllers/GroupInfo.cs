@@ -12,13 +12,15 @@ public class GroupInfo : Controller
     private readonly IUserService _userService;
     private readonly IFileFinder _fileFinder;
     private readonly IFilePolicyChecker _filePolicyChecker;
+    private readonly IPathToImageConverter _pathToImageConverter;
 
-    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker)
+    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
         _fileFinder = fileFinder;
         _filePolicyChecker = filePolicyChecker;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -36,7 +38,7 @@ public class GroupInfo : Controller
                 GroupId = g.Id,
                 Name = g.Name,
                 Description = g.Description,
-                ProfileImagePath = g.ProfileImage.Path,
+                ProfileImagePath = _pathToImageConverter.PathToImage(g.ProfileImage.Path),
                 Members = g.GroupMembers.Select(gm => new GroupInfoMemberDTO
                 {
                     UserId = gm.UserId,
@@ -44,7 +46,7 @@ public class GroupInfo : Controller
                     Lastname = gm.User.Lastname,
                     Username = gm.User.Username,
                     IsAdmin = g.AdminId == gm.UserId,
-                    ProfileImagePath = gm.User.ProfileImage.Path
+                    ProfileImagePath = _pathToImageConverter.PathToImage(gm.User.ProfileImage.Path)
                 }).ToList()
             })
             .FirstAsync();
