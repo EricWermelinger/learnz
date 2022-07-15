@@ -37,7 +37,8 @@
         "ask":"Ask",
         "chat":"Chat",
         "connect":"Connect",
-        "swipe":"Swipe"
+        "swipe":"Swipe",
+        "swipeConnectedWith":"Connected with"
     },
     "group":{
         "group":"Group"

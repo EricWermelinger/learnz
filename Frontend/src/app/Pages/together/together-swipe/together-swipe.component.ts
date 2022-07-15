@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { TogetherSwipeDTO } from 'src/app/DTOs/Together/TogetherSwipeDTO';
 import { TogetherUserProfileDTO } from 'src/app/DTOs/Together/TogetherUserProfileDTO';
-import { getGrades } from 'src/app/Enums/Grade';
-import { getSubjects } from 'src/app/Enums/Subject';
+import { TogetherSwipeConnectedDialogComponent } from './together-swipe-connected-dialog/together-swipe-connected-dialog.component';
 import { TogetherSwipeService } from './together-swipe.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class TogetherSwipeComponent {
 
   constructor(
     private swipeService: TogetherSwipeService,
+    private dialog: MatDialog,
   ) {
     this.swipe$ = this.swipeService.getNextSwipe();
   }
@@ -32,10 +33,16 @@ export class TogetherSwipeComponent {
   }
 
   translateSubject(subject: number) {
-    return 'Subject.' + getSubjects().filter(s => s.value === subject)[0].key;
+    return this.swipeService.translateSubject(subject);
   }
   
   translateGrade(grade: number) {
-    return 'Grade.' + getGrades().filter(g => g.value === grade)[0].key;
+    return this.swipeService.translateGrade(grade);
+  }
+
+  openConnected(user: TogetherUserProfileDTO) {
+    this.dialog.open(TogetherSwipeConnectedDialogComponent, {
+      data: user
+    });
   }
 }
