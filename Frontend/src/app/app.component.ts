@@ -14,6 +14,7 @@ import { LanguagesService } from './Framework/Languages/languages.service';
 })
 export class AppComponent implements AfterViewInit {
   title = 'learnz';
+  activatedRouteKey = '';
 
   constructor (
     private app: AppService,
@@ -39,6 +40,10 @@ export class AppComponent implements AfterViewInit {
     this.darkThemeService.isDarkTheme$.asObservable().subscribe((isDarkTheme) => {
       this.darkThemeService.applyDarkTheme(isDarkTheme);
     });
+  }
+
+  setRoute(route: string) {
+    this.activatedRouteKey = route;
   }
 
   ngAfterViewInit(): void {

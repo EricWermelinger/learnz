@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Observable, combineLatest, filter, map, BehaviorSubject } from 'rxjs';
+import { combineLatest, filter, map, BehaviorSubject } from 'rxjs';
 import { AppService } from 'src/app/app.service';
 import { appRoutes } from './../../Config/appRoutes';
 
@@ -12,6 +12,8 @@ import { appRoutes } from './../../Config/appRoutes';
 export class NavBarComponent {
 
   routes$ = new BehaviorSubject<AppRoute[]>([]);
+
+  @Output() activeRoute = new EventEmitter<string>();
 
   private routes = [
     { route: appRoutes.Login, key: 'login.login', icon: 'verified_user', navigation: [appRoutes.Login], onLoggedIn: false, layer: 1, isParent: false },
@@ -41,8 +43,11 @@ export class NavBarComponent {
       this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
     ]).pipe(
       map(([isLoggedIn, _]) => this.routes.filter(r => r.onLoggedIn === null || r.onLoggedIn === isLoggedIn)),
-      map(routes => routes.filter(r => r.layer === 1)),
-    ).subscribe(routes => this.routes$.next(routes));
+    ).subscribe(routes => {
+      this.routes$.next(routes.filter(r => r.layer === 1));
+      const route = routes.find(r => this.isActive(r));
+      this.activeRoute.emit(route?.key);
+    });
   }
 
   navigate(route: string[]) {

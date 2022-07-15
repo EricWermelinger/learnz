@@ -1,12 +1,13 @@
 <div class="application">
   <mat-drawer-container autosize>
     <mat-drawer #drawer mode="side">
-        <app-nav-bar></app-nav-bar>
+        <app-nav-bar (activeRoute)="setRoute($event)"></app-nav-bar>
     </mat-drawer>
-    <div class="menu-toggle">
+    <div class="header">
       <button type="button" mat-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
+      <h1 class="title">{{ activatedRouteKey | translate }}</h1>
     </div>
     <div class="page">
         <router-outlet></router-outlet>
