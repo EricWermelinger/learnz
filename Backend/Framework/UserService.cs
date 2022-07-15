@@ -12,7 +12,7 @@ public class UserService : IUserService
         _httpContextAccessor = httpContextAccessor;
         _context = context;
     }
-
+    
     public async Task<User> GetUser()
     {
         string guid = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.Name);
@@ -24,5 +24,13 @@ public class UserService : IUserService
     {
         string guid = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.Name);
         return Guid.Parse(guid);
+    }
+    
+    public async Task<List<string>> GetConnectionsOfUser(User user)
+    {
+        var connections = await _context.WebSocketConnections.Where(cnc => cnc.UserId == user.Id)
+                                                             .Select(cnc => cnc.ConnectionId)
+                                                             .ToListAsync();
+        return connections;
     }
 }

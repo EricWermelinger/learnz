@@ -39,4 +39,5 @@ public class User
     public ICollection<GroupMessage> GroupMessages { get; set; }
     public ICollection<CreateSet> CreateSetCreated { get; set; }
     public ICollection<CreateSet> CreateSetModified { get; set; }
+    public ICollection<WebSocketConnection> WebSocketConnections { get; set; }
 }

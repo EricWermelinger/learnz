@@ -196,6 +196,12 @@ public class DataContext : DbContext
             .WithMany(cs => cs.QuestionWords)
             .HasForeignKey(cqd => cqd.SetId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<WebSocketConnection>()
+            .HasOne(wsc => wsc.User)
+            .WithMany(usr => usr.WebSocketConnections)
+            .HasForeignKey(wsc => wsc.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -209,4 +215,5 @@ public class DataContext : DbContext
     public virtual DbSet<GroupMessage> GroupMessages { get; set; }
     public virtual DbSet<LearnzFile> Files { get; set; }
     public virtual DbSet<LearnzFileAnonymous> FilesAnonymous { get; set; }
+    public virtual DbSet<WebSocketConnection> WebSocketConnections { get; set; }
 }
