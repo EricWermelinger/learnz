@@ -22,6 +22,7 @@ export class NavBarComponent {
     { route: appRoutes.Together, key: 'together.together', icon: 'people', navigation: [], onLoggedIn: true, layer: 1, isParent: true },
     { route: appRoutes.TogetherAsk, key: 'together.ask', icon: 'question_answer', navigation: [appRoutes.App, appRoutes.TogetherAsk], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.TogetherConnect, key: 'together.connect', icon: 'person_add', navigation: [appRoutes.App, appRoutes.TogetherConnect], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
+    { route: appRoutes.TogetherChat, key: 'together.chat', icon: '', navigation: [appRoutes.App, appRoutes.TogetherChat], onLoggedIn: null, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.TogetherSwipe, key: 'together.swipe', icon: 'swap_horiz', navigation: [appRoutes.App, appRoutes.TogetherSwipe], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.Group, key: 'group.group', icon: 'public', navigation: [appRoutes.App, appRoutes.Group], onLoggedIn: true, layer: 1, isParent: false },
     { route: appRoutes.Create, key: 'create.create', icon: 'build', navigation: [appRoutes.App, appRoutes.Create], onLoggedIn: true, layer: 1, isParent: false },
@@ -44,7 +45,7 @@ export class NavBarComponent {
     ]).pipe(
       map(([isLoggedIn, _]) => this.routes.filter(r => r.onLoggedIn === null || r.onLoggedIn === isLoggedIn)),
     ).subscribe(routes => {
-      this.routes$.next(routes.filter(r => r.layer === 1));
+      this.routes$.next(routes.filter(r => r.layer === 1 && r.onLoggedIn !== null));
       const route = routes.find(r => this.isActive(r));
       this.activeRoute.emit(route?.key);
     });

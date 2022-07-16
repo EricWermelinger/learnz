@@ -1,1 +1,23 @@
-<p>together-chat works!</p>
+<div *ngIf="chat$ | async as chat">
+    <div class="messages">
+        <div *ngFor="let message of chat" class="message-wrapper">
+            <div [ngClass]="{ 'message': true, 'message-self': message.sentByMe, 'message-non-self': !message.sentByMe }">
+                <div>{{ message.message }}</div>
+                <mat-divider></mat-divider>
+                <div class="message-dateSent">{{ isToday(message.dateSent) ? (message.dateSent | date:'HH:mm') : (message.dateSent | date:'dd.MM.yyyy HH:mm') }}</div>
+            </div>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+    <form class="new-message">
+        <mat-form-field>
+            <mat-label>{{ 'together.message' | translate }}</mat-label>
+            <textarea matInput [formControl]="newMessageControl"></textarea>
+        </mat-form-field>
+        <div class="wrapper">
+            <button mat-icon-button (click)="sendMessage()" [disabled]="!newMessageControl.valid">
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
+    </form>
+</div>

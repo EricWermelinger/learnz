@@ -3,6 +3,9 @@ export function addMinutes(date: Date, minutes: number): Date {
 }
 
 export function isToday(date: Date): boolean {
+    if (typeof date === 'string') {
+        date = new Date(date);
+    }
     const today = new Date();
     return today.getDate() === date.getDate()
         && today.getMonth() === date.getMonth()

@@ -109,7 +109,9 @@ public class TogetherQueryService : ITogetherQueryService
                 Message = msg.Message,
                 DateSent = msg.Date,
                 SentByMe = msg.SenderId == chatFrom
-            }).ToListAsync();
+            })
+            .OrderByDescending(msg => msg.DateSent)
+            .ToListAsync();
         return messages;
     }
 }

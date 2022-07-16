@@ -42,7 +42,8 @@
         "swipe":"Swipe",
         "swipeConnectedWith":"Connected with",
         "you":"You",
-        "noMessage":"No message yet"
+        "noMessage":"No message yet",
+        "message":"Message"
     },
     "group":{
         "group":"Group"

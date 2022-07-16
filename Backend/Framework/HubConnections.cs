@@ -16,7 +16,7 @@ public static class HubConnections
 
     public static void EditConnection(string connectionId, Guid userId)
     {
-        var edit = Connections.FirstOrDefault(cnc => cnc.ConnectionId == connectionId);
+        var edit = Connections.Where(cnc => cnc != null).FirstOrDefault(cnc => cnc.ConnectionId == connectionId);
         if (edit != null)
         {
             edit.UserId = userId;
