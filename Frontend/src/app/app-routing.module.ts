@@ -27,7 +27,7 @@ const routes: Routes = [
     children: [
       { path: appRoutes.Dashboard, component: DashboardComponent },
       { path: appRoutes.TogetherAsk, component: TogetherAskComponent },
-      { path: appRoutes.TogetherChat, component: TogetherChatComponent },
+      { path: `${appRoutes.TogetherChat}/:${appRoutes.TogetherChatId}`, component: TogetherChatComponent },
       { path: appRoutes.TogetherConnect, component: TogetherConnectComponent },
       { path: appRoutes.TogetherSwipe, component: TogetherSwipeComponent },
       { path: appRoutes.Group, component: GroupComponent },

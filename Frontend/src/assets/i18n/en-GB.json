@@ -38,6 +38,7 @@
         "chat":"Chat",
         "connect":"Connect",
         "connectGoTo":"See Connections",
+        "noConnections":"No connections yet",
         "swipe":"Swipe",
         "swipeConnectedWith":"Connected with"
     },

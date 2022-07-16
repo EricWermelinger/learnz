@@ -5,10 +5,13 @@ public static class HubConnections
 
     public static void AddConnection(string connectionId)
     {
-        Connections.Add(new WebSocketConnection
+        if (connectionId != null)
         {
-            ConnectionId = connectionId
-        });
+            Connections.Add(new WebSocketConnection
+            {
+                ConnectionId = connectionId
+            });
+        }
     }
 
     public static void EditConnection(string connectionId, Guid userId)
@@ -31,6 +34,6 @@ public static class HubConnections
 
     public static List<string> ConnectionsOfUser(Guid userId)
     {
-        return Connections.Where(cnc => cnc.UserId == userId).Select(cnc => cnc.ConnectionId).ToList();
+        return Connections.Where(cnc => cnc.UserId == userId && cnc.UserId != null).Select(cnc => cnc.ConnectionId).ToList();
     }
 }

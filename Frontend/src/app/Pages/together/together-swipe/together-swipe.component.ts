@@ -23,7 +23,7 @@ export class TogetherSwipeComponent {
     private ws: WebSocketService,
   ) {
     this.swipe$ = this.swipeService.getNextSwipe();
-    this.ws.webSocketData<TogetherUserProfileDTO>(endpoints.TogetherSwipeUser, {} as TogetherUserProfileDTO).subscribe(user => {
+    this.swipeService.connectionOccured().subscribe(user => {
       this.openConnected(user);
     });
   }

@@ -10,7 +10,7 @@ export const endpoints = {
     TogetherAskUser: 'togetherAskUser', // use get post put
     TogetherChat: 'togetherChat', // use get post
     TogetherConnectUser: 'togetherConnectUser', // use get
-    TogetherSwipeUser: 'togetherSwipeUser', // use get post
+    TogetherSwipeUser: 'togetherSwipeUser',
     TogetherUsers: 'togetherUsers', // use get
     UserDarkTheme: 'userDarkTheme',
     UserLanguage: 'userLanguage',

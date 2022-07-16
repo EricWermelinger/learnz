@@ -6,6 +6,7 @@ import { TogetherUserProfileDTO } from 'src/app/DTOs/Together/TogetherUserProfil
 import { getGrades } from 'src/app/Enums/Grade';
 import { getSubjects } from 'src/app/Enums/Subject';
 import { ApiService } from 'src/app/Framework/API/api.service';
+import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ import { ApiService } from 'src/app/Framework/API/api.service';
 export class TogetherSwipeService {
 
   constructor(
-    private api: ApiService
+    private api: ApiService,
+    private ws: WebSocketService,
   ) { }
 
   getNextSwipe(): Observable<TogetherUserProfileDTO> {
@@ -22,6 +24,10 @@ export class TogetherSwipeService {
 
   swipe(swipe: TogetherSwipeDTO) {
     return this.api.callApi(endpoints.TogetherSwipeUser, swipe, 'POST');
+  }
+
+  connectionOccured() {
+    return this.ws.webSocketData<TogetherUserProfileDTO>(endpoints.TogetherSwipeUser, {} as TogetherUserProfileDTO);
   }
 
   translateSubject(subject: number) {

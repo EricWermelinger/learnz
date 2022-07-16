@@ -5,6 +5,6 @@ namespace Learnz.Framework
     {
         Task<List<TogetherOverviewUserProfileDTO>> GetConnectionOverview(Guid guid);
         Task<List<TogetherChatMessageDTO>> GetMessages(Guid chatFrom, Guid chatTo);
-        Task<TogetherConnectionOverviewDTO> GetOpenAsks(Guid guid);
+        Task<TogetherAskOverviewDTO> GetOpenAsks(Guid guid);
     }
 }

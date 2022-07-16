@@ -1,1 +1,8 @@
-<p>together-connect works!</p>
+<div *ngIf="overview$ | async as overview" class="page">
+    <h2 *ngIf="isEmpty(overview); else listView">
+        {{ 'together.noConnections' | translate }}
+    </h2>
+    <ng-template #listView>
+        <div>{{console.log continue here}}</div>
+    </ng-template>
+</div>

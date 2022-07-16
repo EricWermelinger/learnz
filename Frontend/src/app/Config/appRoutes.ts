@@ -7,6 +7,7 @@ export const appRoutes = {
     Together: 'together',
     TogetherAsk: 'together-ask',
     TogetherChat: 'together-chat',
+    TogetherChatId: 'chatId',
     TogetherConnect: 'together-connect',
     TogetherSwipe: 'together-swipe',
     Group: 'group',

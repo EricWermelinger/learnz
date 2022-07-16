@@ -9,7 +9,7 @@ public class TogetherQueryService : ITogetherQueryService
         _pathToImageConverter = pathToImageConverter;
     }
 
-    public async Task<TogetherConnectionOverviewDTO> GetOpenAsks(Guid guid)
+    public async Task<TogetherAskOverviewDTO> GetOpenAsks(Guid guid)
     {
         var connectedUserIds = await _dataContext.TogetherConnections.Where(cnc => cnc.UserId1 == guid || cnc.UserId2 == guid)
                                                                     .Select(cnc => cnc.UserId1 == guid ? cnc.UserId2 : cnc.UserId1)                                                            
@@ -53,7 +53,7 @@ public class TogetherQueryService : ITogetherQueryService
                                                      })
                                                      .ToListAsync();
 
-        return new TogetherConnectionOverviewDTO
+        return new TogetherAskOverviewDTO
         {
             OpenAsks = openAsks,
             SentAsks = sentAsks
