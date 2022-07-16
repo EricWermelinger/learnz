@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { TogetherSwipeDTO } from 'src/app/DTOs/Together/TogetherSwipeDTO';
 import { TogetherUserProfileDTO } from 'src/app/DTOs/Together/TogetherUserProfileDTO';
-import { TogetherSwipeConnectedDialogComponent } from './together-swipe-connected-dialog/together-swipe-connected-dialog.component';
+import { TogetherDetailDialogComponent } from '../together-detail-dialog/together-detail-dialog.component';
 import { TogetherSwipeService } from './together-swipe.service';
 
 @Component({
@@ -47,8 +47,11 @@ export class TogetherSwipeComponent implements OnDestroy {
   }
 
   openConnected(user: TogetherUserProfileDTO) {
-    this.dialog.open(TogetherSwipeConnectedDialogComponent, {
-      data: user,
+    this.dialog.open(TogetherDetailDialogComponent, {
+      data: {
+        ...user,
+        showConnected: true
+      },
     });
   }
 

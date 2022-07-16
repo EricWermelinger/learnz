@@ -8,8 +8,8 @@ export const endpoints = {
     // GroupMessage: 'groupMessage',
     // GroupOverview: 'groupOverview',
     TogetherAskUser: 'togetherAskUser', // use get post put
-    TogetherChat: 'togetherChat', // use get post
-    TogetherConnectUser: 'togetherConnectUser', // use get
+    TogetherChat: 'togetherChat',
+    TogetherConnectUser: 'togetherConnectUser',
     TogetherSwipeUser: 'togetherSwipeUser',
     TogetherUsers: 'togetherUsers', // use get
     UserDarkTheme: 'userDarkTheme',

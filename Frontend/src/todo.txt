@@ -1,6 +1,4 @@
 todo:
-- group
-- together
--- Connect - alle UserChat > Chat mit User
--- Swipe
--- Ask
+2. Together - Ask
+3. Test Together Part
+4. Group

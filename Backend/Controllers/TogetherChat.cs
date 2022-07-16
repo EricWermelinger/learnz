@@ -22,7 +22,7 @@ public class TogetherChat : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TogetherChatMessageDTO>>> GetMessages(Guid userId)
+    public async Task<ActionResult<TogetherChatDTO>> GetMessages(Guid userId)
     {
         var guid = _userService.GetUserGuid();
         var messages = await _togetherQueryService.GetMessages(guid, userId);
@@ -43,15 +43,10 @@ public class TogetherChat : Controller
         await _dataContext.TogetherMessages.AddAsync(message);
         await _dataContext.SaveChangesAsync();
 
-        var wsMessages = await _togetherQueryService.GetMessages(guid, request.UserId);
-        var wsMessagesInverted = wsMessages.Select(msg => new TogetherChatMessageDTO
-                                                        {
-                                                            Message = msg.Message,
-                                                            DateSent = msg.DateSent,
-                                                            SentByMe = !msg.SentByMe
-                                                        });
-        await _hubService.SendMessageToUser(nameof(TogetherChat), wsMessages, guid);
-        await _hubService.SendMessageToUser(nameof(TogetherChat), wsMessagesInverted, request.UserId);
+        var messageUser1 = await _togetherQueryService.GetMessages(guid, request.UserId);
+        var messageUser2 = await _togetherQueryService.GetMessages(request.UserId, guid);
+        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser1, guid);
+        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser2, request.UserId);
         var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(guid);
         var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(request.UserId);
         await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, guid);

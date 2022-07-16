@@ -34,7 +34,7 @@ import { TogetherChatComponent } from './Pages/together/together-chat/together-c
 import { TogetherSwipeComponent } from './Pages/together/together-swipe/together-swipe.component';
 import { TogetherAskComponent } from './Pages/together/together-ask/together-ask.component';
 import { TogetherConnectComponent } from './Pages/together/together-connect/together-connect.component';
-import { TogetherSwipeConnectedDialogComponent } from './Pages/together/together-swipe/together-swipe-connected-dialog/together-swipe-connected-dialog.component';
+import { TogetherDetailDialogComponent } from './Pages/together/together-detail-dialog/together-detail-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -64,7 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TogetherSwipeComponent,
     TogetherAskComponent,
     TogetherConnectComponent,
-    TogetherSwipeConnectedDialogComponent,
+    TogetherDetailDialogComponent,
   ],
   imports: [
     BrowserModule,

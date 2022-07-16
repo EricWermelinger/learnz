@@ -101,7 +101,7 @@ public class TogetherQueryService : ITogetherQueryService
         return users.OrderBy(usr => usr.LastMessageDateSent).ToList();
     }
 
-    public async Task<List<TogetherChatMessageDTO>> GetMessages(Guid chatFrom, Guid chatTo)
+    public async Task<TogetherChatDTO> GetMessages(Guid chatFrom, Guid chatTo)
     {
         var messages = await _dataContext.TogetherMessages.Where(msg => (msg.SenderId == chatFrom && msg.ReceiverId == chatTo) || (msg.ReceiverId == chatFrom && msg.SenderId == chatTo))
             .Select(msg => new TogetherChatMessageDTO
@@ -112,6 +112,25 @@ public class TogetherQueryService : ITogetherQueryService
             })
             .OrderByDescending(msg => msg.DateSent)
             .ToListAsync();
-        return messages;
+        var user = await _dataContext.Users.Select(usr => new TogetherUserProfileDTO
+                                                        {
+                                                            UserId = usr.Id,
+                                                            Username = usr.Username,
+                                                            Grade = usr.Grade,
+                                                            Information = usr.Information,
+                                                            ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                            GoodSubject1 = usr.GoodSubject1,
+                                                            GoodSubject2 = usr.GoodSubject2,
+                                                            GoodSubject3 = usr.GoodSubject3,
+                                                            BadSubject1 = usr.BadSubject1,
+                                                            BadSubject2 = usr.BadSubject2,
+                                                            BadSubject3 = usr.BadSubject3,
+                                                        })
+                                               .FirstAsync(usr => usr.UserId == chatTo);
+        return new TogetherChatDTO
+        {
+            User = user,
+            Messages = messages
+        };
     }
 }

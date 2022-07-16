@@ -69,7 +69,7 @@ export class NavBarComponent {
       for (const r of previous) {
         next.push(r);
         if (r.route === route.route) {
-          next = [...next, ...this.routes.filter(r => r.parent === route.route)];
+          next = [...next, ...this.routes.filter(r => r.parent === route.route && r.onLoggedIn !== null)];
         }
       }
     }
