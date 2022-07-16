@@ -1,5 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { appRoutes } from 'src/app/Config/appRoutes';
 import { TogetherUserProfileDTO } from 'src/app/DTOs/Together/TogetherUserProfileDTO';
 import { TogetherSwipeService } from '../together-swipe.service';
 
@@ -12,7 +14,9 @@ export class TogetherSwipeConnectedDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: TogetherUserProfileDTO,
+    private dialog: MatDialogRef<TogetherSwipeConnectedDialogComponent>,
     private swipeService: TogetherSwipeService,
+    private router: Router,
   ) { }
 
   getData() {
@@ -27,4 +31,8 @@ export class TogetherSwipeConnectedDialogComponent {
     return this.swipeService.translateGrade(grade);
   }
 
+  navigateConnections() {
+    this.dialog.close();
+    this.router.navigate([appRoutes.App, appRoutes.TogetherConnect]);
+  }
 }

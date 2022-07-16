@@ -48,7 +48,7 @@ export class TogetherSwipeComponent {
 
   openConnected(user: TogetherUserProfileDTO) {
     this.dialog.open(TogetherSwipeConnectedDialogComponent, {
-      data: user
+      data: user,
     });
   }
 }

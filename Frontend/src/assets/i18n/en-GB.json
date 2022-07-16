@@ -37,6 +37,7 @@
         "ask":"Ask",
         "chat":"Chat",
         "connect":"Connect",
+        "connectGoTo":"See Connections",
         "swipe":"Swipe",
         "swipeConnectedWith":"Connected with"
     },
