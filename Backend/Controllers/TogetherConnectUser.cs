@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -8,54 +9,21 @@ namespace Learnz.Controllers;
 [Authorize]
 public class TogetherConnectUser : Controller
 {
-    private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
-    public TogetherConnectUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
+    private readonly ITogetherQueryService _togetherQueryService;
+    private readonly HubService _hubService;
+    public TogetherConnectUser(IUserService userService, ITogetherQueryService togetherQueryService, IHubContext<LearnzHub> learnzHub)
     {
-        _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
+        _togetherQueryService = togetherQueryService;
+        _hubService = new HubService(learnzHub);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TogetherOverviewUserProfileDTO>>> GetConnections()
     {
         var guid = _userService.GetUserGuid();
-        var users = await _dataContext.TogetherConnections.Where(cnc => cnc.UserId1 == guid || cnc.UserId2 == guid)
-                                                               .Select(cnc => cnc.UserId1 == guid ? cnc.User2 : cnc.User1)
-                                                               .Select(usr => new TogetherOverviewUserProfileDTO
-                                                               {
-                                                                   UserId = usr.Id,
-                                                                   Username = usr.Username,
-                                                                   Grade = usr.Grade,
-                                                                   ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
-                                                                   Information = usr.Information,
-                                                                   GoodSubject1 = usr.GoodSubject1,
-                                                                   GoodSubject2 = usr.GoodSubject2,
-                                                                   GoodSubject3 = usr.GoodSubject3,
-                                                                   BadSubject1 = usr.BadSubject1,
-                                                                   BadSubject2 = usr.BadSubject2,
-                                                                   BadSubject3 = usr.BadSubject3
-                                                               })
-                                                               .ToListAsync();
-
-        var messages = await _dataContext.TogetherMessages.Where(msg => msg.SenderId == guid || msg.ReceiverId == guid)
-            .ToListAsync();
-
-        foreach (var user in users)
-        {
-            var message = messages.Where(msg => msg.SenderId == user.UserId || msg.ReceiverId == user.UserId)
-                .OrderByDescending(msg => msg.Date)
-                .FirstOrDefault();
-            if (message != null)
-            {
-                user.LastMessage = message.Message;
-                user.LastMessageDateSent = message.Date;
-                user.LastMessageSentByMe = message.SenderId == guid;
-            }
-        }
-
-        return Ok(users.OrderBy(usr => usr.LastMessageDateSent).ToList());
+        var connections = await _togetherQueryService.GetConnectionOverview(guid);
+        return Ok(connections);
     }
 }

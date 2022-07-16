@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -10,23 +11,21 @@ public class TogetherChat : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TogetherChat(DataContext dataContext, IUserService userService)
+    private readonly ITogetherQueryService _togetherQueryService;
+    private readonly HubService _hubService;
+    public TogetherChat(DataContext dataContext, IUserService userService, ITogetherQueryService togetherQueryService, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _togetherQueryService = togetherQueryService;
+        _hubService = new HubService(learnzHub);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TogetherChatMessageDTO>>> GetMessages(Guid userId)
     {
         var guid = _userService.GetUserGuid();
-        var messages = await _dataContext.TogetherMessages.Where(msg => (msg.SenderId == guid && msg.ReceiverId == userId) || (msg.ReceiverId == guid && msg.SenderId == userId))
-            .Select(msg => new TogetherChatMessageDTO
-            {
-                Message = msg.Message,
-                DateSent = msg.Date,
-                SentByMe = msg.SenderId == guid
-            }).ToListAsync();
+        var messages = await _togetherQueryService.GetMessages(guid, userId);
         return Ok(messages);
     }
 
@@ -43,6 +42,21 @@ public class TogetherChat : Controller
         };
         await _dataContext.TogetherMessages.AddAsync(message);
         await _dataContext.SaveChangesAsync();
+
+        var wsMessages = await _togetherQueryService.GetMessages(guid, request.UserId);
+        var wsMessagesInverted = wsMessages.Select(msg => new TogetherChatMessageDTO
+                                                        {
+                                                            Message = msg.Message,
+                                                            DateSent = msg.DateSent,
+                                                            SentByMe = !msg.SentByMe
+                                                        });
+        await _hubService.SendMessageToUser(nameof(TogetherChat), wsMessages, guid);
+        await _hubService.SendMessageToUser(nameof(TogetherChat), wsMessagesInverted, request.UserId);
+        var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(guid);
+        var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(request.UserId);
+        await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, guid);
+        await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser2, request.UserId);
+
         return Ok();
     }
 }

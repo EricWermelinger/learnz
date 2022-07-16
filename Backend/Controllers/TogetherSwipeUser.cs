@@ -12,16 +12,16 @@ public class TogetherSwipeUser : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IPathToImageConverter _pathToImageConverter;
-    private readonly IHubContext<LearnzHub> _learnzHub;
     private readonly HubService _hubService;
+    private readonly ITogetherQueryService _togetherQueryService;
 
-    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IHubContext<LearnzHub> learnzHub)
+    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IHubContext<LearnzHub> learnzHub, ITogetherQueryService togetherQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
         _pathToImageConverter = pathToImageConverter;
-        _learnzHub = learnzHub;
-        _hubService = new HubService(_learnzHub);
+        _hubService = new HubService(learnzHub);
+        _togetherQueryService = togetherQueryService;
     }
 
     [HttpGet]
@@ -136,6 +136,21 @@ public class TogetherSwipeUser : Controller
                 
                 await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[0], connectedUsers[1].UserId);
                 await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[1], connectedUsers[0].UserId);
+
+                var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(connectedUsers[0].UserId);
+                var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(connectedUsers[1].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, connectedUsers[0].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser2, connectedUsers[1].UserId);
+
+                var openAskExists = await _dataContext.TogetherAsks.AnyAsync(ask => (ask.InterestedUserId == connectedUsers[0].UserId && ask.AskedUserId == connectedUsers[1].UserId)
+                                                                                || (ask.InterestedUserId == connectedUsers[1].UserId && ask.AskedUserId == connectedUsers[0].UserId));
+                if (openAskExists)
+                {
+                    var asksUser1 = await _togetherQueryService.GetOpenAsks(connectedUsers[0].UserId);
+                    var asksUser2 = await _togetherQueryService.GetOpenAsks(connectedUsers[1].UserId);
+                    await _hubService.SendMessageToUser(nameof(TogetherAskUser), asksUser1, connectedUsers[0].UserId);
+                    await _hubService.SendMessageToUser(nameof(TogetherAskUser), asksUser2, connectedUsers[1].UserId);
+                }
             }
         }
         await _dataContext.SaveChangesAsync();

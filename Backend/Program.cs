@@ -31,6 +31,7 @@ builder.Services.AddScoped<IFileFinder, FileFinder>();
 builder.Services.AddScoped<IFileAnonymousFinder, FileAnonymousFinder>();
 builder.Services.AddScoped<ISetPolicyChecker, SetPolicyChecker>();
 builder.Services.AddScoped<IPathToImageConverter, PathToImageConverter>();
+builder.Services.AddScoped<ITogetherQueryService, TogetherQueryService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(options => {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
