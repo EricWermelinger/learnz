@@ -11,22 +11,22 @@ public class UserProfile : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IFilePolicyChecker _filePolicyChecker;
-    private readonly IFileFinder _fileFinder;
+    private readonly IFileAnonymousFinder _fileFinder;
+    private readonly IPathToImageConverter _pathToImageConverter;
 
-    public UserProfile(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IFileFinder fileFinder)
+    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder, IPathToImageConverter pathToImageConverter)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _filePolicyChecker = filePolicyChecker;
         _fileFinder = fileFinder;
+        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
     public async Task<ActionResult<UserProfileGetDTO>> GetProfile()
     {
         var guid = _userService.GetUserGuid();
-        var user = await _dataContext.Users.FirstAsync(u => u.Id == guid);
+        var user = await _dataContext.Users.Include(u => u.ProfileImage).FirstAsync(u => u.Id == guid);
         var userProfile = new UserProfileGetDTO
         {
             Username = user.Username,
@@ -34,7 +34,8 @@ public class UserProfile : Controller
             Lastname = user.Lastname,
             Birthdate = user.Birthdate,
             Grade = user.Grade,
-            ProfileImagePath = user.ProfileImage.Path,
+            ProfileImagePath = _pathToImageConverter.PathToImage(user.ProfileImage.Path),
+            ProfileImageName = user.ProfileImage.FileNameExternal,
             Information = user.Information,
             Language = user.Language,
             GoodSubject1 = user.GoodSubject1,
@@ -74,8 +75,7 @@ public class UserProfile : Controller
             return BadRequest(ErrorKeys.UsernameTaken);
         }
 
-        var profileImageId =
-            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        var profileImageId = await _fileFinder.GetFileId(_dataContext, request.ProfileImagePath);
         if (profileImageId == null)
         {
             return BadRequest(ErrorKeys.FileNotValid);
@@ -89,6 +89,7 @@ public class UserProfile : Controller
         user.Grade = request.Grade;
         user.ProfileImageId = (Guid)profileImageId;
         user.Information = request.Information;
+        user.Language = request.Language;
         user.GoodSubject1 = request.GoodSubject1;
         user.GoodSubject2 = request.GoodSubject2;
         user.GoodSubject3 = request.GoodSubject3;

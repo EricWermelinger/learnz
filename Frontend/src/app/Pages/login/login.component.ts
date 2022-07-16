@@ -41,10 +41,6 @@ export class LoginComponent {
 
   login() {
     this.loginService.login(this.form.value);
-    this.form.patchValue({
-      username: '',
-      password: ''
-    });
   }
 
   signUpInstead() {

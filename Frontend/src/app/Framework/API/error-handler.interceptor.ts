@@ -21,7 +21,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   private cloneRequest(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
     return request.clone({
       setHeaders: {
-        [appConfig.API_HEADER_AUTHORIZATION]: `${token}`
+        [appConfig.API_HEADER_AUTHORIZATION]: `${appConfig.API_HEADER_BEARER} ${token}`
       }
     });
   }
@@ -37,14 +37,9 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         if (this.tokenService.isExpired()) {
           this.tokenService.clearToken();
         }
-
-        if ((error.url as string).split('/').some(u => u === endpoints.UserLogin || u === endpoints.UserRefreshToken)) {
-          return this.errorHandler.handleError({
-            error,
-            request
-          });
+        if (error.status !== 401 && error.url.split('/').some((u: any) => u.includes(endpoints.UserRefreshToken))) {
+          this.tokenService.clearToken();
         }
-
         if (error.status === 401) {
           return this.api.callApi<TokenDTO>(endpoints.UserRefreshToken,  {
             refreshToken: this.tokenService.getRefreshToken(),

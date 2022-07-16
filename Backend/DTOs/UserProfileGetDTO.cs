@@ -8,6 +8,7 @@ public class UserProfileGetDTO
     public DateTime Birthdate { get; set; }
     public Grade Grade { get; set; }
     public string ProfileImagePath { get; set; }
+    public string ProfileImageName { get; set; }
     public string Information { get; set; }
     public Language Language { get; set; }
     public Subject GoodSubject1 { get; set; }

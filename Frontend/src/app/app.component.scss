@@ -2,10 +2,22 @@
     padding: 40px;
     padding-top: 20px;
     display: flex;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 117px);
 }
 
-.menu-toggle {
+.header {
     padding-left: 20px;
     padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    .title {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+    }
+}
+
+.application {
+    background-color: var(--learnz-white);
 }

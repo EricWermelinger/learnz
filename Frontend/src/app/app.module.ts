@@ -22,7 +22,6 @@ import { FileUploadComponent } from './Framework/file-upload/file-upload.compone
 import { MatMomentDateModule, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { NavBarComponent } from './Framework/index/nav-bar.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
-import { TogetherComponent } from './Pages/together/together.component';
 import { GroupComponent } from './Pages/group/group.component';
 import { CreateComponent } from './Pages/create/create.component';
 import { LearnComponent } from './Pages/learn/learn.component';
@@ -30,6 +29,12 @@ import { ChallengeComponent } from './Pages/challenge/challenge.component';
 import { TestComponent } from './Pages/test/test.component';
 import { DrawComponent } from './Pages/draw/draw.component';
 import { SettingsComponent } from './Pages/settings/settings.component';
+import { PasswordChangeDialogComponent } from './Pages/settings/password-change-dialog/password-change-dialog.component';
+import { TogetherChatComponent } from './Pages/together/together-chat/together-chat.component';
+import { TogetherSwipeComponent } from './Pages/together/together-swipe/together-swipe.component';
+import { TogetherAskComponent } from './Pages/together/together-ask/together-ask.component';
+import { TogetherConnectComponent } from './Pages/together/together-connect/together-connect.component';
+import { TogetherDetailDialogComponent } from './Pages/together/together-detail-dialog/together-detail-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -47,7 +52,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     FileUploadComponent,
     NavBarComponent,
     DashboardComponent,
-    TogetherComponent,
     GroupComponent,
     CreateComponent,
     LearnComponent,
@@ -55,6 +59,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestComponent,
     DrawComponent,
     SettingsComponent,
+    PasswordChangeDialogComponent,
+    TogetherChatComponent,
+    TogetherSwipeComponent,
+    TogetherAskComponent,
+    TogetherConnectComponent,
+    TogetherDetailDialogComponent,
   ],
   imports: [
     BrowserModule,

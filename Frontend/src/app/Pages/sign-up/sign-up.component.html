@@ -1,5 +1,4 @@
 <form [formGroup]="formGroup">
-    <h1>{{ 'signUp.signUp' | translate }}</h1>
     <mat-form-field>
         <input matInput type="text" formControlName="username" [placeholder]="'signUp.username' | translate">
     </mat-form-field>
@@ -30,7 +29,6 @@
             <mat-option *ngFor="let grade of grades" [value]="grade.value">{{ ('Grade.' + grade.key) | translate }}</mat-option>
         </mat-select>
     </mat-form-field>
-    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()" [translationKey]="'signUp.profileImagePath'"></app-file-upload>
     <mat-form-field>
         <mat-label>{{ 'signUp.information' | translate }}</mat-label>
         <textarea formControlName="information" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
@@ -71,13 +69,17 @@
             <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
         </mat-select>
     </mat-form-field>
+    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()" [translationKey]="'signUp.profileImagePath'"></app-file-upload>
+    <div class="slide-wrapper">
+        <mat-slide-toggle (change)="setDarkTheme(formGroup.value.darkTheme)" formControlName="darkTheme">{{ 'signUp.darkTheme' | translate }}</mat-slide-toggle>
+    </div>
     <mat-error *ngIf="errorVisible$ | async">
         {{ 'signUp.differentSubjects' | translate }}
     </mat-error>
     <button mat-flat-button color="primary" type="submit" (click)="signUp()" [disabled]="!formGroup.valid || !formGroup.dirty">
         {{ 'signUp.signUp' | translate }}
     </button>
-    <button mat-flat-button color="secondary" (click)="loginInstead()">
+    <button mat-flat-button color="accent" (click)="loginInstead()">
         {{ 'signUp.loginInstead' | translate }}
     </button>
 </form>

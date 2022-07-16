@@ -22,7 +22,7 @@ public class UserRefreshToken : Controller
         var user = await _dataContext.Users.Where(usr => usr.RefreshToken == request.RefreshToken && usr.RefreshExpires >= DateTime.UtcNow).FirstOrDefaultAsync();
         if (user == null)
         {
-            return Unauthorized(ErrorKeys.InvalidLogin);
+            return BadRequest(ErrorKeys.InvalidLogin);
         }
 
         var token = TokenAuthentication.CreateToken(user.Id, _configuration);

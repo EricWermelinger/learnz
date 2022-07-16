@@ -12,7 +12,7 @@ public class UserService : IUserService
         _httpContextAccessor = httpContextAccessor;
         _context = context;
     }
-
+    
     public async Task<User> GetUser()
     {
         string guid = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.Name);

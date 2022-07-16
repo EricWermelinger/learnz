@@ -32,6 +32,26 @@ $learnz-dark-theme: mat.define-dark-theme((
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+// toast
 .toast-container .ngx-toastr {
   padding: 0 !important;
+}
+
+// scrollbar
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--learnz-white);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--learnz-black);
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--learnz-grey);
+}
+::-webkit-scrollbar-thumb:active {
+  background: var(--learnz-grey-dark);
 }

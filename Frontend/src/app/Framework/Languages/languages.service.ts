@@ -13,20 +13,6 @@ export class LanguagesService {
     private translateService: TranslateService,
   ) { }
 
-  setLanguageOnStartup() {
-    if (!this.translateService.currentLang) {
-      const tokenLang = this.sanitizeLanguage(this.tokenService.getSelectedLanguage());
-      const browserLang = this.sanitizeLanguage(this.translateService.getBrowserLang());
-      if (!!tokenLang && !this.translateService.currentLang) {
-        this.translateService.use(tokenLang);
-      } else if (!!browserLang && !this.translateService.currentLang) {
-        this.translateService.use(browserLang);
-      } else {
-        this.translateService.use(this.translateService.defaultLang);
-      }
-    }
-  }
-
   sanitizeLanguage(language: string | null | undefined): string | null {
     if (!language) {
       return null;
@@ -61,6 +47,13 @@ export class LanguagesService {
   getLanguageIndex(language: string): number {
     const lang = languages.findIndex(l => l.key === language);
     return lang === -1 ? 1 : lang + 1;
+  }
+
+  getLanguageKey(index: number): string {
+    if (!index || index <= 0) {
+      return languages[0].key;
+    }
+    return languages[index - 1].key;
   }
 }
 

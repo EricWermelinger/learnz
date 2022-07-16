@@ -28,13 +28,13 @@ public class UserLogin : Controller
         var user = await _dataContext.Users.Where(usr => usr.Username == request.Username).FirstOrDefaultAsync();
         if (user == null)
         {
-            return Unauthorized(ErrorKeys.InvalidLogin);
+            return BadRequest(ErrorKeys.InvalidLogin);
         }
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.Password));
         if (!computeHash.SequenceEqual(user.PasswordHash))
         {
-            return Unauthorized(ErrorKeys.InvalidLogin);
+            return BadRequest(ErrorKeys.InvalidLogin);
         }
 
         var token = TokenAuthentication.CreateToken(user.Id, _configuration);

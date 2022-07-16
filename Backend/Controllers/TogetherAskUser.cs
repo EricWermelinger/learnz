@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -10,33 +11,21 @@ public class TogetherAskUser : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TogetherAskUser(DataContext dataContext, IUserService userService)
+    private readonly ITogetherQueryService _togetherQueryService;
+    private readonly HubService _hubService;
+    public TogetherAskUser(DataContext dataContext, IUserService userService, ITogetherQueryService togetherQueryService, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _togetherQueryService = togetherQueryService;
+        _hubService = new HubService(learnzHub);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TogetherUserProfileDTO>>> GetOpenAsks()
     {
         var guid = _userService.GetUserGuid();
-        var users = await _dataContext.TogetherAsks.Where(ask => ask.Answer == null && ask.AskedUserId == guid)
-                                                     .Select(ask => ask.InterestedUser)
-                                                     .Select(usr => new TogetherUserProfileDTO
-                                                     {
-                                                         UserId = usr.Id,
-                                                         Username = usr.Username,
-                                                         Grade = usr.Grade,
-                                                         ProfileImagePath = usr.ProfileImage.Path,
-                                                         Information = usr.Information,
-                                                         GoodSubject1 = usr.GoodSubject1,
-                                                         GoodSubject2 = usr.GoodSubject2,
-                                                         GoodSubject3 = usr.GoodSubject3,
-                                                         BadSubject1 = usr.BadSubject1,
-                                                         BadSubject2 = usr.BadSubject2,
-                                                         BadSubject3 = usr.BadSubject3
-                                                     })
-                                                     .ToListAsync();
+        var users = await _togetherQueryService.GetOpenAsks(guid);
         return Ok(users);
     }
 
@@ -60,6 +49,8 @@ public class TogetherAskUser : Controller
 
         await _dataContext.SaveChangesAsync();
 
+        await TriggerAskWebsocket(guid);
+        await TriggerAskWebsocket(request.UserId);
         return Ok();
     }
 
@@ -86,7 +77,20 @@ public class TogetherAskUser : Controller
                 });
                 await _dataContext.SaveChangesAsync();
             }
+
+            var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(guid);
+            var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(request.UserId);
+            await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, guid);
+            await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser2, request.UserId);
         }
+        await TriggerAskWebsocket(guid);
+        await TriggerAskWebsocket(request.UserId);
         return Ok();
+    }
+
+    private async Task TriggerAskWebsocket(Guid userId)
+    {
+        var openAsks = await _togetherQueryService.GetOpenAsks(userId);
+        await _hubService.SendMessageToUser(nameof(TogetherAskUser), openAsks, userId);
     }
 }

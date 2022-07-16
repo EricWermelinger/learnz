@@ -25,6 +25,7 @@
         "badSubject1":"Worst Subject",
         "badSubject2":"Second worst Subject",
         "badSubject3":"Third worst Subject",
+        "darkTheme":"Dark Theme",
         "loginInstead":"Login instead",
         "differentSubjects":"Please select different subjects."
     },
@@ -32,7 +33,28 @@
         "dashboard":"Dashboard"
     },
     "together":{
-        "together":"Together"
+        "together":"Together",
+        "ask":"Ask",
+        "chat":"Chat",
+        "connect":"Connect",
+        "connectGoTo":"See Connections",
+        "noConnections":"No connections yet",
+        "swipe":"Swipe",
+        "swipeConnectedWith":"Connected with",
+        "you":"You",
+        "noMessage":"No message yet",
+        "message":"Message",
+        "openAsks":"Open invitations",
+        "asksSent":"Invitations sent",
+        "newAsk":"New invitation",
+        "noSentAsks":"No invitations sent",
+        "noOpenAsks":"No open invitations",
+        "username":"Username",
+        "goodSubject":"Good in",
+        "badSubject":"Bad in",
+        "grade":"Grade",
+        "filter":"Filter",
+        "noSearchResults":"No search results"
     },
     "group":{
         "group":"Group"
@@ -53,7 +75,26 @@
         "draw":"Draw"
     },
     "settings":{
-        "settings":"Settings"
+        "settings":"Settings",
+        "username":"Username",
+        "firstname":"Firstname",
+        "lastname":"Lastname",
+        "birthdate":"Birthdate",
+        "grade":"Grade",
+        "profileImagePath":"Profile Image",
+        "information":"Information",
+        "goodSubject1":"Best Subject",
+        "goodSubject2":"Second best Subject",
+        "goodSubject3":"Third best Subject",
+        "badSubject1":"Worst Subject",
+        "badSubject2":"Second worst Subject",
+        "badSubject3":"Third worst Subject",
+        "darkTheme":"Dark Theme",
+        "changePassword":"Change Password",
+        "differentSubjects":"Please select different subjects.",
+        "oldPassword":"Old Password",
+        "newPassword":"New Password",
+        "confirmPassword":"Confirm Password"
     },
     "fileUpload":{
         "uploadSuccessful":"Upload Successful",
@@ -84,6 +125,8 @@
         "usernameTaken_title":"Username taken",
         "passwordNotMatch":"Password not match",
         "passwordNotMatch_title":"Password not match",
+        "togetherNoUserFound":"No User found",
+        "togetherNoUserFound_title":"No User found",
         "unknownError":"Unknown error",
         "unknownError_title":"Unknown error"
     },

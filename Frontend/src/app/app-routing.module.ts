@@ -12,7 +12,10 @@ import { LoginComponent } from './Pages/login/login.component';
 import { SettingsComponent } from './Pages/settings/settings.component';
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
 import { TestComponent } from './Pages/test/test.component';
-import { TogetherComponent } from './Pages/together/together.component';
+import { TogetherAskComponent } from './Pages/together/together-ask/together-ask.component';
+import { TogetherChatComponent } from './Pages/together/together-chat/together-chat.component';
+import { TogetherConnectComponent } from './Pages/together/together-connect/together-connect.component';
+import { TogetherSwipeComponent } from './Pages/together/together-swipe/together-swipe.component';
 
 const routes: Routes = [
   { path: '', redirectTo: `/${appRoutes.Login}`, pathMatch: 'full' },
@@ -23,7 +26,10 @@ const routes: Routes = [
     canActivate: [AppGuard],
     children: [
       { path: appRoutes.Dashboard, component: DashboardComponent },
-      { path: appRoutes.Together, component: TogetherComponent },
+      { path: appRoutes.TogetherAsk, component: TogetherAskComponent },
+      { path: `${appRoutes.TogetherChat}/:${appRoutes.TogetherChatId}`, component: TogetherChatComponent },
+      { path: appRoutes.TogetherConnect, component: TogetherConnectComponent },
+      { path: appRoutes.TogetherSwipe, component: TogetherSwipeComponent },
       { path: appRoutes.Group, component: GroupComponent },
       { path: appRoutes.Create, component: CreateComponent },
       { path: appRoutes.Learn, component: LearnComponent },

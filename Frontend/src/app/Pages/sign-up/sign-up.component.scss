@@ -3,4 +3,11 @@ form {
     grid-template-columns: 1fr;
     gap: 8px;
     max-width: 500px;
+
+    .slide-wrapper {
+        margin-bottom: 8px;
+        display: block;
+        width: calc(100vw - 80px);
+        max-width: 500px;
+    }
 }

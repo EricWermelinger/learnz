@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { UserDarkThemeDTO } from 'src/app/DTOs/User/UserDarkThemeDTO';
 import { UserSignUpDTO } from 'src/app/DTOs/User/UserSignUpDTO';
 import { getGrades } from 'src/app/Enums/Grade';
 import { getSubjects } from 'src/app/Enums/Subject';
@@ -46,6 +47,7 @@ export class SignUpComponent {
       badSubject1: [null, Validators.required],
       badSubject2: [null, Validators.required],
       badSubject3: [null, Validators.required],
+      darkTheme: false,
     });
     this.formGroup.addValidators(() => this.validateDifferentSubjects());
     this.errorVisible$ = this.formGroup.valueChanges.pipe(
@@ -79,6 +81,10 @@ export class SignUpComponent {
       birthdate: ignoreUTC(this.formGroup.value.birthdate),
     } as UserSignUpDTO;
     this.signUpService.save(value);
+  }
+
+  setDarkTheme(darkTheme: boolean) {
+    this.signUpService.setDarkTheme({ darkTheme } as UserDarkThemeDTO);
   }
 
   fileTypes(): string {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -10,47 +11,53 @@ public class TogetherSwipeUser : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TogetherSwipeUser(DataContext dataContext, IUserService userService)
+    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly HubService _hubService;
+    private readonly ITogetherQueryService _togetherQueryService;
+
+    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IHubContext<LearnzHub> learnzHub, ITogetherQueryService togetherQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _pathToImageConverter = pathToImageConverter;
+        _hubService = new HubService(learnzHub);
+        _togetherQueryService = togetherQueryService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<TogetherUserProfileDTO?>> GetNextSwipe()
+    public async Task<ActionResult<TogetherUserProfileDTO>> GetNextSwipe()
     {
         var user = await _userService.GetUser();
-        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id || swp.AskedUserId == user.Id)
-                                                       .Select(swp => swp.SwiperUserId == user.Id ? swp.AskedUserId : swp.SwiperUserId)
+        var alreadySwiped = await _dataContext.TogetherSwipes.Where(swp => swp.SwiperUserId == user.Id)
+                                                       .Select(swp => swp.AskedUserId)
                                                        .ToListAsync();
+        var openSwipes = await _dataContext.TogetherSwipes.Where(swp => swp.AskedUserId == user.Id && swp.Choice)
+                                                        .Select(swp => swp.SwiperUserId)
+                                                        .Where(swp => !alreadySwiped.Contains(swp))
+                                                        .ToListAsync();
         var alreadyConnection = await _dataContext.TogetherConnections
             .Where(cnc => cnc.UserId1 == user.Id || cnc.UserId2 == user.Id)
             .Select(cnc => cnc.UserId1 == user.Id ? cnc.UserId2 : cnc.UserId1)
             .ToListAsync();
 
-        var nextSwipe = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
+        var nextPossibilities = await _dataContext.Users.Where(usr => !alreadySwiped.Contains(usr.Id) && !alreadyConnection.Contains(usr.Id))
+                                          .Where(usr => usr.Id != user.Id)
                                           .Select(usr => new
                                           {
                                               User = usr,
-                                              ScoreSubject = Enum.GetValues(typeof(Subject)).Cast<Subject>().Select(sbj =>
-                                                            user.GoodSubject1 == sbj ? 3 : 0
-                                                            + user.GoodSubject2 == sbj ? 2 : 0
-                                                            + user.GoodSubject3 == sbj ? 1 : 0
-                                                            + usr.GoodSubject1 == sbj ? 3 : 0
-                                                            + usr.GoodSubject2 == sbj ? 2 : 0
-                                                            + usr.GoodSubject3 == sbj ? 1 : 0
-                                                            + user.BadSubject1 == sbj ? -3 : 0
-                                                            + user.BadSubject2 == sbj ? -2 : 0
-                                                            + user.BadSubject3 == sbj ? -1 : 0
-                                                            + usr.BadSubject1 == sbj ? -3 : 0
-                                                            + usr.BadSubject2 == sbj ? -2 : 0
-                                                            + usr.BadSubject3 == sbj ? -1 : 0
-                                                        )
-                                                .Sum(scr => scr),
-                                              ScoreGrade = Math.Abs((int)usr.Grade - (int)usr.Grade),
-                                              TieBreaker = new Random().Next(100)
+                                              ProfileImage = usr.ProfileImage.Path,
+                                              ScoreSubject = CalculateSubjectScore(user, usr),
+                                              ScoreGrade = CalculateGradeScore(user.Grade, usr.Grade),
+                                              TieBreaker = Guid.NewGuid(),
+                                              OpenSwipe = openSwipes.Contains(usr.Id) ? 1 : 0,
                                           })
-                                          .OrderBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
+                                          .OrderByDescending(usr => usr.OpenSwipe)
+                                          .ThenByDescending(usr => usr.TieBreaker)
+                                          .Take(10)
+                                          .ToListAsync();
+
+        var nextSwipe = nextPossibilities.OrderByDescending(usr => usr.OpenSwipe)
+                                          .ThenBy(usr => (usr.ScoreSubject + usr.ScoreGrade))
                                           .ThenBy(usr => usr.ScoreGrade)
                                           .ThenBy(usr => usr.TieBreaker)
                                           .Select(usr => new TogetherUserProfileDTO
@@ -58,7 +65,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImagePath = usr.User.ProfileImage.Path,
+                                              ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage),
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,
@@ -67,7 +74,11 @@ public class TogetherSwipeUser : Controller
                                               BadSubject2 = usr.User.BadSubject2,
                                               BadSubject3 = usr.User.BadSubject3
                                           })
-                                          .FirstOrDefaultAsync();
+                                          .FirstOrDefault();
+        if (nextSwipe == null)
+        {
+            return BadRequest(ErrorKeys.TogetherNoUserFound);
+        }
         return Ok(nextSwipe);
     }
 
@@ -86,6 +97,8 @@ public class TogetherSwipeUser : Controller
                 Choice = request.Choice
             });
 
+            await _dataContext.SaveChangesAsync();
+
             var counts = await _dataContext.TogetherSwipes.Where(swp => (swp.SwiperUserId == guid && swp.AskedUserId == request.UserId && swp.Choice)
                                                                 || (swp.SwiperUserId == request.UserId && swp.AskedUserId == guid && swp.Choice))
                                                     .CountAsync();
@@ -103,9 +116,76 @@ public class TogetherSwipeUser : Controller
                         UserId2 = request.UserId
                     });
                 }
+
+                await _dataContext.SaveChangesAsync();
+
+                var connectedUsers = await _dataContext.Users.Select(usr => new TogetherUserProfileDTO
+                                                                        {
+                                                                            UserId = usr.Id,
+                                                                            Username = usr.Username,
+                                                                            Grade = usr.Grade,
+                                                                            ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                                            Information = usr.Information,
+                                                                            GoodSubject1 = usr.GoodSubject1,
+                                                                            GoodSubject2 = usr.GoodSubject2,
+                                                                            GoodSubject3 = usr.GoodSubject3,
+                                                                            BadSubject1 = usr.BadSubject1,
+                                                                            BadSubject2 = usr.BadSubject2,
+                                                                            BadSubject3 = usr.BadSubject3
+                                                                        })
+                                                                        .Where(usr => usr.UserId == guid || usr.UserId == request.UserId)
+                                                                        .ToListAsync();
+
+                await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[0], connectedUsers[1].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[1], connectedUsers[0].UserId);
+
+                var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(connectedUsers[0].UserId);
+                var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(connectedUsers[1].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, connectedUsers[0].UserId);
+                await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser2, connectedUsers[1].UserId);
+
+                var openAskExists = await _dataContext.TogetherAsks.AnyAsync(ask => (ask.InterestedUserId == connectedUsers[0].UserId && ask.AskedUserId == connectedUsers[1].UserId)
+                                                                                || (ask.InterestedUserId == connectedUsers[1].UserId && ask.AskedUserId == connectedUsers[0].UserId));
+                if (openAskExists)
+                {
+                    var asksUser1 = await _togetherQueryService.GetOpenAsks(connectedUsers[0].UserId);
+                    var asksUser2 = await _togetherQueryService.GetOpenAsks(connectedUsers[1].UserId);
+                    await _hubService.SendMessageToUser(nameof(TogetherAskUser), asksUser1, connectedUsers[0].UserId);
+                    await _hubService.SendMessageToUser(nameof(TogetherAskUser), asksUser2, connectedUsers[1].UserId);
+                }
             }
         }
-        await _dataContext.SaveChangesAsync();
         return Ok();
+    }
+
+    private static int CalculateSubjectScore(User userA, User userB)
+    {
+        int score = 0;
+        var subjects = (Subject[])Enum.GetValues(typeof(Subject));
+        foreach (Subject sbj in subjects)
+        {
+            int subjectScore = 0;
+            subjectScore += userA.GoodSubject1 == sbj ? 3 : 0;
+            subjectScore += userA.GoodSubject2 == sbj ? 2 : 0;
+            subjectScore += userA.GoodSubject3 == sbj ? 1 : 0;
+            subjectScore += userB.GoodSubject1 == sbj ? 3 : 0;
+            subjectScore += userB.GoodSubject2 == sbj ? 2 : 0;
+            subjectScore += userB.GoodSubject3 == sbj ? 1 : 0;
+            subjectScore += userA.BadSubject1 == sbj ? -3 : 0;
+            subjectScore += userA.BadSubject2 == sbj ? -2 : 0;
+            subjectScore += userA.BadSubject3 == sbj ? -1 : 0;
+            subjectScore += userB.BadSubject1 == sbj ? -3 : 0;
+            subjectScore += userB.BadSubject2 == sbj ? -2 : 0;
+            subjectScore += userB.BadSubject3 == sbj ? -1 : 0;
+            score += Math.Abs(subjectScore);
+        }
+        return score;
+    }
+
+    private static int CalculateGradeScore(Grade gradeA, Grade gradeB)
+    {
+        int a = (int)gradeA;
+        int b = (int)gradeB;
+        return Math.Abs(a - b);
     }
 }

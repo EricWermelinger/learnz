@@ -1,3 +1,5 @@
 todo:
-- sign up add darktheme
-- implement user settings
+2. Together - Ask
+- new Asks
+3. Test Together Part
+4. Group
