@@ -43,7 +43,18 @@
         "swipeConnectedWith":"Connected with",
         "you":"You",
         "noMessage":"No message yet",
-        "message":"Message"
+        "message":"Message",
+        "openAsks":"Open invitations",
+        "asksSent":"Invitations sent",
+        "newAsk":"New invitation",
+        "noSentAsks":"No invitations sent",
+        "noOpenAsks":"No open invitations",
+        "username":"Username",
+        "goodSubject":"Good in",
+        "badSubject":"Bad in",
+        "grade":"Grade",
+        "filter":"Filter",
+        "noSearchResults":"No search results"
     },
     "group":{
         "group":"Group"

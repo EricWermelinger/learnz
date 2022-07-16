@@ -50,5 +50,4 @@ public class GroupMessages : Controller
         await _dataContext.SaveChangesAsync();
         return Ok();
     }
-
 }

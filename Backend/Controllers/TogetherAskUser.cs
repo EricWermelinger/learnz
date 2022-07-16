@@ -90,7 +90,7 @@ public class TogetherAskUser : Controller
 
     private async Task TriggerAskWebsocket(Guid userId)
     {
-        var openAsks = _togetherQueryService.GetOpenAsks(userId);
+        var openAsks = await _togetherQueryService.GetOpenAsks(userId);
         await _hubService.SendMessageToUser(nameof(TogetherAskUser), openAsks, userId);
     }
 }

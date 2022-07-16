@@ -7,11 +7,11 @@ export const endpoints = {
     // GroupLeave: 'groupLeave',
     // GroupMessage: 'groupMessage',
     // GroupOverview: 'groupOverview',
-    TogetherAskUser: 'togetherAskUser', // use get post put
+    TogetherAskUser: 'togetherAskUser', // use post
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',
     TogetherSwipeUser: 'togetherSwipeUser',
-    TogetherUsers: 'togetherUsers', // use get
+    TogetherUsersFilter: 'togetherUsersFilter',
     UserDarkTheme: 'userDarkTheme',
     UserLanguage: 'userLanguage',
     UserLogin: 'userLogin',

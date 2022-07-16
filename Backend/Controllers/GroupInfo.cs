@@ -54,7 +54,7 @@ public class GroupInfo : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateGroup(GroupInfoCreateDTO request)
+    public async Task<ActionResult> UpsertGroup(GroupInfoCreateDTO request)
     {
         var guid = _userService.GetUserGuid();
         var existingGroup = await _dataContext.Groups.FirstOrDefaultAsync(g => g.Id == request.GroupId);
