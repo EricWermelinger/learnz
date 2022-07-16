@@ -117,6 +117,8 @@ public class TogetherSwipeUser : Controller
                     });
                 }
 
+                await _dataContext.SaveChangesAsync();
+
                 var connectedUsers = await _dataContext.Users.Select(usr => new TogetherUserProfileDTO
                                                                         {
                                                                             UserId = usr.Id,
@@ -133,7 +135,7 @@ public class TogetherSwipeUser : Controller
                                                                         })
                                                                         .Where(usr => usr.UserId == guid || usr.UserId == request.UserId)
                                                                         .ToListAsync();
-                
+
                 await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[0], connectedUsers[1].UserId);
                 await _hubService.SendMessageToUser(nameof(TogetherSwipeUser), connectedUsers[1], connectedUsers[0].UserId);
 
@@ -153,7 +155,6 @@ public class TogetherSwipeUser : Controller
                 }
             }
         }
-        await _dataContext.SaveChangesAsync();
         return Ok();
     }
 

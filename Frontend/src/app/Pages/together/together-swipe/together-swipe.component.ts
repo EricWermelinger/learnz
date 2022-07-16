@@ -1,10 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { endpoints } from 'src/app/Config/endpoints';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { TogetherSwipeDTO } from 'src/app/DTOs/Together/TogetherSwipeDTO';
 import { TogetherUserProfileDTO } from 'src/app/DTOs/Together/TogetherUserProfileDTO';
-import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
 import { TogetherSwipeConnectedDialogComponent } from './together-swipe-connected-dialog/together-swipe-connected-dialog.component';
 import { TogetherSwipeService } from './together-swipe.service';
 
@@ -13,17 +11,19 @@ import { TogetherSwipeService } from './together-swipe.service';
   templateUrl: './together-swipe.component.html',
   styleUrls: ['./together-swipe.component.scss']
 })
-export class TogetherSwipeComponent {
+export class TogetherSwipeComponent implements OnDestroy {
 
   swipe$: Observable<TogetherUserProfileDTO>;
+  private destroyed$ = new Subject<void>();
 
   constructor(
     private swipeService: TogetherSwipeService,
     private dialog: MatDialog,
-    private ws: WebSocketService,
   ) {
     this.swipe$ = this.swipeService.getNextSwipe();
-    this.swipeService.connectionOccured().subscribe(user => {
+    this.swipeService.connectionOccured().pipe(
+      takeUntil(this.destroyed$),
+    ).subscribe(user => {
       this.openConnected(user);
     });
   }
@@ -50,5 +50,10 @@ export class TogetherSwipeComponent {
     this.dialog.open(TogetherSwipeConnectedDialogComponent, {
       data: user,
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

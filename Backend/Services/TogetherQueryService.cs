@@ -63,6 +63,8 @@ public class TogetherQueryService : ITogetherQueryService
     public async Task<List<TogetherOverviewUserProfileDTO>> GetConnectionOverview(Guid guid)
     {
         var users = await _dataContext.TogetherConnections.Where(cnc => cnc.UserId1 == guid || cnc.UserId2 == guid)
+                                                               .Include(usr => usr.User1.ProfileImage)
+                                                               .Include(usr => usr.User2.ProfileImage)
                                                                .Select(cnc => cnc.UserId1 == guid ? cnc.User2 : cnc.User1)
                                                                .Select(usr => new TogetherOverviewUserProfileDTO
                                                                {

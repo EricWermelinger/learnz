@@ -40,7 +40,9 @@
         "connectGoTo":"See Connections",
         "noConnections":"No connections yet",
         "swipe":"Swipe",
-        "swipeConnectedWith":"Connected with"
+        "swipeConnectedWith":"Connected with",
+        "you":"You",
+        "noMessage":"No message yet"
     },
     "group":{
         "group":"Group"
