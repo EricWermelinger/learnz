@@ -16,11 +16,16 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
-        img {
-            width: 400px;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 50%;
+        .img-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img {
+                width: 400px;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 50%;
+            }
         }
         .username {
             font-size: 24px;

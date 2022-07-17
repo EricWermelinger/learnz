@@ -34,6 +34,9 @@ public class GroupOverview : Controller
                 LastMessageDateSent = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Date
                     : null,
+                LastMessageSentUsername = grp.GroupMessages.Any()
+                    ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Sender.Username
+                    : null,
                 LastMessageSentByMe = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().SenderId == guid
                     : null,

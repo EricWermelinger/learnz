@@ -18,13 +18,19 @@ export class NavBarComponent {
   private routes = [
     { route: appRoutes.Login, key: 'login.login', icon: 'verified_user', navigation: [appRoutes.Login], onLoggedIn: false, layer: 1, isParent: false },
     { route: appRoutes.SignUp, key: 'signUp.signUp', icon: 'account_box', navigation: [appRoutes.SignUp], onLoggedIn: false, layer: 1, isParent: false },
+
     { route: appRoutes.Dashboard, key: 'dashboard.dashboard', icon: 'dashboard', navigation: [appRoutes.App, appRoutes.Dashboard], onLoggedIn: true, layer: 1, isParent: false },
+    
     { route: appRoutes.Together, key: 'together.together', icon: 'people', navigation: [], onLoggedIn: true, layer: 1, isParent: true },
     { route: appRoutes.TogetherAsk, key: 'together.ask', icon: 'question_answer', navigation: [appRoutes.App, appRoutes.TogetherAsk], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.TogetherConnect, key: 'together.connect', icon: 'person_add', navigation: [appRoutes.App, appRoutes.TogetherConnect], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.TogetherChat, key: 'together.chat', icon: '', navigation: [appRoutes.App, appRoutes.TogetherChat], onLoggedIn: null, layer: 2, isParent: false, parent: appRoutes.Together },
     { route: appRoutes.TogetherSwipe, key: 'together.swipe', icon: 'swap_horiz', navigation: [appRoutes.App, appRoutes.TogetherSwipe], onLoggedIn: true, layer: 2, isParent: false, parent: appRoutes.Together },
+    
     { route: appRoutes.Group, key: 'group.group', icon: 'public', navigation: [appRoutes.App, appRoutes.Group], onLoggedIn: true, layer: 1, isParent: false },
+    { route: appRoutes.GroupChat, key: 'group.chat', icon: '', navigation: [appRoutes.App, appRoutes.GroupChat], onLoggedIn: null, layer: 2, isParent: false, parent: appRoutes.Group },
+    { route: appRoutes.GroupFiles, key: 'group.files', icon: '', navigation: [appRoutes.App, appRoutes.GroupFiles], onLoggedIn: null, layer: 2, isParent: false, parent: appRoutes.Group },
+    
     { route: appRoutes.Create, key: 'create.create', icon: 'build', navigation: [appRoutes.App, appRoutes.Create], onLoggedIn: true, layer: 1, isParent: false },
     { route: appRoutes.Learn, key: 'learn.learn', icon: 'school', navigation: [appRoutes.App, appRoutes.Learn], onLoggedIn: true, layer: 1, isParent: false },
     { route: appRoutes.Challenge, key: 'challenge.challenge', icon: 'poll', navigation: [appRoutes.App, appRoutes.Challenge], onLoggedIn: true, layer: 1, isParent: false },

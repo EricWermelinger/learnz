@@ -7,6 +7,7 @@ public class GroupOverviewDTO
     public bool? LastMessageSentByMe { get; set; }
     public string? LastMessage { get; set; }
     public DateTime? LastMessageDateSent { get; set; }
+    public string? LastMessageSentUsername { get; set; }
     public bool? LastMessageWasInfoMessage { get; set; }
     public int NumberOfFiles { get; set; }
 }

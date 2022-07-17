@@ -98,7 +98,7 @@ public class TogetherQueryService : ITogetherQueryService
             }
         }
 
-        return users.OrderBy(usr => usr.LastMessageDateSent).ToList();
+        return users.OrderByDescending(usr => usr.LastMessageDateSent).ToList();
     }
 
     public async Task<TogetherChatDTO> GetMessages(Guid chatFrom, Guid chatTo)

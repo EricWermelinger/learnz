@@ -1,13 +1,14 @@
 export const endpoints = {
     // FileInfo: 'fileInfo',
-    FileUploadDownload: 'fileUploadDownload', // post / put
+    FileUploadDownload: 'fileUploadDownload', // use post / put
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
-    // GroupFiles: 'groupFiles',
-    // GroupInfo: 'groupInfo',
-    // GroupLeave: 'groupLeave',
-    // GroupMessage: 'groupMessage',
-    // GroupOverview: 'groupOverview',
-    TogetherAskUser: 'togetherAskUser', // use post
+    GroupFiles: 'groupFiles', // use get / post
+    GroupInfo: 'groupInfo', // use get / post
+    GroupLeave: 'groupLeave', // use post
+    GroupMessage: 'groupMessage', // use get / post
+    GroupOverview: 'groupOverview', // use get
+    GroupPossibleUsers: 'groupPossibleUsers', // use get
+    TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',
     TogetherSwipeUser: 'togetherSwipeUser',

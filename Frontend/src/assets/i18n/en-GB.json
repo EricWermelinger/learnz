@@ -57,7 +57,9 @@
         "noSearchResults":"No search results"
     },
     "group":{
-        "group":"Group"
+        "group":"Group",
+        "chat":"Chat",
+        "files":"Files"
     },
     "create":{
         "create":"Create"
