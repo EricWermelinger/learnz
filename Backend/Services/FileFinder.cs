@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class FileFinder : IFileFinder
 {
     public async Task<Guid?> GetFileId(DataContext dataContext, Guid userId, string path, IFilePolicyChecker policyChecker)

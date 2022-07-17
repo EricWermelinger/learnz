@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class FileAnonymousFinder : IFileAnonymousFinder
 {
     public async Task<Guid?> GetFileId(DataContext dataContext, string path)

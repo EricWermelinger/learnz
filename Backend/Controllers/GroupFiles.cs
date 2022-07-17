@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -11,12 +12,15 @@ public class GroupFiles : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IFilePolicyChecker _filePolicyChecker;
-
-    public GroupFiles(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker)
+    private readonly IGroupQueryService _groupQueryService;
+    private readonly HubService _hubService;
+    public GroupFiles(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IGroupQueryService groupQueryService, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
         _filePolicyChecker = filePolicyChecker;
+        _groupQueryService = groupQueryService;
+        _hubService = new HubService(learnzHub);
     }
 
     [HttpGet]
@@ -28,29 +32,15 @@ public class GroupFiles : Controller
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
 
-        var files = await _dataContext.GroupFiles
-            .Where(gf => gf.GroupId == groupId)
-            .Select(gf => new FileInfoDTO
-            {
-                FileNameExternal = gf.File.FileNameExternal,
-                FilePath = gf.File.Path,
-                Created = gf.File.Created,
-                CreatedUsername = gf.File.CreatedBy.Username,
-                Modified = gf.File.Modified,
-                ModifiedUsername = gf.File.ModifiedBy.Username,
-                FileFromMe = gf.File.CreatedById == guid,
-                FileEditable = _filePolicyChecker.FileEditable(gf.File, guid),
-                FileDeletable = _filePolicyChecker.FileDeletable(gf.File, guid)
-            })
-            .ToListAsync();
-
+        var files = await _groupQueryService.GetFiles(guid, groupId);
         return Ok(files);
     }
 
     [HttpPost]
     public async Task<ActionResult> EditFiles(GroupFilesEditDTO request)
     {
-        var guid = _userService.GetUserGuid();
+        var user = await _userService.GetUser();
+        var guid = user.Id;
         if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == request.GroupId && gm.UserId == guid)))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
@@ -91,7 +81,30 @@ public class GroupFiles : Controller
             });
         }
 
+        var filesEditedMessage = new GroupMessage
+        {
+            GroupId = request.GroupId,
+            IsInfoMessage = true,
+            Date = DateTime.UtcNow,
+            Message = "filesEdited|" + user.Username,
+            SenderId = guid
+        };
+        _dataContext.GroupMessages.Add(filesEditedMessage);
+
         await _dataContext.SaveChangesAsync();
+
+        var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId)
+                                                             .Select(gm => gm.UserId)
+                                                             .ToListAsync();
+        foreach (var memberId in groupMembersIds)
+        {
+            var fileOverview = await _groupQueryService.GetFiles(memberId, request.GroupId);
+            var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
+            var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
+            await _hubService.SendMessageToUser(nameof(GroupOverview), chatMessages, memberId, request.GroupId);
+        }
 
         return Ok();
     }

@@ -3,6 +3,7 @@ global using Learnz.Framework;
 global using Learnz.Entities;
 global using Learnz.Entities.Enums;
 global using Learnz.DTOs;
+global using Learnz.Services;
 global using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

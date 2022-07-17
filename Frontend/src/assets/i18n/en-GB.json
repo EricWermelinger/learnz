@@ -59,7 +59,12 @@
     "group":{
         "group":"Group",
         "chat":"Chat",
-        "files":"Files"
+        "files":"Files",
+        "groupCreated":"was Created",
+        "userDeleted":"was Removed from the Group",
+        "userAdded":"was Added from the Group",
+        "userLeft":"left the Group",
+        "filesEdited":"edited Groupfiles"
     },
     "create":{
         "create":"Create"

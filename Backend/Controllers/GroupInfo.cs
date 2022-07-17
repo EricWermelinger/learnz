@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Learnz.Controllers;
 
@@ -13,14 +14,17 @@ public class GroupInfo : Controller
     private readonly IFileFinder _fileFinder;
     private readonly IFilePolicyChecker _filePolicyChecker;
     private readonly IPathToImageConverter _pathToImageConverter;
-
-    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker, IPathToImageConverter pathToImageConverter)
+    private readonly IGroupQueryService _groupQueryService;
+    private readonly HubService _hubService;
+    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker, IPathToImageConverter pathToImageConverter, IGroupQueryService groupQueryService, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
         _fileFinder = fileFinder;
         _filePolicyChecker = filePolicyChecker;
         _pathToImageConverter = pathToImageConverter;
+        _groupQueryService = groupQueryService;
+        _hubService = new HubService(learnzHub);
     }
 
     [HttpGet]
@@ -93,7 +97,7 @@ public class GroupInfo : Controller
                 Date = timestamp,
                 GroupId = request.GroupId,
                 IsInfoMessage = true,
-                Message = "groupCreated",
+                Message = "groupCreated|" + request.Name,
                 SenderId = guid
             };
             await _dataContext.GroupMessages.AddAsync(createdMessage);
@@ -139,6 +143,18 @@ public class GroupInfo : Controller
         }
 
         await _dataContext.SaveChangesAsync();
+
+        var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId)
+                                                             .Select(gm => gm.UserId)
+                                                             .ToListAsync();
+        foreach (var memberId in groupMembersIds)
+        {
+            var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
+            var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
+            await _hubService.SendMessageToUser(nameof(GroupOverview), chatMessages, memberId, request.GroupId);
+        }
+
         return Ok();
     }
 }

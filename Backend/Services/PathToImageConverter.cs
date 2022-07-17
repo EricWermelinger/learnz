@@ -1,5 +1,4 @@
-﻿namespace Learnz.Framework;
-
+﻿namespace Learnz.Services;
 public class PathToImageConverter : IPathToImageConverter
 {
     public string PathToImage(string path)

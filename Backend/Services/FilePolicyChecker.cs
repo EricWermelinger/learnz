@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class FilePolicyChecker : IFilePolicyChecker
 {
     public bool FileEditable(LearnzFile file, Guid userId)

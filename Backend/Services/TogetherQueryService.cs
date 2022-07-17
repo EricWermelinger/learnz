@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class TogetherQueryService : ITogetherQueryService
 {
     private readonly DataContext _dataContext;

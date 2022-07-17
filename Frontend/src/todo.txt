@@ -1,5 +1,7 @@
 todo:
-2. Together - Ask
-- new Asks
-3. Test Together Part
-4. Group
+1. Group
+- Websocketize Backend
+- Overview
+- Info Dialog (for new, edit, readonly)
+- Chat
+- Files
