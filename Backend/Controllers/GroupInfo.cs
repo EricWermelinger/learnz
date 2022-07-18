@@ -56,7 +56,7 @@ public class GroupInfo : Controller
                                                     .OrderByDescending(gm => gm.IsAdmin)
                                                     .ThenBy(gm => gm.Username)
                                                     .ToList(),
-                IsUserAdmin = g.AdminId == g.GroupMembers.First(gm => gm.User.Id == guid).UserId
+                IsUserAdmin = g.AdminId == guid
             })
             .FirstAsync();
         return Ok(group);
@@ -95,6 +95,11 @@ public class GroupInfo : Controller
                     UserId = member.Id
                 });
             }
+            await _dataContext.GroupMembers.AddAsync(new GroupMember
+            {
+                GroupId = request.GroupId,
+                UserId = guid
+            });
 
             var createdMessage = new GroupMessage
             {

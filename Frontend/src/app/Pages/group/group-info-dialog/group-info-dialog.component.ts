@@ -88,6 +88,7 @@ export class GroupInfoDialogComponent implements OnInit {
       profileImagePath: groupInfo.profileImagePath,
       profileImageName: groupInfo.profileImageName
     });
+    this.isEditMode = true;
   }
 
   leaveGroup(groupId: string) {

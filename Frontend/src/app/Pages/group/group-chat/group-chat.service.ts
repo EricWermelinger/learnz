@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
@@ -25,5 +26,16 @@ export class GroupChatService {
 
   sendMessage(message: GroupMessageSendDTO) {
     this.api.callApi(endpoints.GroupMessage, message, 'POST').subscribe();
+  }
+
+  translateInfoMessage(message: string): KeyValue<string, string> {
+    let part = message.split('|');
+    if (part.length < 2) {
+      part = [...part, ''];
+    }
+    return {
+      key: 'group.' + part[0],
+      value: part[1]
+    };
   }
 }

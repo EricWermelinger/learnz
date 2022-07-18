@@ -2,7 +2,6 @@
     <h1>{{ (isNewGroup ? 'group.newGroup' : (isEditMode ? 'group.groupInfo' : 'group.editGroup')) | translate }}</h1>
     <div *ngIf="!isEditMode; else editMode">
         <div *ngIf="groupInfo$ | async as groupInfo">
-            <!-- todo styling -->
             <div>
                 <div>{{ groupInfo.name }}</div>
                 <img [src]="groupInfo.profileImagePath">

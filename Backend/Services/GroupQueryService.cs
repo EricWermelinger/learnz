@@ -50,7 +50,7 @@ public class GroupQueryService : IGroupQueryService
 
     public async Task<List<GroupOverviewDTO>> GetGroupOverview(Guid userId)
     {
-        var overview = await _dataContext.Groups.Where(grp => grp.GroupMembers.Select(gm => gm.Id).Contains(userId))
+        var overview = await _dataContext.Groups.Where(grp => grp.GroupMembers.Select(gm => gm.UserId).Contains(userId))
             .Select(grp => new GroupOverviewDTO
             {
                 GroupId = grp.Id,
@@ -73,6 +73,7 @@ public class GroupQueryService : IGroupQueryService
                     : null,
                 NumberOfFiles = grp.GroupFiles.Count()
             })
+            .OrderByDescending(grp => grp.LastMessageDateSent)
             .ToListAsync();
         return overview;
     }

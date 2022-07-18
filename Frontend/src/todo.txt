@@ -1,6 +1,6 @@
 todo:
 1. Group
-- Overview
-- Info Dialog (for new, edit, readonly)
+- Not edited files are falsy
+- Info Dialog check design readonly & check edit
 - Chat
 - Files

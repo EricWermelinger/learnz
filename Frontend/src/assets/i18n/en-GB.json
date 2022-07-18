@@ -61,8 +61,8 @@
         "chat":"Chat",
         "files":"Files",
         "groupCreated":"was Created",
-        "userDeleted":"was Removed from the Group",
-        "userAdded":"was Added from the Group",
+        "userDeleted":"was Removed to the Group",
+        "userAdded":"was Added to the Group",
         "userLeft":"left the Group",
         "filesEdited":"edited Groupfiles",
         "newGroup":"New Group",
@@ -73,7 +73,9 @@
         "description":"Description",
         "profileImage":"Profile Image",
         "groupMembers":"Group Members",
-        "user":"User"
+        "user":"User",
+        "you":"You",
+        "noGroups":"No groups yet"
     },
     "create":{
         "create":"Create"
