@@ -1,0 +1,10 @@
+<div *ngIf="!isEditMode; else editMode">
+    <div *ngIf="groupInfo$ | async as groupInfo">
+        <!-- todo readonly infos -->
+        <!-- todo get field of admin -->
+        <!-- <button *ngIf="groupInfo.isAdmin" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button> -->
+    </div>
+</div>
+<ng-template #editMode>
+    <!-- todo formgroup -->
+</ng-template>

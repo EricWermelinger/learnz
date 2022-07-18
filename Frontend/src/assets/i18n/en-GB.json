@@ -64,7 +64,9 @@
         "userDeleted":"was Removed from the Group",
         "userAdded":"was Added from the Group",
         "userLeft":"left the Group",
-        "filesEdited":"edited Groupfiles"
+        "filesEdited":"edited Groupfiles",
+        "newGroup":"New Group",
+        "editGroup":"Edit Group"
     },
     "create":{
         "create":"Create"

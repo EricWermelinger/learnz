@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { GroupInfoDialogComponent } from './group-info-dialog/group-info-dialog.component';
 import { GroupService } from './group.service';
 
 @Component({
@@ -10,6 +12,12 @@ export class GroupComponent {
 
   constructor(
     private groupService: GroupService,
+    private dialog: MatDialog,
   ) { }
 
+  openDialog() {
+    this.dialog.open(GroupInfoDialogComponent, {
+      data: null,
+    });
+  }
 }
