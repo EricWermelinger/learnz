@@ -6,4 +6,5 @@ export interface GroupInfoDTO {
   description: string;
   profileImagePath: string;
   members: GroupInfoMemberDTO[];
+  isUserAdmin: boolean;
 }

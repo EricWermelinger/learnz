@@ -25,10 +25,10 @@ export class GroupInfoDialogService {
   }
 
   upsertGroup(group: GroupInfoCreateDTO) {
-    this.api.callApi(endpoints.GroupInfo, group, 'POST').subscribe();
+    return this.api.callApi(endpoints.GroupInfo, group, 'POST');
   }
 
   leaveGroup(group: GroupLeaveDTO) {
-    this.api.callApi(endpoints.GroupLeave, group, 'POST').subscribe();
+    return this.api.callApi(endpoints.GroupLeave, group, 'POST');
   }
 }

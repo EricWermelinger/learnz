@@ -44,14 +44,18 @@ public class GroupInfo : Controller
                 Description = g.Description,
                 ProfileImagePath = _pathToImageConverter.PathToImage(g.ProfileImage.Path),
                 Members = g.GroupMembers.Select(gm => new GroupInfoMemberDTO
-                {
-                    UserId = gm.UserId,
-                    Firstname = gm.User.Firstname,
-                    Lastname = gm.User.Lastname,
-                    Username = gm.User.Username,
-                    IsAdmin = g.AdminId == gm.UserId,
-                    ProfileImagePath = _pathToImageConverter.PathToImage(gm.User.ProfileImage.Path)
-                }).ToList()
+                                                    {
+                                                        UserId = gm.UserId,
+                                                        Firstname = gm.User.Firstname,
+                                                        Lastname = gm.User.Lastname,
+                                                        Username = gm.User.Username,
+                                                        IsAdmin = g.AdminId == gm.UserId,
+                                                        ProfileImagePath = _pathToImageConverter.PathToImage(gm.User.ProfileImage.Path)
+                                                    })
+                                                    .OrderByDescending(gm => gm.IsAdmin)
+                                                    .ThenBy(gm => gm.Username)
+                                                    .ToList(),
+                IsUserAdmin = g.AdminId == g.GroupMembers.First(gm => gm.User.Id == guid).UserId
             })
             .FirstAsync();
         return Ok(group);

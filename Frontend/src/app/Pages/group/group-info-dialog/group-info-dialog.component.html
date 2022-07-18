@@ -1,10 +1,42 @@
 <div *ngIf="!isEditMode; else editMode">
     <div *ngIf="groupInfo$ | async as groupInfo">
-        <!-- todo readonly infos -->
-        <!-- todo get field of admin -->
-        <!-- <button *ngIf="groupInfo.isAdmin" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button> -->
+        <!-- todo styling -->
+        <div>
+            <div>{{ groupInfo.name }}</div>
+            <img [src]="groupInfo.profileImagePath">
+            <div>{{ groupInfo.description }}</div>
+            <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
+            <ng-template #leave>
+                <button mat-button color="primary" (click)="leaveGroup(groupInfo.groupId)">{{ 'group.leaveGroup' | translate }}</button>
+            </ng-template>
+        </div>
+        <mat-divider></mat-divider>
+        <div *ngFor="let user of groupInfo.members">
+            <img [src]="user.profileImagePath">
+            <div>{{ user.username }}</div>
+            <div>{{ user.firstname }}</div>
+            <div>{{ user.lastname }}</div>
+            <div *ngIf="user.isAdmin">
+                <mat-icon>verified_user</mat-icon>
+            </div>
+        </div>
     </div>
 </div>
 <ng-template #editMode>
-    <!-- todo formgroup -->
+    <div *ngIf="possibleUsers$ | async as possibleUsers">
+        <!-- todo formgroup, styling -->
+        <form [formGroup]="formGroup">
+            <mat-form-field>
+                <input matInput type="text" formControlName="name" [placeholder]="'group.name' | translate">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>{{ 'group.description' | translate }}</mat-label>
+                <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+            </mat-form-field>
+            <!-- <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'settings.profileImagePath'" [externalFileName]="formGroup.value.profileImageName"></app-file-upload> -->
+            <!-- members -->
+            <button mat-button (click)="closeDialog()">{{ 'framework.cancel' | translate }}</button>
+            <button mat-button color="primary" type="submit" (click)="upsertGroup()" [disabled]="!formGroup.valid || !formGroup.dirty">{{ 'framework.save' | translate }}</button>
+        </form>
+    </div>    
 </ng-template>

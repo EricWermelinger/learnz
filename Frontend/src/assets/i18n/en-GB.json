@@ -66,7 +66,8 @@
         "userLeft":"left the Group",
         "filesEdited":"edited Groupfiles",
         "newGroup":"New Group",
-        "editGroup":"Edit Group"
+        "editGroup":"Edit Group",
+        "leaveGroup":"Leave Group"
     },
     "create":{
         "create":"Create"
