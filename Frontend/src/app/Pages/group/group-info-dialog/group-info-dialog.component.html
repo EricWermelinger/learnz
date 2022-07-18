@@ -1,42 +1,62 @@
-<div *ngIf="!isEditMode; else editMode">
-    <div *ngIf="groupInfo$ | async as groupInfo">
-        <!-- todo styling -->
-        <div>
-            <div>{{ groupInfo.name }}</div>
-            <img [src]="groupInfo.profileImagePath">
-            <div>{{ groupInfo.description }}</div>
-            <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
-            <ng-template #leave>
-                <button mat-button color="primary" (click)="leaveGroup(groupInfo.groupId)">{{ 'group.leaveGroup' | translate }}</button>
-            </ng-template>
-        </div>
-        <mat-divider></mat-divider>
-        <div *ngFor="let user of groupInfo.members">
-            <img [src]="user.profileImagePath">
-            <div>{{ user.username }}</div>
-            <div>{{ user.firstname }}</div>
-            <div>{{ user.lastname }}</div>
-            <div *ngIf="user.isAdmin">
-                <mat-icon>verified_user</mat-icon>
+<mat-dialog-content>
+    <h1>{{ (isNewGroup ? 'group.newGroup' : (isEditMode ? 'group.groupInfo' : 'group.editGroup')) | translate }}</h1>
+    <div *ngIf="!isEditMode; else editMode">
+        <div *ngIf="groupInfo$ | async as groupInfo">
+            <!-- todo styling -->
+            <div>
+                <div>{{ groupInfo.name }}</div>
+                <img [src]="groupInfo.profileImagePath">
+                <div>{{ groupInfo.description }}</div>
+                <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
+                <ng-template #leave>
+                    <button mat-button color="primary" (click)="leaveGroup(groupInfo.groupId)">{{ 'group.leaveGroup' | translate }}</button>
+                </ng-template>
+            </div>
+            <mat-divider></mat-divider>
+            <div *ngFor="let user of groupInfo.members">
+                <img [src]="user.profileImagePath">
+                <div>{{ user.username }}</div>
+                <div>{{ user.firstname }}</div>
+                <div>{{ user.lastname }}</div>
+                <div *ngIf="user.isAdmin">
+                    <mat-icon>verified_user</mat-icon>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<ng-template #editMode>
-    <div *ngIf="possibleUsers$ | async as possibleUsers">
-        <!-- todo formgroup, styling -->
-        <form [formGroup]="formGroup">
-            <mat-form-field>
-                <input matInput type="text" formControlName="name" [placeholder]="'group.name' | translate">
-            </mat-form-field>
-            <mat-form-field>
-                <mat-label>{{ 'group.description' | translate }}</mat-label>
-                <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
-            </mat-form-field>
-            <!-- <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'settings.profileImagePath'" [externalFileName]="formGroup.value.profileImageName"></app-file-upload> -->
-            <!-- members -->
-            <button mat-button (click)="closeDialog()">{{ 'framework.cancel' | translate }}</button>
-            <button mat-button color="primary" type="submit" (click)="upsertGroup()" [disabled]="!formGroup.valid || !formGroup.dirty">{{ 'framework.save' | translate }}</button>
-        </form>
-    </div>    
-</ng-template>
+    <ng-template #editMode>
+        <div *ngIf="ready$ | async">
+            <form [formGroup]="formGroup" class="form">
+                <mat-form-field>
+                    <input matInput type="text" formControlName="name" [placeholder]="'group.name' | translate">
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>{{ 'group.description' | translate }}</mat-label>
+                    <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+                </mat-form-field>
+                <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'group.profileImage'" [externalFileName]="formGroup.value.profileImageName" [breakLine]="true"></app-file-upload>
+                <mat-form-field>
+                    <mat-label>{{ 'group.groupMembers' | translate }}</mat-label>
+                    <mat-chip-list #chipList>
+                        <mat-chip *ngFor="let userId of selectedUser" (removed)="removeUser(userId)">
+                        {{ getNameFromId(userId) }}
+                            <button matChipRemove>
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        </mat-chip>
+                        <input [placeholder]="'group.user' | translate" #userIdInput [formControl]="groupFormUserId" [matAutocomplete]="auto" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addUser($event)">
+                    </mat-chip-list>
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectUser($event)">
+                        <mat-option *ngFor="let user of filteredOptionsGroup$ | async" [value]="user.userId">
+                            {{ user.username }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <div class="buttons">
+                    <button mat-button (click)="closeDialog()">{{ 'framework.cancel' | translate }}</button>
+                    <button mat-button color="primary" type="submit" (click)="upsertGroup()" [disabled]="!formGroup.valid || !formGroup.dirty">{{ 'framework.save' | translate }}</button>
+                </div>
+            </form>
+        </div>    
+    </ng-template>
+</mat-dialog-content>

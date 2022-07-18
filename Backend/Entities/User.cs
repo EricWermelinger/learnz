@@ -25,7 +25,7 @@ public class User
     public string? RefreshToken { get; set; }
     
     public ICollection<Group> GroupAdmin { get; set; }
-    public ICollection<GroupMember> GroupMembers { get; set; }
+    public ICollection<GroupMember> GroupUsers { get; set; }
     public ICollection<LearnzFile> LearnzFileCreated { get; set; }
     public ICollection<LearnzFile> LearnzFileModified { get; set; }
     public ICollection<TogetherAsk> TogetherAskInterestedUsers { get; set; }

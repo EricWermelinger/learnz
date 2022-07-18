@@ -67,7 +67,13 @@
         "filesEdited":"edited Groupfiles",
         "newGroup":"New Group",
         "editGroup":"Edit Group",
-        "leaveGroup":"Leave Group"
+        "groupInfo":"Group Info",
+        "leaveGroup":"Leave Group",
+        "name":"Groupname",
+        "description":"Description",
+        "profileImage":"Profile Image",
+        "groupMembers":"Group Members",
+        "user":"User"
     },
     "create":{
         "create":"Create"

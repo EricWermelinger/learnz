@@ -1,6 +1,5 @@
 todo:
 1. Group
-- Websocketize Backend
 - Overview
 - Info Dialog (for new, edit, readonly)
 - Chat

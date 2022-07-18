@@ -16,3 +16,8 @@
         margin-left: 16px;
     }
 }
+.break-line {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}

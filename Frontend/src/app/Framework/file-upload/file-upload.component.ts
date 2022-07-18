@@ -37,6 +37,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
+  @Input() breakLine: boolean = false;
   
   constructor(
     private api: ApiService,

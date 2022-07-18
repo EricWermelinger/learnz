@@ -43,8 +43,8 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<GroupMember>()
             .HasOne(gm => gm.User)
-            .WithMany(u => u.GroupMembers)
-            .HasForeignKey(gm => gm.GroupId)
+            .WithMany(u => u.GroupUsers)
+            .HasForeignKey(gm => gm.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<GroupMessage>()

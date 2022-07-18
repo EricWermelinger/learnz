@@ -1,4 +1,4 @@
-<div class="file-upload">
+<div [ngClass]="{ 'file-upload': true, 'break-line': breakLine }">
     <div *ngIf="_filePath; else fileUpload">
         <button mat-flat-button color="accent" type="button" (click)="downloadFile()">
             {{ !_externalFileName ? ('fileUpload.file' | translate) : _externalFileName }}

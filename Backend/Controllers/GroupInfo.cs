@@ -43,6 +43,7 @@ public class GroupInfo : Controller
                 Name = g.Name,
                 Description = g.Description,
                 ProfileImagePath = _pathToImageConverter.PathToImage(g.ProfileImage.Path),
+                ProfileImageName = g.ProfileImage.FileNameExternal,
                 Members = g.GroupMembers.Select(gm => new GroupInfoMemberDTO
                                                     {
                                                         UserId = gm.UserId,
@@ -68,8 +69,7 @@ public class GroupInfo : Controller
         var existingGroup = await _dataContext.Groups.FirstOrDefaultAsync(g => g.Id == request.GroupId);
         var timestamp = DateTime.UtcNow;
 
-        var profileImageId =
-            await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
+        var profileImageId = await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
         if (profileImageId == null)
         {
             return BadRequest(ErrorKeys.FileNotValid);

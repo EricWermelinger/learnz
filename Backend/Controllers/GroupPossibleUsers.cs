@@ -10,12 +10,10 @@ public class GroupPossibleUsers : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
-    public GroupPossibleUsers(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
+    public GroupPossibleUsers(DataContext dataContext, IUserService userService)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
     }
 
     [HttpGet]
@@ -28,7 +26,6 @@ public class GroupPossibleUsers : Controller
                                                                   {
                                                                       UserId = usr.Id,
                                                                       Username = usr.Username,
-                                                                      ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path)
                                                                   })
                                                                   .ToListAsync();
         return Ok(possibleUsers);
