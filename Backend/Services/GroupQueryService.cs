@@ -32,7 +32,7 @@ public class GroupQueryService : IGroupQueryService
         return files;
     }
 
-    public async Task<List<GroupMessageGetDTO>> GetMessages(Guid userId, Guid groupId)
+    public async Task<GroupMessageChatDTO> GetMessages(Guid userId, Guid groupId)
     {
         var messages = await _dataContext.GroupMessages.Where(msg => msg.GroupId == groupId)
             .OrderByDescending(msg => msg.Date)
@@ -45,7 +45,14 @@ public class GroupQueryService : IGroupQueryService
                 IsInfoMessage = msg.IsInfoMessage
             })
             .ToListAsync();
-        return messages;
+        var group = await _dataContext.Groups.Include(g => g.ProfileImage).FirstAsync(g => g.Id == groupId);
+        var chat = new GroupMessageChatDTO
+        {
+            GroupName = group.Name,
+            ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(group.ProfileImage.Path),
+            Messages = messages
+        };
+        return chat;
     }
 
     public async Task<List<GroupOverviewDTO>> GetGroupOverview(Guid userId)

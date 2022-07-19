@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
-import { GroupMessageGetDTO } from 'src/app/DTOs/Group/GroupMessageGetDTO';
+import { GroupMessageChatDTO } from 'src/app/DTOs/Group/GroupMessageChatDTO';
 import { GroupMessageSendDTO } from 'src/app/DTOs/Group/GroupMessageSendDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
@@ -17,15 +17,15 @@ export class GroupChatService {
     private ws: WebSocketService,
   ) { }
 
-  getMessages(groupId: string): Observable<GroupMessageGetDTO[]> {
+  getMessages(groupId: string): Observable<GroupMessageChatDTO> {
     return merge(
-      this.api.callApi<GroupMessageGetDTO[]>(endpoints.GroupMessage, { groupId }, 'GET'),
-      this.ws.webSocketData<GroupMessageGetDTO[]>(endpoints.GroupMessage, [] as GroupMessageGetDTO[], groupId),
+      this.api.callApi<GroupMessageChatDTO>(endpoints.GroupMessages, { groupId }, 'GET'),
+      this.ws.webSocketData<GroupMessageChatDTO>(endpoints.GroupMessages, {} as GroupMessageChatDTO, groupId),
     );
   }
 
   sendMessage(message: GroupMessageSendDTO) {
-    this.api.callApi(endpoints.GroupMessage, message, 'POST').subscribe();
+    return this.api.callApi(endpoints.GroupMessages, message, 'POST');
   }
 
   translateInfoMessage(message: string): KeyValue<string, string> {

@@ -5,7 +5,7 @@ export const endpoints = {
     GroupFiles: 'groupFiles', // use get / post
     GroupInfo: 'groupInfo', // use get / post
     GroupLeave: 'groupLeave', // use post
-    GroupMessage: 'groupMessage', // use get / post
+    GroupMessages: 'groupMessages', // use get / post
     GroupOverview: 'groupOverview', // use get
     GroupPossibleUsers: 'groupPossibleUsers', // use get
     TogetherAskUser: 'togetherAskUser',

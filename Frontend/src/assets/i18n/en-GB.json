@@ -75,7 +75,8 @@
         "groupMembers":"Group Members",
         "user":"User",
         "you":"You",
-        "noGroups":"No groups yet"
+        "noGroups":"No groups yet",
+        "message":"Message"
     },
     "create":{
         "create":"Create"

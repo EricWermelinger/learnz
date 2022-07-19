@@ -122,7 +122,7 @@ public class GroupInfo : Controller
             var existingMember =
                 await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId).ToListAsync();
             var addedMembers = await _dataContext.Users.Where(u =>
-                request.Members.Contains(u.Id) && !existingMember.Select(em => em.Id).Contains(u.Id))
+                request.Members.Contains(u.Id) && !existingMember.Select(em => em.UserId).Contains(u.Id))
                 .ToListAsync();
             var deletedMembers = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId && !request.Members.Contains(gm.UserId))
                 .Where(gm => existingGroup.AdminId != gm.UserId)

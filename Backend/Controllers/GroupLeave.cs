@@ -50,7 +50,7 @@ public class GroupLeave : Controller
             var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
             var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
             await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
-            await _hubService.SendMessageToUser(nameof(GroupOverview), chatMessages, memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, request.GroupId);
         }
 
         return Ok();

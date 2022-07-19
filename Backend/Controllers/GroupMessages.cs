@@ -22,9 +22,14 @@ public class GroupMessages : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<GroupMessageGetDTO>>> GetMessages(Guid groupId)
+    public async Task<ActionResult<GroupMessageChatDTO>> GetMessages(Guid groupId)
     {
         var guid = _userService.GetUserGuid();
+        var isInGroup = await _dataContext.GroupMembers.AnyAsync(gm => gm.UserId == guid && gm.GroupId == groupId);
+        if (!isInGroup)
+        {
+            return BadRequest(ErrorKeys.AccessBlocked);
+        }
         var messages = await _groupQueryService.GetMessages(guid, groupId);
         return Ok(messages);
     }
@@ -52,7 +57,7 @@ public class GroupMessages : Controller
             var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
             var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
             await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
-            await _hubService.SendMessageToUser(nameof(GroupOverview), chatMessages, memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, request.GroupId);
         }
 
         return Ok();
