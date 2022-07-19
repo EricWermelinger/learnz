@@ -61,7 +61,7 @@
         "chat":"Chat",
         "files":"Files",
         "groupCreated":"was Created",
-        "userDeleted":"was Removed to the Group",
+        "userDeleted":"was Removed from the Group",
         "userAdded":"was Added to the Group",
         "userLeft":"left the Group",
         "filesEdited":"edited Groupfiles",

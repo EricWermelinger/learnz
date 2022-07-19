@@ -85,7 +85,7 @@ export class GroupInfoDialogComponent implements OnInit {
   }
 
   edit(groupInfo: GroupInfoDTO) {
-    this.selectedUser = groupInfo.members.map(user => user.userId);
+    this.selectedUser = groupInfo.members.map(user => user.userId).filter(userId => this.getNameFromId(userId) !== '');
     this.formGroup.patchValue({
       groupId: groupInfo.groupId,
       description: groupInfo.description,

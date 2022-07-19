@@ -57,7 +57,7 @@ public class GroupInfo : Controller
                                                     .ToList(),
                 IsUserAdmin = g.AdminId == guid
             })
-            .FirstAsync();
+            .FirstAsync(g => g.GroupId == groupId);
         return Ok(group);
     }
 
@@ -67,6 +67,10 @@ public class GroupInfo : Controller
         var guid = _userService.GetUserGuid();
         var existingGroup = await _dataContext.Groups.FirstOrDefaultAsync(g => g.Id == request.GroupId);
         var timestamp = DateTime.UtcNow;
+
+        var previousMemberIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId)
+                                                             .Select(gm => gm.UserId)
+                                                             .ToListAsync();
 
         var profileImageId = await _fileFinder.GetFileId(_dataContext, guid, request.ProfileImagePath, _filePolicyChecker);
         if (profileImageId == null)
@@ -121,33 +125,42 @@ public class GroupInfo : Controller
                 request.Members.Contains(u.Id) && !existingMember.Select(em => em.Id).Contains(u.Id))
                 .ToListAsync();
             var deletedMembers = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId && !request.Members.Contains(gm.UserId))
+                .Where(gm => existingGroup.AdminId != gm.UserId)
+                .Include(gm => gm.User)
                 .ToListAsync();
             var newUsers = addedMembers.Select(am => new GroupMember
             {
                 GroupId = request.GroupId,
                 UserId = am.Id
             });
-            var deletedMembersMessage = deletedMembers.Select(dm => new GroupMessage
-            {
-                GroupId = request.GroupId,
-                IsInfoMessage = true,
-                Date = timestamp,
-                Message = "userDeleted|" + dm.User.Username,
-                SenderId = guid
-            });
-            var addedMembersMessage = addedMembers.Select(am => new GroupMessage
-            {
-                GroupId = request.GroupId,
-                IsInfoMessage = true,
-                Date = timestamp,
-                Message = "userAdded|" + am.Username,
-                SenderId = guid
-            });
-
+            
             _dataContext.GroupMembers.RemoveRange(deletedMembers);
             await _dataContext.GroupMembers.AddRangeAsync(newUsers);
-            await _dataContext.GroupMessages.AddRangeAsync(deletedMembersMessage);
-            await _dataContext.GroupMessages.AddRangeAsync(addedMembersMessage);
+            
+            if (deletedMembers != null && deletedMembers.Count > 0)
+            {
+                var deletedMembersMessage = deletedMembers.Select(dm => new GroupMessage
+                {
+                    GroupId = request.GroupId,
+                    IsInfoMessage = true,
+                    Date = timestamp,
+                    Message = "userDeleted|" + dm.User.Username,
+                    SenderId = guid
+                });
+                await _dataContext.GroupMessages.AddRangeAsync(deletedMembersMessage);
+            }
+            if (addedMembers != null && addedMembers.Count > 0)
+            {
+                var addedMembersMessage = addedMembers.Select(am => new GroupMessage
+                {
+                    GroupId = request.GroupId,
+                    IsInfoMessage = true,
+                    Date = timestamp,
+                    Message = "userAdded|" + am.Username,
+                    SenderId = guid
+                });
+                await _dataContext.GroupMessages.AddRangeAsync(addedMembersMessage);
+            }
         }
 
         await _dataContext.SaveChangesAsync();
@@ -155,12 +168,21 @@ public class GroupInfo : Controller
         var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId)
                                                              .Select(gm => gm.UserId)
                                                              .ToListAsync();
+        
+        foreach (var memberId in previousMemberIds)
+        {
+            if (!groupMembersIds.Contains(memberId))
+            {
+                groupMembersIds.Add(memberId);
+            }
+        }
+
         foreach (var memberId in groupMembersIds)
         {
             var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
             var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
             await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
-            await _hubService.SendMessageToUser(nameof(GroupOverview), chatMessages, memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, request.GroupId);
         }
 
         return Ok();
