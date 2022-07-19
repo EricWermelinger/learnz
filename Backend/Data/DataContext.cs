@@ -59,18 +59,6 @@ public class DataContext : DbContext
             .HasForeignKey(gm => gm.GroupId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<LearnzFile>()
-            .HasOne(f => f.CreatedBy)
-            .WithMany(u => u.LearnzFileCreated)
-            .HasForeignKey(f => f.CreatedById)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<LearnzFile>()
-            .HasOne(f => f.ModifiedBy)
-            .WithMany(u => u.LearnzFileModified)
-            .HasForeignKey(f => f.ModifiedById)
-            .OnDelete(DeleteBehavior.Restrict);
-
         modelBuilder.Entity<TogetherAsk>()
             .HasOne(ta => ta.InterestedUser)
             .WithMany(u => u.TogetherAskInterestedUsers)
@@ -196,6 +184,12 @@ public class DataContext : DbContext
             .WithMany(cs => cs.QuestionWords)
             .HasForeignKey(cqd => cqd.SetId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LearnzFileVersion>()
+            .HasOne(lfv => lfv.File)
+            .WithMany(fil => fil.LearnzFileVersions)
+            .HasForeignKey(lfv => lfv.FileId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -209,4 +203,5 @@ public class DataContext : DbContext
     public virtual DbSet<GroupMessage> GroupMessages { get; set; }
     public virtual DbSet<LearnzFile> Files { get; set; }
     public virtual DbSet<LearnzFileAnonymous> FilesAnonymous { get; set; }
+    public virtual DbSet<LearnzFileVersion> FileVersions { get; set; }
 }

@@ -5,9 +5,9 @@ public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
     {
         return new LearnzFileFrontendDTO
         {
-            Path = file.Path,
-            ExternalFilename = file.FileNameExternal,
-            ByteString = PathToImage(file.Path)
+            Path = file.ActualVersionPath,
+            ExternalFilename = file.ActualVersionFileNameExternal,
+            ByteString = PathToImage(file.ActualVersionPath)
         };
     }
 
