@@ -1,25 +1,38 @@
 <mat-dialog-content>
-    <h1>{{ (isNewGroup ? 'group.newGroup' : (isEditMode ? 'group.groupInfo' : 'group.editGroup')) | translate }}</h1>
+    <h1>{{ (isNewGroup ? 'group.newGroup' : (isEditMode ? 'group.editGroup' : 'group.groupInfo')) | translate }}</h1>
     <div *ngIf="!isEditMode; else editMode">
         <div *ngIf="groupInfo$ | async as groupInfo">
-            <div>
-                <div>{{ groupInfo.name }}</div>
-                <img [src]="groupInfo.profileImage.byteString">
-                <div>{{ groupInfo.description }}</div>
-                <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
-                <ng-template #leave>
-                    <button mat-button color="primary" (click)="leaveGroup(groupInfo.groupId)">{{ 'group.leaveGroup' | translate }}</button>
-                </ng-template>
+            <div class="header">
+                <div class="name">{{ groupInfo.name }}</div>
+                <div class="img-wrap">
+                    <img [src]="groupInfo.profileImage.byteString">
+                </div>
+                <div class="description">{{ groupInfo.description }}</div>
+                <div class="button-wrap">
+                    <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
+                    <ng-template #leave>
+                        <button mat-button (click)="leaveGroup(groupInfo.groupId)">{{ 'group.leaveGroup' | translate }}</button>
+                    </ng-template>
+                </div>
             </div>
             <mat-divider></mat-divider>
             <div *ngFor="let user of groupInfo.members">
-                <img [src]="user.profileImagePath">
-                <div>{{ user.username }}</div>
-                <div>{{ user.firstname }}</div>
-                <div>{{ user.lastname }}</div>
-                <div *ngIf="user.isAdmin">
-                    <mat-icon>verified_user</mat-icon>
+                <div class="user">
+                    <img [src]="user.profileImagePath">
+                    <div class="text-wrap">
+                        <div class="username">{{ user.username }}</div>
+                    </div>
+                    <div class="text-wrap">
+                        <div>{{ user.firstname }}</div>
+                    </div>
+                    <div class="text-wrap">
+                        <div>{{ user.lastname }}</div>
+                    </div>
+                    <div class="text-wrap">
+                        <mat-icon *ngIf="user.isAdmin">verified_user</mat-icon>
+                    </div>
                 </div>
+                <mat-divider></mat-divider>
             </div>
         </div>
     </div>
@@ -53,7 +66,7 @@
                 </mat-form-field>
                 <div class="buttons">
                     <button mat-button (click)="closeDialog()">{{ 'framework.cancel' | translate }}</button>
-                    <button mat-button color="primary" type="submit" (click)="upsertGroup()" [disabled]="!formGroup.valid || !formGroup.dirty">{{ 'framework.save' | translate }}</button>
+                    <button mat-button color="primary" type="submit" (click)="upsertGroup()" [disabled]="!formGroup.valid || !formGroup.dirty || !groupFormUserId.valid">{{ 'framework.save' | translate }}</button>
                 </div>
             </form>
         </div>    

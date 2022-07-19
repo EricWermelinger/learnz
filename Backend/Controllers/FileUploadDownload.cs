@@ -102,7 +102,7 @@ public class FileUploadDownload : Controller
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateFile(FilePathDTO request)
+    public async Task<ActionResult<FilePathDTO>> UpdateFile(FilePathDTO request)
     {
         try
         {
@@ -137,7 +137,13 @@ public class FileUploadDownload : Controller
                 }
 
                 await _dataContext.SaveChangesAsync();
-                return Ok();
+
+                FilePathDTO fileDto = new FilePathDTO
+                {
+                    Path = dbFile.Path,
+                    ExternalFilename = dbFile.FileNameExternal
+                };
+                return Ok(fileDto);
             }
             return BadRequest(ErrorKeys.FileNotProvided);
         }
