@@ -1,7 +1,7 @@
 <div [ngClass]="{ 'file-upload': true, 'break-line': breakLine }">
     <div *ngIf="_filePath; else fileUpload">
         <button mat-flat-button color="accent" type="button" (click)="downloadFile()">
-            {{ !_externalFileName ? ('fileUpload.file' | translate) : _externalFileName }}
+            {{ !_externalFilename ? ('fileUpload.file' | translate) : _externalFilename }}
         </button>
         <button mat-icon-button class="space" (click)="removeFile()">
             <mat-icon>delete</mat-icon>

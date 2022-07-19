@@ -4,7 +4,7 @@
         <div *ngIf="groupInfo$ | async as groupInfo">
             <div>
                 <div>{{ groupInfo.name }}</div>
-                <img [src]="groupInfo.profileImagePath">
+                <img [src]="groupInfo.profileImage.byteString">
                 <div>{{ groupInfo.description }}</div>
                 <button *ngIf="groupInfo.isUserAdmin; else leave" mat-button color="primary" (click)="edit(groupInfo)">{{ 'group.editGroup' | translate }}</button>
                 <ng-template #leave>
@@ -33,7 +33,7 @@
                     <mat-label>{{ 'group.description' | translate }}</mat-label>
                     <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
                 </mat-form-field>
-                <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'group.profileImage'" [externalFileName]="formGroup.value.profileImageName" [breakLine]="true"></app-file-upload>
+                <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'group.profileImage'" [externalFilename]="formGroup.value.profileImage.externalFilename" [breakLine]="true"></app-file-upload>
                 <mat-form-field>
                     <mat-label>{{ 'group.groupMembers' | translate }}</mat-label>
                     <mat-chip-list #chipList>

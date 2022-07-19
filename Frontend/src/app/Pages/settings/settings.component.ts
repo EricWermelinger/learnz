@@ -39,8 +39,8 @@ export class SettingsComponent {
       lastname: ['', Validators.required],
       birthdate: [null, Validators.required],
       grade: [null, Validators.required],
+      profileImage: null,
       profileImagePath: '',
-      profileImageName: '',
       information: ['', Validators.required],
       languageKey: ['', Validators.required],
       goodSubject1: [null, Validators.required],
@@ -53,11 +53,12 @@ export class SettingsComponent {
     });
     this.formGroup.addValidators(() => this.validateDifferentSubjects());
     this.settings$ = this.settingsService.getUserProfile();
-    this.settings$.subscribe((user: any) => {
+    this.settings$.subscribe(user => {
       this.formGroup.patchValue(user);
       this.formGroup.patchValue({
         birthdate: user.birthdate,
         languageKey: this.languageService.getLanguageKey(user.language),
+        profileImagePath: user.profileImage.path,
       });
     });
     this.errorVisible$ = this.formGroup.valueChanges.pipe(

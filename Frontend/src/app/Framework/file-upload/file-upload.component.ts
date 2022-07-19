@@ -27,12 +27,12 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   progress: number = 0;
   message: string = '';
   _filePath: string = '';
-  _externalFileName: string = '';
+  _externalFilename: string = '';
   @Input() set filePath(filePath: string) {
     this._filePath = filePath;
   }
-  @Input() set externalFileName(externalFileName: string) {
-    this._externalFileName = externalFileName;
+  @Input() set externalFilename(externalFilename: string) {
+    this._externalFilename = externalFilename;
   }
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
@@ -59,7 +59,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
         this.message = 'fileUpload.uploadSuccessful';
         const body = (event.body as FilePathDTO);
         this.updateValue(body.path);
-        this._externalFileName = body.externalFileName;
+        this._externalFilename = body.externalFilename;
         this.progress = 0;
       }
     });
@@ -67,7 +67,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
 
   removeFile() {
     this.updateValue('');
-    this._externalFileName = '';
+    this._externalFilename = '';
     this.message = '';
     this.progress = 0;
   }
@@ -91,7 +91,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     const a = document.createElement('a');
     a.setAttribute('style', 'display:none;');
     document.body.appendChild(a);
-    a.download = this._externalFileName;
+    a.download = this._externalFilename;
     a.href = URL.createObjectURL(downloadedFile);
     a.target = '_blank';
     a.click();

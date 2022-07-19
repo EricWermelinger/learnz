@@ -12,14 +12,14 @@ public class UserProfile : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IFileAnonymousFinder _fileFinder;
-    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
 
-    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder, IPathToImageConverter pathToImageConverter)
+    public UserProfile(DataContext dataContext, IUserService userService, IFileAnonymousFinder fileFinder, ILearnzFrontendFileGenerator learnzFrontendFileGenerator)
     {
         _dataContext = dataContext;
         _userService = userService;
         _fileFinder = fileFinder;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
     }
 
     [HttpGet]
@@ -34,8 +34,7 @@ public class UserProfile : Controller
             Lastname = user.Lastname,
             Birthdate = user.Birthdate,
             Grade = user.Grade,
-            ProfileImagePath = _pathToImageConverter.PathToImage(user.ProfileImage.Path),
-            ProfileImageName = user.ProfileImage.FileNameExternal,
+            ProfileImage = _learnzFrontendFileGenerator.AnonymousFrontendFile(user.ProfileImage),
             Information = user.Information,
             Language = user.Language,
             GoodSubject1 = user.GoodSubject1,

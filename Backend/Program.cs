@@ -31,7 +31,7 @@ builder.Services.AddScoped<IFilePolicyChecker, FilePolicyChecker>();
 builder.Services.AddScoped<IFileFinder, FileFinder>();
 builder.Services.AddScoped<IFileAnonymousFinder, FileAnonymousFinder>();
 builder.Services.AddScoped<ISetPolicyChecker, SetPolicyChecker>();
-builder.Services.AddScoped<IPathToImageConverter, PathToImageConverter>();
+builder.Services.AddScoped<ILearnzFrontendFileGenerator, LearnzFrontendFileGenerator>();
 builder.Services.AddScoped<ITogetherQueryService, TogetherQueryService>();
 builder.Services.AddScoped<IGroupQueryService, GroupQueryService>();
 builder.Services.AddHttpContextAccessor();

@@ -13,16 +13,16 @@ public class GroupInfo : Controller
     private readonly IUserService _userService;
     private readonly IFileFinder _fileFinder;
     private readonly IFilePolicyChecker _filePolicyChecker;
-    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
     private readonly IGroupQueryService _groupQueryService;
     private readonly HubService _hubService;
-    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker, IPathToImageConverter pathToImageConverter, IGroupQueryService groupQueryService, IHubContext<LearnzHub> learnzHub)
+    public GroupInfo(DataContext dataContext, IUserService userService, IFileFinder fileFinder, IFilePolicyChecker filePolicyChecker, ILearnzFrontendFileGenerator learnzFrontendFileGenerator, IGroupQueryService groupQueryService, IHubContext<LearnzHub> learnzHub)
     {
         _dataContext = dataContext;
         _userService = userService;
         _fileFinder = fileFinder;
         _filePolicyChecker = filePolicyChecker;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
         _groupQueryService = groupQueryService;
         _hubService = new HubService(learnzHub);
     }
@@ -42,8 +42,7 @@ public class GroupInfo : Controller
                 GroupId = g.Id,
                 Name = g.Name,
                 Description = g.Description,
-                ProfileImagePath = _pathToImageConverter.PathToImage(g.ProfileImage.Path),
-                ProfileImageName = g.ProfileImage.FileNameExternal,
+                ProfileImage = _learnzFrontendFileGenerator.FrontendFile(g.ProfileImage),
                 Members = g.GroupMembers.Select(gm => new GroupInfoMemberDTO
                                                     {
                                                         UserId = gm.UserId,
@@ -51,7 +50,7 @@ public class GroupInfo : Controller
                                                         Lastname = gm.User.Lastname,
                                                         Username = gm.User.Username,
                                                         IsAdmin = g.AdminId == gm.UserId,
-                                                        ProfileImagePath = _pathToImageConverter.PathToImage(gm.User.ProfileImage.Path)
+                                                        ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(gm.User.ProfileImage.Path)
                                                     })
                                                     .OrderByDescending(gm => gm.IsAdmin)
                                                     .ThenBy(gm => gm.Username)

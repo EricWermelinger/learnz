@@ -10,13 +10,13 @@ public class GroupOverview : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
     private readonly IGroupQueryService _groupQueryService;
-    public GroupOverview(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IGroupQueryService groupQueryService)
+    public GroupOverview(DataContext dataContext, IUserService userService, ILearnzFrontendFileGenerator learnzFrontendFileGenerator, IGroupQueryService groupQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
         _groupQueryService = groupQueryService;
     }
 

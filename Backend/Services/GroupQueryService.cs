@@ -2,12 +2,12 @@
 public class GroupQueryService : IGroupQueryService
 {
     private readonly DataContext _dataContext;
-    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
     private readonly IFilePolicyChecker _filePolicyChecker;
-    public GroupQueryService(DataContext dataContext, IPathToImageConverter pathToImageConverter, IFilePolicyChecker filePolicyChecker)
+    public GroupQueryService(DataContext dataContext, ILearnzFrontendFileGenerator learnzFrontendFileGenerator, IFilePolicyChecker filePolicyChecker)
     {
         _dataContext = dataContext;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
         _filePolicyChecker = filePolicyChecker;
     }
 
@@ -55,7 +55,7 @@ public class GroupQueryService : IGroupQueryService
             {
                 GroupId = grp.Id,
                 GroupName = grp.Name,
-                ProfileImagePath = _pathToImageConverter.PathToImage(grp.ProfileImage.Path),
+                ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(grp.ProfileImage.Path),
                 LastMessage = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Message
                     : null,

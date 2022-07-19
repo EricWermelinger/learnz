@@ -2,11 +2,11 @@
 public class TogetherQueryService : ITogetherQueryService
 {
     private readonly DataContext _dataContext;
-    private readonly IPathToImageConverter _pathToImageConverter;
-    public TogetherQueryService(DataContext dataContext, IPathToImageConverter pathToImageConverter)
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
+    public TogetherQueryService(DataContext dataContext, ILearnzFrontendFileGenerator learnzFrontendFileGenerator)
     {
         _dataContext = dataContext;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
     }
 
     public async Task<TogetherAskOverviewDTO> GetOpenAsks(Guid guid)
@@ -23,7 +23,7 @@ public class TogetherQueryService : ITogetherQueryService
                                                          UserId = usr.Id,
                                                          Username = usr.Username,
                                                          Grade = usr.Grade,
-                                                         ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                         ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage.Path),
                                                          Information = usr.Information,
                                                          GoodSubject1 = usr.GoodSubject1,
                                                          GoodSubject2 = usr.GoodSubject2,
@@ -42,7 +42,7 @@ public class TogetherQueryService : ITogetherQueryService
                                                          UserId = usr.Id,
                                                          Username = usr.Username,
                                                          Grade = usr.Grade,
-                                                         ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                         ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage.Path),
                                                          Information = usr.Information,
                                                          GoodSubject1 = usr.GoodSubject1,
                                                          GoodSubject2 = usr.GoodSubject2,
@@ -71,7 +71,7 @@ public class TogetherQueryService : ITogetherQueryService
                                                                    UserId = usr.Id,
                                                                    Username = usr.Username,
                                                                    Grade = usr.Grade,
-                                                                   ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                                   ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage.Path),
                                                                    Information = usr.Information,
                                                                    GoodSubject1 = usr.GoodSubject1,
                                                                    GoodSubject2 = usr.GoodSubject2,
@@ -118,7 +118,7 @@ public class TogetherQueryService : ITogetherQueryService
                                                             Username = usr.Username,
                                                             Grade = usr.Grade,
                                                             Information = usr.Information,
-                                                            ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                            ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage.Path),
                                                             GoodSubject1 = usr.GoodSubject1,
                                                             GoodSubject2 = usr.GoodSubject2,
                                                             GoodSubject3 = usr.GoodSubject3,

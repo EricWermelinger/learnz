@@ -42,8 +42,8 @@ export class GroupInfoDialogComponent implements OnInit {
       groupId: null,
       description: ['', Validators.required],
       name: ['', Validators.required],
+      profileImage: null,
       profileImagePath: ['', Validators.required],
-      profileImageName: null,
     });
     if (data === null) {
       this.isNewGroup = true;
@@ -85,8 +85,8 @@ export class GroupInfoDialogComponent implements OnInit {
       groupId: groupInfo.groupId,
       description: groupInfo.description,
       name: groupInfo.name,
-      profileImagePath: groupInfo.profileImagePath,
-      profileImageName: groupInfo.profileImageName
+      profileImage: groupInfo.profileImage,
+      profileImagePath: groupInfo.profileImage.path
     });
     this.isEditMode = true;
   }

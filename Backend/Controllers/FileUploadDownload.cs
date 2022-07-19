@@ -89,7 +89,7 @@ public class FileUploadDownload : Controller
                 FilePathDTO fileDto = new FilePathDTO
                 {
                     Path = dbFile.Path,
-                    ExternalFileName = dbFile.FileNameExternal
+                    ExternalFilename = dbFile.FileNameExternal
                 };
                 return Ok(fileDto);
             }
