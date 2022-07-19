@@ -5,17 +5,17 @@ todo:
 Single File
 -> Create File -> ok
 -> Download File -> ok
--> Delete File
+-> Delete File -> ok
 Historize
--> Get History
--> Update Version
--> Download Versions
--> Revert to Version
--> Delete File (with versions)
+-> Get History -> historyVersions GET
+-> Update Version -> historyUploadDownload POST
+-> Download Versions -> historyUploadDownload GET
+-> Revert to Version -> historyVersions POST
+-> Delete File (with versions) -> normal DELETE
 File Context
-- View History
-- Update Version
-- Delete File
+- View History -> open popup
+- Update Version -> open explorer
+- Delete File -> delete
 
 - Implement Group Files
 -> Make Group Files Autosave
