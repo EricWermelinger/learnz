@@ -190,6 +190,12 @@ public class DataContext : DbContext
             .WithMany(fil => fil.LearnzFileVersions)
             .HasForeignKey(lfv => lfv.FileId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LearnzFile>()
+            .HasOne(f => f.Owner)
+            .WithMany(u => u.LearnzFileOwner)
+            .HasForeignKey(f => f.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }

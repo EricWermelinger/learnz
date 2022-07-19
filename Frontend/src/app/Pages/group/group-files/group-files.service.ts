@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
-import { FileInfoDTO } from 'src/app/DTOs/File/FileInfoDTO';
+import { LearnzFileFrontendDTO } from 'src/app/DTOs/File/LearnzFileFrontendDTO';
 import { GroupFilesEditDTO } from 'src/app/DTOs/Group/GroupFilesEditDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
@@ -16,10 +16,10 @@ export class GroupFilesService {
     private ws: WebSocketService,
   ) { }
 
-  getFiles(groupId: string): Observable<FileInfoDTO[]> {
+  getFiles(groupId: string): Observable<LearnzFileFrontendDTO[]> {
     return merge(
-      this.api.callApi<FileInfoDTO[]>(endpoints.GroupFiles, { groupId }, 'GET'),
-      this.ws.webSocketData<FileInfoDTO[]>(endpoints.GroupFiles, [] as FileInfoDTO[], groupId),
+      this.api.callApi<LearnzFileFrontendDTO[]>(endpoints.GroupFiles, { groupId }, 'GET'),
+      this.ws.webSocketData<LearnzFileFrontendDTO[]>(endpoints.GroupFiles, [] as LearnzFileFrontendDTO[], groupId),
     );
   }
 

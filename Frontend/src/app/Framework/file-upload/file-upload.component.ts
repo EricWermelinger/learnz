@@ -24,8 +24,6 @@ import { ApiService } from '../API/api.service';
 })
 export class FileUploadComponent implements ControlValueAccessor, Validator {
 
-  progress: number = 0;
-  message: string = '';
   _filePath: string = '';
   _externalFilename: string = '';
   @Input() set filePath(filePath: string) {
@@ -37,7 +35,6 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
-  @Input() breakLine: boolean = false;
   
   constructor(
     private api: ApiService,
@@ -47,43 +44,37 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     if (files.length === 0) {
       return;
     }
-    this.message = 'fileUpload.uploading';
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
-    this.api.callFileUpload(endpoint, formData).subscribe((event: any) => {
-      if (event.type === HttpEventType.UploadProgress) {
-        this.progress = this.sanitizePercent(event.loaded, event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.message = 'fileUpload.uploadSuccessful';
+    this.api.callFileUpload(this.getEndpoint(), formData).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
         const body = (event.body as FilePathDTO);
         this.updateValue(body.path);
         this._externalFilename = body.externalFilename;
-        this.progress = 0;
       }
     });
   }
 
   removeFile() {
+    const path = this._filePath;
     this.updateValue('');
     this._externalFilename = '';
-    this.message = '';
-    this.progress = 0;
+    this.api.callApi(this.getEndpoint(), {
+      filePath: path
+    }, 'DELETE').subscribe();
   }
 
   downloadFile() {
-    this.message = 'fileUpload.downloading';
-    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
-    this.api.callFileDownload(endpoint, { filePath: this._filePath }).subscribe((event: any) => {
-      if (event.type === HttpEventType.DownloadProgress) {
-        this.progress = this.sanitizePercent(event.loaded, event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.message = 'fileUpload.downloadSuccessful';
-        this.progress = 0;
+    this.api.callFileDownload(this.getEndpoint(), { filePath: this._filePath }).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
         this.download(event);
       }
     });
+  }
+  
+  private getEndpoint() {
+    return this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
   }
 
   private download(data: any) {
@@ -96,11 +87,6 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     a.target = '_blank';
     a.click();
     document.body.removeChild(a);
-  }
-
-  private sanitizePercent(loaded: number, total: number): number {
-    const percent = Math.round(loaded * 100 / total);
-    return percent === 100 ? 99 : percent;
   }
 
   touched = false;

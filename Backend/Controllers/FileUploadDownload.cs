@@ -27,12 +27,12 @@ public class FileUploadDownload : Controller
     public async Task<ActionResult> FileDownload(string filePath)
     {
         var guid = _userService.GetUserGuid();
-        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == filePath && _filePolicyChecker.FileDownloadable(f, guid));
-        if (file == null)
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
+        if (file == null || !_filePolicyChecker.FileDownloadable(file, guid))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
-        string path = file.Path;
+        string path = file.ActualVersionPath;
         var memory = new MemoryStream();
         await using (var stream = new FileStream(path, FileMode.Open))
         {
@@ -58,24 +58,33 @@ public class FileUploadDownload : Controller
             {
                 DateTime timeStamp = DateTime.UtcNow;
                 var guid = _userService.GetUserGuid();
+                Guid fileVersionId = Guid.NewGuid();
                 Guid fileId = Guid.NewGuid();
-                
+
                 string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string fileNameInternal = fileId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
+                string fileNameInternal = fileVersionId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
                 string folderName = _configuration["Files:Folder"];
                 string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
 
                 LearnzFile dbFile = new LearnzFile
                 {
                     Id = fileId,
+                    ActualVersionId = fileVersionId,
+                    ActualVersionFileNameExternal = fileNameExternal,
+                    ActualVersionPath = path,
+                    FilePolicy = FilePolicy.Private,
+                    OwnerId = guid
+                };
+
+                LearnzFileVersion dbVersion = new LearnzFileVersion
+                {
+                    Id = fileVersionId,
                     Created = timeStamp,
                     CreatedById = guid,
-                    Modified = timeStamp,
-                    ModifiedById = guid,
                     FileNameExternal = fileNameExternal,
                     FileNameInternal = fileNameInternal,
-                    FilePolicy = FilePolicy.Private,
-                    Path = path
+                    Path = path,
+                    FileId = fileId
                 };
                 
                 using (var stream = new FileStream(path, FileMode.Create))
@@ -85,11 +94,13 @@ public class FileUploadDownload : Controller
 
                 await _dataContext.Files.AddAsync(dbFile);
                 await _dataContext.SaveChangesAsync();
+                await _dataContext.FileVersions.AddAsync(dbVersion);
+                await _dataContext.SaveChangesAsync();
 
                 FilePathDTO fileDto = new FilePathDTO
                 {
-                    Path = dbFile.Path,
-                    ExternalFilename = dbFile.FileNameExternal
+                    Path = dbVersion.Path,
+                    ExternalFilename = dbVersion.FileNameExternal
                 };
                 return Ok(fileDto);
             }
@@ -101,55 +112,28 @@ public class FileUploadDownload : Controller
         }
     }
 
-    [HttpPut]
-    public async Task<ActionResult<FilePathDTO>> UpdateFile(FilePathDTO request)
+    [HttpDelete]
+    public async Task<ActionResult> DeleteFile(string filePath)
     {
+        var guid = _userService.GetUserGuid();
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
+        if (file == null || !_filePolicyChecker.FileDeletable(file, guid))
+        {
+            return BadRequest(ErrorKeys.FileNotAccessible);
+        }
         try
         {
-            IFormFile file = Request.Form.Files[0];
-            if (file.Length > 0)
-            {
-                DateTime timeStamp = DateTime.UtcNow;
-                var guid = _userService.GetUserGuid();
-                
-                var dbFile = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == request.Path && _filePolicyChecker.FileEditable(f, guid));
-                if (dbFile == null)
-                {
-                    return BadRequest(ErrorKeys.FileNotFound);
-                }
-
-                Guid versionId = Guid.NewGuid();
-                string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string fileNameInternal = versionId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
-                string folderName = _configuration["Files:Folder"];
-                string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
-
-                dbFile.ActualVersionId = versionId;
-                dbFile.FileNameExternal = fileNameExternal;
-                dbFile.FileNameInternal = fileNameInternal;
-                dbFile.Path = path;
-                dbFile.Modified = timeStamp;
-                dbFile.ModifiedById = guid;
-
-                using (var stream = new FileStream(dbFile.Path, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
-
-                await _dataContext.SaveChangesAsync();
-
-                FilePathDTO fileDto = new FilePathDTO
-                {
-                    Path = dbFile.Path,
-                    ExternalFilename = dbFile.FileNameExternal
-                };
-                return Ok(fileDto);
-            }
-            return BadRequest(ErrorKeys.FileNotProvided);
+            System.IO.File.Delete(filePath);
         }
-        catch (Exception ex)
+        catch
         {
-            return BadRequest(ErrorKeys.FileUploadUnsuccessful);
+            // do nothing
         }
+        var versions = await _dataContext.FileVersions.Where(lvf => lvf.FileId == file.Id).ToListAsync();
+        _dataContext.RemoveRange(versions);
+        await _dataContext.SaveChangesAsync();
+        _dataContext.Remove(file);
+        await _dataContext.SaveChangesAsync();
+        return Ok();
     }
 }

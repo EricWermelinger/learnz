@@ -9,7 +9,7 @@ public class FilePolicyChecker : IFilePolicyChecker
                 return true;
             case FilePolicy.Private:
             case FilePolicy.OnlySelfEditable:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -22,7 +22,7 @@ public class FilePolicyChecker : IFilePolicyChecker
             case FilePolicy.Everyone:
             case FilePolicy.OnlySelfEditable:
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -36,7 +36,7 @@ public class FilePolicyChecker : IFilePolicyChecker
             case FilePolicy.OnlySelfEditable:
                 return true;
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -50,7 +50,7 @@ public class FilePolicyChecker : IFilePolicyChecker
             case FilePolicy.OnlySelfEditable:
                 return true;
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }

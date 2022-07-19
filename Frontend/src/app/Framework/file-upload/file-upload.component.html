@@ -1,4 +1,4 @@
-<div [ngClass]="{ 'file-upload': true, 'break-line': breakLine }">
+<div class="file-upload">
     <div *ngIf="_filePath; else fileUpload">
         <button mat-flat-button color="accent" type="button" (click)="downloadFile()">
             {{ !_externalFilename ? ('fileUpload.file' | translate) : _externalFilename }}
@@ -11,10 +11,4 @@
         <input type="file" #file class="hidden" (change)="uploadFile(file.files)" [accept]="fileTypes">
         <button mat-flat-button color="accent" type="button" (click)="file.click()">{{ ('fileUpload.uploadFile' | translate) + (translationKey ? ' ' + (translationKey | translate) : '') }}</button>
     </ng-template>
-    <div *ngIf="progress > 0" class="center space">
-        <div class="space">{{ progress }}%</div>
-    </div>
-    <div *ngIf="message" class="center space">
-        <div>{{ message | translate }}</div>
-    </div>
 </div>

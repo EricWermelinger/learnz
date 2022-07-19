@@ -11,21 +11,15 @@ public class GroupQueryService : IGroupQueryService
         _filePolicyChecker = filePolicyChecker;
     }
 
-    public async Task<List<FileInfoDTO>> GetFiles(Guid userId, Guid groupId)
+    public async Task<List<LearnzFileFrontendDTO>> GetFiles(Guid userId, Guid groupId)
     {
         var files = await _dataContext.GroupFiles
             .Where(gf => gf.GroupId == groupId)
-            .Select(gf => new FileInfoDTO
+            .Select(gf => new LearnzFileFrontendDTO
             {
-                FileNameExternal = gf.File.FileNameExternal,
-                FilePath = gf.File.Path,
-                Created = gf.File.Created,
-                CreatedUsername = gf.File.CreatedBy.Username,
-                Modified = gf.File.Modified,
-                ModifiedUsername = gf.File.ModifiedBy.Username,
-                FileFromMe = gf.File.CreatedById == userId,
-                FileEditable = _filePolicyChecker.FileEditable(gf.File, userId),
-                FileDeletable = _filePolicyChecker.FileDeletable(gf.File, userId)
+                ExternalFilename = gf.File.ActualVersionFileNameExternal,
+                Path = gf.File.ActualVersionPath,
+                ByteString = _learnzFrontendFileGenerator.PathToImage(gf.File.ActualVersionPath),
             })
             .ToListAsync();
 
@@ -49,7 +43,7 @@ public class GroupQueryService : IGroupQueryService
         var chat = new GroupMessageChatDTO
         {
             GroupName = group.Name,
-            ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(group.ProfileImage.Path),
+            ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(group.ProfileImage.ActualVersionPath),
             Messages = messages
         };
         return chat;
@@ -62,7 +56,7 @@ public class GroupQueryService : IGroupQueryService
             {
                 GroupId = grp.Id,
                 GroupName = grp.Name,
-                ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(grp.ProfileImage.Path),
+                ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(grp.ProfileImage.ActualVersionPath),
                 LastMessage = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Message
                     : null,

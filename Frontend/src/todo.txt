@@ -1,6 +1,21 @@
 todo:
 1. Group
-- Not edited files are falsy
-- Info Dialog check design readonly & check edit
-- Chat
-- Files
+
+- Historize File
+Single File
+-> Create File -> ok
+-> Download File -> ok
+-> Delete File
+Historize
+-> Get History
+-> Update Version
+-> Download Versions
+-> Revert to Version
+-> Delete File (with versions)
+File Context
+- View History
+- Update Version
+- Delete File
+
+- Implement Group Files
+-> Make Group Files Autosave

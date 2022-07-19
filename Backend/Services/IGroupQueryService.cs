@@ -1,7 +1,10 @@
-﻿namespace Learnz.Services;
-public interface IGroupQueryService
+﻿
+namespace Learnz.Services
 {
-    Task<List<FileInfoDTO>> GetFiles(Guid userId, Guid groupId);
-    Task<List<GroupOverviewDTO>> GetGroupOverview(Guid userId);
-    Task<GroupMessageChatDTO> GetMessages(Guid userId, Guid groupId);
+    public interface IGroupQueryService
+    {
+        Task<List<LearnzFileFrontendDTO>> GetFiles(Guid userId, Guid groupId);
+        Task<List<GroupOverviewDTO>> GetGroupOverview(Guid userId);
+        Task<GroupMessageChatDTO> GetMessages(Guid userId, Guid groupId);
+    }
 }
