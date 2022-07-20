@@ -2,9 +2,9 @@
 {
     public interface ILearnzFrontendFileGenerator
     {
-        LearnzFileFrontendDTO AnonymousFrontendFile(LearnzFileAnonymous file);
-        LearnzFileFrontendDTO FrontendFile(LearnzFile file);
-        LearnzFileFrontendDTO FrontendFileFromVersion(LearnzFileVersion file);
+        FileFrontendDTO AnonymousFrontendFile(LearnzFileAnonymous file);
+        FileFrontendDTO FrontendFile(LearnzFile file);
+        FileFrontendDTO FrontendFileFromVersion(LearnzFileVersion file);
         string PathToImage(string path);
     }
 }

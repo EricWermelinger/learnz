@@ -1,4 +1,4 @@
-export interface LearnzFileFrontendDTO {
+export interface FileFrontendDTO {
     path: string;
     externalFilename: string;
     byteString: string;

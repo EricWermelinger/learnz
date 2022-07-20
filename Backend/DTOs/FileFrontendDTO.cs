@@ -1,5 +1,5 @@
 ﻿namespace Learnz.DTOs;
-public class LearnzFileFrontendDTO
+public class FileFrontendDTO
 {
     public string Path { get; set; }
     public string ExternalFilename { get; set; }

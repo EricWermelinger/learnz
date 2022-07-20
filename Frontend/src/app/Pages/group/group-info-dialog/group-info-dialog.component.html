@@ -46,7 +46,7 @@
                     <mat-label>{{ 'group.description' | translate }}</mat-label>
                     <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
                 </mat-form-field>
-                <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'group.profileImage'" [externalFilename]="formGroup.value.profileImage.externalFilename"></app-file-upload>
+                <app-file-upload formControlName="profileImagePath" [fileTypes]="fileTypes()" [translationKey]="'group.profileImage'" [externalFilename]="formGroup.value.profileImage.externalFilename" [historized]="true"></app-file-upload>
                 <mat-form-field>
                     <mat-label>{{ 'group.groupMembers' | translate }}</mat-label>
                     <mat-chip-list #chipList>

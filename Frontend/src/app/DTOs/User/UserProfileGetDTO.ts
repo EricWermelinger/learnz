@@ -1,4 +1,4 @@
-﻿import { LearnzFileFrontendDTO } from "../File/LearnzFileFrontendDTO";
+﻿import { FileFrontendDTO } from "../File/FileFrontendDTO";
 
 export interface UserProfileGetDTO {
   username: string;
@@ -6,7 +6,7 @@ export interface UserProfileGetDTO {
   lastname: string;
   birthdate: Date;
   grade: number;
-  profileImage: LearnzFileFrontendDTO;
+  profileImage: FileFrontendDTO;
   information: string;
   language: number;
   goodSubject1: number;

@@ -11,7 +11,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { GroupInfoCreateDTO } from 'src/app/DTOs/Group/GroupInfoCreateDTO';
-import { LearnzFileFrontendDTO } from 'src/app/DTOs/File/LearnzFileFrontendDTO';
+import { FileFrontendDTO } from 'src/app/DTOs/File/FileFrontendDTO';
 
 @Component({
   selector: 'app-group-info-dialog',
@@ -47,7 +47,7 @@ export class GroupInfoDialogComponent implements OnInit {
         path: '',
         byteString: '',
         externalFilename: ''
-      } as LearnzFileFrontendDTO,
+      } as FileFrontendDTO,
       profileImagePath: ['', Validators.required],
     });
     if (data === null) {

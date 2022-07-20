@@ -1,0 +1,20 @@
+<mat-dialog-content>
+    <div *ngIf="versions$ | async as versions">
+        <h1>{{ 'fileUpload.fileHistory' | translate }}</h1>
+        <mat-divider></mat-divider>
+        <div *ngFor="let version of versions">
+            <div>
+                <button mat-icon-button (click)="downloadVersion(version.frontendFile.path)">
+                    <mat-icon>insert_drive_file</mat-icon>
+                </button>
+                <div>{{ version.frontendFile.externalFilename }}</div>
+                <div>{{ version.created }}</div>
+                <div>{{ version.createdBy }}</div>
+                <button mat-icon-button (click)="revertVersion(version.frontendFile.path)">
+                    <mat-icon>subdirectory_arrow_left</mat-icon>
+                </button>
+            </div>
+            <mat-divider></mat-divider>
+        </div>
+    </div>
+</mat-dialog-content>

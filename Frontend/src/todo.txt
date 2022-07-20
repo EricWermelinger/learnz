@@ -20,3 +20,6 @@ File Context
 
 - Implement Group Files
 -> Make Group Files Autosave
+
+- Make policy of file changeable
+- Remove entry in context menu when not editable, make readonly

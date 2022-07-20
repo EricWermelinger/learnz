@@ -48,16 +48,17 @@ public class FileVersionUploadDownload : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<FilePathDTO>> UploadNewVersion(FileNewVersionDTO reqeust)
+    public async Task<ActionResult<FilePathDTO>> UploadNewVersion()
     {
         try
         {
             IFormFile file = Request.Form.Files[0];
-            if (file.Length > 0)
+            string formPath = Request.Form["path"];
+            if (file.Length > 0 && formPath != null)
             {
                 var guid = _userService.GetUserGuid();
-                var existingFile = await _dataContext.Files.FirstOrDefaultAsync(lf => lf.ActualVersionPath == reqeust.Path);
-                if (existingFile == null || _filePolicyChecker.FileEditable(existingFile, guid))
+                var existingFile = await _dataContext.Files.FirstOrDefaultAsync(lf => lf.ActualVersionPath == formPath);
+                if (existingFile == null || !_filePolicyChecker.FileEditable(existingFile, guid))
                 {
                     return BadRequest(ErrorKeys.FileNotAccessible);
                 }

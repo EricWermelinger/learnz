@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
-import { LearnzFileFrontendDTO } from 'src/app/DTOs/File/LearnzFileFrontendDTO';
+import { FileFrontendDTO } from 'src/app/DTOs/File/FileFrontendDTO';
 import { UserDarkThemeDTO } from 'src/app/DTOs/User/UserDarkThemeDTO';
 import { UserProfileGetDTO } from 'src/app/DTOs/User/UserProfileGetDTO';
 import { UserProfileUploadDTO } from 'src/app/DTOs/User/UserProfileUploadDTO';
@@ -44,7 +44,7 @@ export class SettingsComponent {
         externalFilename: '',
         byteString: '',
         path: '',
-      } as LearnzFileFrontendDTO,
+      } as FileFrontendDTO,
       profileImagePath: '',
       information: ['', Validators.required],
       languageKey: ['', Validators.required],

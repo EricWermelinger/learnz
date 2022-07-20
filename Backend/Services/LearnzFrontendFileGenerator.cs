@@ -1,9 +1,9 @@
 ﻿namespace Learnz.Services;
 public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
 {
-    public LearnzFileFrontendDTO FrontendFile(LearnzFile file)
+    public FileFrontendDTO FrontendFile(LearnzFile file)
     {
-        return new LearnzFileFrontendDTO
+        return new FileFrontendDTO
         {
             Path = file.ActualVersionPath,
             ExternalFilename = file.ActualVersionFileNameExternal,
@@ -11,9 +11,9 @@ public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
         };
     }
 
-    public LearnzFileFrontendDTO FrontendFileFromVersion(LearnzFileVersion file)
+    public FileFrontendDTO FrontendFileFromVersion(LearnzFileVersion file)
     {
-        return new LearnzFileFrontendDTO
+        return new FileFrontendDTO
         {
             Path = file.Path,
             ExternalFilename = file.FileNameExternal,
@@ -21,9 +21,9 @@ public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
         };
     }
 
-    public LearnzFileFrontendDTO AnonymousFrontendFile(LearnzFileAnonymous file)
+    public FileFrontendDTO AnonymousFrontendFile(LearnzFileAnonymous file)
     {
-        return new LearnzFileFrontendDTO
+        return new FileFrontendDTO
         {
             Path = file.Path,
             ExternalFilename = file.FileNameExternal,

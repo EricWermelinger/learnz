@@ -1,6 +1,8 @@
 export const endpoints = {
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
+    FileVersions: 'fileVersions', // use get / post
+    FileVersionUploadDownload: 'fileVersionUploadDownload', // use get
     GroupFiles: 'groupFiles', // use get / post
     GroupInfo: 'groupInfo',
     GroupLeave: 'groupLeave',

@@ -117,7 +117,11 @@
     },
     "fileUpload":{
         "uploadFile":"Upload File",
-        "file":"File"
+        "file":"File",
+        "deleteFile":"Delete File",
+        "uploadNewVersion":"Upload New Version",
+        "viewVersionHistory":"View Version History",
+        "fileHistory":"File History"
     },
     "errorBackend":{
         "fileUploadUnsuccessful":"File upload unsuccessful",

@@ -38,6 +38,7 @@ import { TogetherDetailDialogComponent } from './Pages/together/together-detail-
 import { GroupInfoDialogComponent } from './Pages/group/group-info-dialog/group-info-dialog.component';
 import { GroupChatComponent } from './Pages/group/group-chat/group-chat.component';
 import { GroupFilesComponent } from './Pages/group/group-files/group-files.component';
+import { FileHistoryDialogComponent } from './Framework/file-upload/file-history-dialog/file-history-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -71,6 +72,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     GroupInfoDialogComponent,
     GroupChatComponent,
     GroupFilesComponent,
+    FileHistoryDialogComponent,
   ],
   imports: [
     BrowserModule,

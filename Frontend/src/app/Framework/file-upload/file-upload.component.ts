@@ -1,9 +1,11 @@
 import { HttpEventType } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { endpoints } from 'src/app/Config/endpoints';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
 import { ApiService } from '../API/api.service';
+import { FileHistoryDialogComponent } from './file-history-dialog/file-history-dialog.component';
 
 @Component({
   selector: 'app-file-upload',
@@ -35,19 +37,24 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
+  @Input() historized: boolean = false;
   
   constructor(
     private api: ApiService,
+    private matDialog: MatDialog,
   ) { }
 
-  uploadFile(files: any) {
+  uploadFile(files: any, isNewVersion: boolean = false) {
     if (files.length === 0) {
       return;
     }
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    this.api.callFileUpload(this.getEndpoint(), formData).subscribe((event: any) => {
+    if (isNewVersion) {
+      formData.append('path', this._filePath);
+    }
+    this.api.callFileUpload(this.getEndpoint(isNewVersion), formData).subscribe((event: any) => {
       if (event.type === HttpEventType.Response) {
         const body = (event.body as FilePathDTO);
         this.updateValue(body.path);
@@ -72,8 +79,17 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
       }
     });
   }
+
+  openHistory() {
+    this.matDialog.open(FileHistoryDialogComponent, {
+      data: this._filePath
+    });
+  }
   
-  private getEndpoint() {
+  private getEndpoint(isNewVersion: boolean = false): string {
+    if (isNewVersion) {
+      return endpoints.FileVersionUploadDownload;
+    }
     return this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
   }
 

@@ -24,7 +24,7 @@ public class GroupFiles : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<LearnzFileFrontendDTO>>> GetFiles(Guid groupId)
+    public async Task<ActionResult<List<FileFrontendDTO>>> GetFiles(Guid groupId)
     {
         var guid = _userService.GetUserGuid();
         if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == groupId && gm.UserId == guid)))

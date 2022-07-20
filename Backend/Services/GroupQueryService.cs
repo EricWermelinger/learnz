@@ -11,19 +11,14 @@ public class GroupQueryService : IGroupQueryService
         _filePolicyChecker = filePolicyChecker;
     }
 
-    public async Task<List<LearnzFileFrontendDTO>> GetFiles(Guid userId, Guid groupId)
+    public async Task<List<FileFrontendDTO>> GetFiles(Guid userId, Guid groupId)
     {
         var files = await _dataContext.GroupFiles
             .Where(gf => gf.GroupId == groupId)
-            .Select(gf => new LearnzFileFrontendDTO
-            {
-                ExternalFilename = gf.File.ActualVersionFileNameExternal,
-                Path = gf.File.ActualVersionPath,
-                ByteString = _learnzFrontendFileGenerator.PathToImage(gf.File.ActualVersionPath),
-            })
+            .Select(gf => gf.File)
             .ToListAsync();
-
-        return files;
+        var frontendFiles = files.Select(f => _learnzFrontendFileGenerator.FrontendFile(f)).ToList();
+        return frontendFiles;
     }
 
     public async Task<GroupMessageChatDTO> GetMessages(Guid userId, Guid groupId)
@@ -33,7 +28,7 @@ public class GroupQueryService : IGroupQueryService
             .Select(msg => new GroupMessageGetDTO
             {
                 Message = msg.Message,
-                UserName = msg.Sender.Firstname + " " + msg.Sender.Lastname,
+                UserName = msg.Sender.Username,
                 Date = msg.Date,
                 SentByMe = msg.SenderId == userId,
                 IsInfoMessage = msg.IsInfoMessage
