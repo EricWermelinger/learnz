@@ -8,14 +8,13 @@ namespace Learnz.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class FileUploadDownload : Controller
+public class FileVersionUploadDownload : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly IFilePolicyChecker _filePolicyChecker;
     private readonly IConfiguration _configuration;
-
-    public FileUploadDownload(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IConfiguration configuration)
+    public FileVersionUploadDownload(DataContext dataContext, IUserService userService, IFilePolicyChecker filePolicyChecker, IConfiguration configuration)
     {
         _dataContext = dataContext;
         _userService = userService;
@@ -24,15 +23,15 @@ public class FileUploadDownload : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult> FileDownload(string filePath)
+    public async Task<ActionResult> FileVersionDownload(string filePath)
     {
         var guid = _userService.GetUserGuid();
-        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
-        if (file == null || !_filePolicyChecker.FileDownloadable(file, guid))
+        var version = await _dataContext.FileVersions.Include(lfv => lfv.File).FirstOrDefaultAsync(lfv => lfv.Path == filePath);
+        if (version == null || !_filePolicyChecker.FileDownloadable(version.File, guid))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
-        string path = file.ActualVersionPath;
+        string path = version.Path;
         var memory = new MemoryStream();
         await using (var stream = new FileStream(path, FileMode.Open))
         {
@@ -49,51 +48,47 @@ public class FileUploadDownload : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<FilePathDTO>> UploadFile()
+    public async Task<ActionResult<FilePathDTO>> UploadNewVersion(FileNewVersionDTO reqeust)
     {
         try
         {
             IFormFile file = Request.Form.Files[0];
             if (file.Length > 0)
             {
-                DateTime timeStamp = DateTime.UtcNow;
                 var guid = _userService.GetUserGuid();
+                var existingFile = await _dataContext.Files.FirstOrDefaultAsync(lf => lf.ActualVersionPath == reqeust.Path);
+                if (existingFile == null || _filePolicyChecker.FileEditable(existingFile, guid))
+                {
+                    return BadRequest(ErrorKeys.FileNotAccessible);
+                }
+
                 Guid fileVersionId = Guid.NewGuid();
-                Guid fileId = Guid.NewGuid();
 
                 string fileNameExternal = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                 string fileNameInternal = fileVersionId.ToString().Replace("-", "") + "." + fileNameExternal.Split(".")[^1];
                 string folderName = _configuration["Files:Folder"];
                 string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
 
-                LearnzFile dbFile = new LearnzFile
-                {
-                    Id = fileId,
-                    ActualVersionId = fileVersionId,
-                    ActualVersionFileNameExternal = fileNameExternal,
-                    ActualVersionPath = path,
-                    FilePolicy = FilePolicy.Private,
-                    OwnerId = guid
-                };
+                existingFile.ActualVersionId = fileVersionId;
+                existingFile.ActualVersionFileNameExternal = fileNameExternal;
+                existingFile.ActualVersionPath = path;
 
                 LearnzFileVersion dbVersion = new LearnzFileVersion
                 {
                     Id = fileVersionId,
-                    Created = timeStamp,
+                    Created = DateTime.UtcNow,
                     CreatedById = guid,
                     FileNameExternal = fileNameExternal,
                     FileNameInternal = fileNameInternal,
                     Path = path,
-                    FileId = fileId
+                    FileId = existingFile.Id
                 };
-                
+
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
                     file.CopyTo(stream);
                 }
 
-                await _dataContext.Files.AddAsync(dbFile);
-                await _dataContext.SaveChangesAsync();
                 await _dataContext.FileVersions.AddAsync(dbVersion);
                 await _dataContext.SaveChangesAsync();
 
@@ -110,26 +105,5 @@ public class FileUploadDownload : Controller
         {
             return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
-    }
-
-    [HttpDelete]
-    public async Task<ActionResult> DeleteFile(string filePath)
-    {
-        var guid = _userService.GetUserGuid();
-        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
-        if (file == null || !_filePolicyChecker.FileDeletable(file, guid))
-        {
-            return BadRequest(ErrorKeys.FileNotAccessible);
-        }
-        try
-        {
-            System.IO.File.Delete(filePath);
-        } catch { }
-        var versions = await _dataContext.FileVersions.Where(lvf => lvf.FileId == file.Id).ToListAsync();
-        _dataContext.RemoveRange(versions);
-        await _dataContext.SaveChangesAsync();
-        _dataContext.Remove(file);
-        await _dataContext.SaveChangesAsync();
-        return Ok();
     }
 }

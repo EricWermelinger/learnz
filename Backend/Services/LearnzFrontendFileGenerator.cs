@@ -11,6 +11,16 @@ public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
         };
     }
 
+    public LearnzFileFrontendDTO FrontendFileFromVersion(LearnzFileVersion file)
+    {
+        return new LearnzFileFrontendDTO
+        {
+            Path = file.Path,
+            ExternalFilename = file.FileNameExternal,
+            ByteString = PathToImage(file.Path)
+        };
+    }
+
     public LearnzFileFrontendDTO AnonymousFrontendFile(LearnzFileAnonymous file)
     {
         return new LearnzFileFrontendDTO

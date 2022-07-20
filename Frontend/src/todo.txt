@@ -7,11 +7,12 @@ Single File
 -> Download File -> ok
 -> Delete File -> ok
 Historize
--> Get History -> historyVersions GET
--> Update Version -> historyUploadDownload POST
--> Download Versions -> historyUploadDownload GET
--> Revert to Version -> historyVersions POST
+-> Get History -> historyVersions GET (backend implemented)
+-> Update Version -> historyUploadDownload POST (backend implemented)
+-> Download Versions -> historyUploadDownload GET (backend implemented)
+-> Revert to Version -> historyVersions POST (in progress)
 -> Delete File (with versions) -> normal DELETE
+- add FileNewVersionDTO in Frontend
 File Context
 - View History -> open popup
 - Update Version -> open explorer

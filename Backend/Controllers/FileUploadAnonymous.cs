@@ -101,11 +101,7 @@ public class FileUploadDownloadAnonymous : Controller
         try
         {
             System.IO.File.Delete(filePath);
-        }
-        catch
-        {
-            // do nothing
-        }
+        } catch { }
         return Ok();
     }
 }
