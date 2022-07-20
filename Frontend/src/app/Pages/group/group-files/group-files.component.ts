@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
-import { FileFrontendDTO } from 'src/app/DTOs/File/FileFrontendDTO';
+import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { GroupFilesService } from './group-files.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { GroupFilesService } from './group-files.service';
 export class GroupFilesComponent implements OnDestroy {
 
   groupId: string;
-  files$: Observable<FileFrontendDTO[]>;
+  files$: Observable<FileFrontendHistorizedDTO[]>;
   private destroyed$ = new Subject<void>();
 
   constructor(

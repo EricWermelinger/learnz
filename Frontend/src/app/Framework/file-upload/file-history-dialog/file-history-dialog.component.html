@@ -16,7 +16,7 @@
                 <div class="text">
                     <div>{{ version.createdBy }}</div>
                 </div>
-                <button mat-icon-button (click)="revertVersion(version.frontendFile.path)">
+                <button *ngIf="revertable" mat-icon-button (click)="revertVersion(version.frontendFile.path)">
                     <mat-icon>subdirectory_arrow_left</mat-icon>
                 </button>
             </div>

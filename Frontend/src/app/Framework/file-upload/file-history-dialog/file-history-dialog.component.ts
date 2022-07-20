@@ -14,12 +14,14 @@ export class FileHistoryDialogComponent {
 
   versions$: Observable<FileVersionInfoDTO[]>;
   path: string;
+  revertable: boolean;
 
   constructor(
     private fileHistoryService: FileHistoryDialogService,
-    @Inject(MAT_DIALOG_DATA) public data: string,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
-    this.path = this.data;
+    this.path = this.data.path;
+    this.revertable = this.data.revertable;
     this.versions$ = this.fileHistoryService.getVersions(this.path);
   }
 

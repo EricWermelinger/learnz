@@ -3,7 +3,7 @@
         <button mat-flat-button color="accent" type="button" (click)="downloadFile()">
             {{ !_externalFilename ? ('fileUpload.file' | translate) : _externalFilename }}
         </button>
-        <button *ngIf="!historized; else contextMenu" mat-icon-button class="space" (click)="removeFile()">
+        <button *ngIf="!_historizedFile; else contextMenu" mat-icon-button class="space" (click)="removeFile()">
             <mat-icon>delete</mat-icon>
         </button>
         <ng-template #contextMenu>
@@ -12,8 +12,12 @@
             </button>
             <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="openHistory()">{{ 'fileUpload.viewVersionHistory' | translate }}</button>
-                <button mat-menu-item (click)="fileVersion.click()">{{ 'fileUpload.uploadNewVersion' | translate }}</button>
-                <button mat-menu-item (click)="removeFile()">{{ 'fileUpload.deleteFile' | translate }}</button>
+                <button *ngIf="_historizedFile!.editable" mat-menu-item (click)="fileVersion.click()">{{ 'fileUpload.uploadNewVersion' | translate }}</button>
+                <button *ngIf="_historizedFile!.policyChangeable" mat-menu-item [matMenuTriggerFor]="filePolicies">{{ 'fileUpload.changePolicy' | translate }}</button>
+                <button *ngIf="_historizedFile!.deletable" mat-menu-item (click)="removeFile()">{{ 'fileUpload.deleteFile' | translate }}</button>
+            </mat-menu>
+            <mat-menu #filePolicies>
+                <button mat-menu-item *ngFor="let policy of policies" (click)="setPolicy(policy.value)">{{ ('FilePolicy.' + policy.key) | translate }}</button>
             </mat-menu>
             <input type="file" #fileVersion class="hidden" (change)="uploadFile(fileVersion.files, true)" [accept]="fileTypes">
         </ng-template>

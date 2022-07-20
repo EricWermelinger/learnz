@@ -11,13 +11,13 @@ public class GroupQueryService : IGroupQueryService
         _filePolicyChecker = filePolicyChecker;
     }
 
-    public async Task<List<FileFrontendDTO>> GetFiles(Guid userId, Guid groupId)
+    public async Task<List<FileFrontendHistorizedDTO>> GetFiles(Guid userId, Guid groupId)
     {
         var files = await _dataContext.GroupFiles
             .Where(gf => gf.GroupId == groupId)
             .Select(gf => gf.File)
             .ToListAsync();
-        var frontendFiles = files.Select(f => _learnzFrontendFileGenerator.FrontendFile(f)).ToList();
+        var frontendFiles = files.Select(f => _learnzFrontendFileGenerator.FrontendFileHistorized(f, userId)).ToList();
         return frontendFiles;
     }
 

@@ -50,7 +50,7 @@ public class FileVersions : Controller
         var guid = _userService.GetUserGuid();
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.FilePath);
         var version = await _dataContext.FileVersions.FirstOrDefaultAsync(lvf => lvf.Path == request.VersionPath);
-        if (file == null || version == null || !_filePolicyChecker.FileDownloadable(file, guid))
+        if (file == null || version == null || !_filePolicyChecker.FileEditable(file, guid))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }

@@ -121,7 +121,8 @@
         "deleteFile":"Delete File",
         "uploadNewVersion":"Upload New Version",
         "viewVersionHistory":"View Version History",
-        "fileHistory":"File History"
+        "fileHistory":"File History",
+        "changePolicy":"Change Policy"
     },
     "errorBackend":{
         "fileUploadUnsuccessful":"File upload unsuccessful",
@@ -180,6 +181,11 @@
         "Grade10":"Grade 10",
         "Grade11":"Grade 11",
         "Grade12":"Grade 12"
+    },
+    "FilePolicy":{
+        "Private":"Private",
+        "OnlySelfEditable":"Only Self Editable",
+        "Everyone":"Public"
     },
     "languages":{
         "languages":"Language",

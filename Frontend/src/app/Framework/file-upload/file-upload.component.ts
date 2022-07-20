@@ -3,7 +3,10 @@ import { Component, Input } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { endpoints } from 'src/app/Config/endpoints';
+import { FileChangePolicyDTO } from 'src/app/DTOs/File/FileChangePolicyDTO';
+import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
+import { FilePolicy, getPolicies } from 'src/app/Enums/FilePolicy';
 import { ApiService } from '../API/api.service';
 import { FileHistoryDialogComponent } from './file-history-dialog/file-history-dialog.component';
 
@@ -28,6 +31,8 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
 
   _filePath: string = '';
   _externalFilename: string = '';
+  _historizedFile: FileFrontendHistorizedDTO | null = null;
+  policies = getPolicies();
   @Input() set filePath(filePath: string) {
     this._filePath = filePath;
   }
@@ -37,7 +42,11 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
-  @Input() historized: boolean = false;
+  @Input() set historizedFile (file: FileFrontendHistorizedDTO) {
+    this._historizedFile = file;
+    this._filePath = this.historizedFile.path;
+    this._externalFilename = this.historizedFile.externalFilename;
+  }
   
   constructor(
     private api: ApiService,
@@ -82,8 +91,19 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
 
   openHistory() {
     this.matDialog.open(FileHistoryDialogComponent, {
-      data: this._filePath
+      data: {
+        path: this._filePath,
+        revertable: this._historizedFile!.editable
+      }
     });
+  }
+
+  setPolicy(policyNumber: number) {
+    const value = {
+      filePath: this._filePath,
+      policy: policyNumber,
+    } as FileChangePolicyDTO;
+    this.api.callApi(endpoints.FileChangePolicy, value, 'POST').subscribe();
   }
   
   private getEndpoint(isNewVersion: boolean = false): string {

@@ -1,25 +1,7 @@
 todo:
 1. Group
+Policy
+- Know which file is readonly
 
-- Historize File
-Single File
--> Create File -> ok
--> Download File -> ok
--> Delete File -> ok
-Historize
--> Get History -> historyVersions GET (backend implemented)
--> Update Version -> historyUploadDownload POST (backend implemented)
--> Download Versions -> historyUploadDownload GET (backend implemented)
--> Revert to Version -> historyVersions POST (in progress)
--> Delete File (with versions) -> normal DELETE
-- add FileNewVersionDTO in Frontend
-File Context
-- View History -> open popup
-- Update Version -> open explorer
-- Delete File -> delete
-
-- Implement Group Files
+Implement Group Files
 -> Make Group Files Autosave
-
-- Make policy of file changeable
-- Remove entry in context menu when not editable, make readonly

@@ -1,6 +1,12 @@
 ﻿namespace Learnz.Services;
 public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
 {
+    private readonly IFilePolicyChecker _filePolicyChecker;
+    public LearnzFrontendFileGenerator(IFilePolicyChecker filePolicyChecker)
+    {
+        _filePolicyChecker = filePolicyChecker;
+    }
+
     public FileFrontendDTO FrontendFile(LearnzFile file)
     {
         return new FileFrontendDTO
@@ -8,6 +14,19 @@ public class LearnzFrontendFileGenerator : ILearnzFrontendFileGenerator
             Path = file.ActualVersionPath,
             ExternalFilename = file.ActualVersionFileNameExternal,
             ByteString = PathToImage(file.ActualVersionPath)
+        };
+    }
+
+    public FileFrontendHistorizedDTO FrontendFileHistorized(LearnzFile file, Guid guid)
+    {
+        return new FileFrontendHistorizedDTO
+        {
+            Path = file.ActualVersionPath,
+            ExternalFilename = file.ActualVersionFileNameExternal,
+            ByteString = PathToImage(file.ActualVersionPath),
+            Editable = _filePolicyChecker.FileEditable(file, guid),
+            Deletable = _filePolicyChecker.FileDeletable(file, guid),
+            PolicyChangeable = _filePolicyChecker.FilePolicyChangeable(file, guid),
         };
     }
 
