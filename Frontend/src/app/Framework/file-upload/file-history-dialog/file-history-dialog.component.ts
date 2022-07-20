@@ -1,3 +1,4 @@
+import { HttpEventType } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -28,7 +29,23 @@ export class FileHistoryDialogComponent {
     });
   }
 
-  downloadVersion(filePath: string) {
-    this.fileHistoryService.downloadVersion(filePath);
+  downloadVersion(filePath: string, fileName: string) {
+    this.fileHistoryService.downloadVersion(filePath).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
+        this.download(event, fileName);
+      }
+    });
+  }
+
+  private download(data: any, fileName: string) {
+    const downloadedFile = new Blob([data.body], { type: data.body.type });
+    const a = document.createElement('a');
+    a.setAttribute('style', 'display:none;');
+    document.body.appendChild(a);
+    a.download = fileName;
+    a.href = URL.createObjectURL(downloadedFile);
+    a.target = '_blank';
+    a.click();
+    document.body.removeChild(a);
   }
 }

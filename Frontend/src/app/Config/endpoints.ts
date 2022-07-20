@@ -1,4 +1,5 @@
 export const endpoints = {
+    // FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
     FileVersions: 'fileVersions', // use get / post

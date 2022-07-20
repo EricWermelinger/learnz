@@ -31,20 +31,19 @@ public class FileVersionUploadDownload : Controller
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
-        string path = version.Path;
         var memory = new MemoryStream();
-        await using (var stream = new FileStream(path, FileMode.Open))
+        await using (var stream = new FileStream(filePath, FileMode.Open))
         {
             await stream.CopyToAsync(memory);
         }
         memory.Position = 0;
         var provider = new FileExtensionContentTypeProvider();
         string contentType;
-        if (!provider.TryGetContentType(path, out contentType))
+        if (!provider.TryGetContentType(filePath, out contentType))
         {
             contentType = "application/octet-stream";
         }
-        return File(memory, contentType, path);
+        return File(memory, contentType, filePath);
     }
 
     [HttpPost]

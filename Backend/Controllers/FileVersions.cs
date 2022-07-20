@@ -45,12 +45,12 @@ public class FileVersions : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<FilePathDTO>> RevertToVersion(string versionPath, string filePath)
+    public async Task<ActionResult<FilePathDTO>> RevertToVersion(FileRevertDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
-        var version = await _dataContext.FileVersions.FirstOrDefaultAsync(lvf => lvf.Path == versionPath);
-        if (file == null ||version == null || _filePolicyChecker.FileDownloadable(file, guid))
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.FilePath);
+        var version = await _dataContext.FileVersions.FirstOrDefaultAsync(lvf => lvf.Path == request.VersionPath);
+        if (file == null || version == null || !_filePolicyChecker.FileDownloadable(file, guid))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
@@ -59,6 +59,8 @@ public class FileVersions : Controller
         string newVersionFileNameInternal = newVersionId.ToString().Replace("-", "") + "." + version.FileNameExternal.Split(".")[^1];
         string folderName = _configuration["Files:Folder"];
         string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, newVersionFileNameInternal);
+        string oldPath = Path.Combine(Directory.GetCurrentDirectory(), folderName, version.FileNameInternal);
+        System.IO.File.Copy(oldPath, path);
         
         var newVersion = new LearnzFileVersion
         {
@@ -67,7 +69,7 @@ public class FileVersions : Controller
             FileNameExternal = version.FileNameExternal,
             FileNameInternal = newVersionFileNameInternal,
             Path = path,
-            Created = DateTime.Now,
+            Created = DateTime.UtcNow,
             CreatedById = guid
         };
 

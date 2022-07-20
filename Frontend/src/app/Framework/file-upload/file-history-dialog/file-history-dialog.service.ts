@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
+import { FileRevertDTO } from 'src/app/DTOs/File/FileRevertDTO';
 import { FileVersionInfoDTO } from 'src/app/DTOs/File/FileVersionInfoDTO';
 import { ApiService } from '../../API/api.service';
 
@@ -17,10 +18,14 @@ export class FileHistoryDialogService {
   }
 
   revertVersion(versionPath: string, filePath: string) {
-    return this.api.callApi(endpoints.FileVersions, { versionPath, filePath }, 'POST');
+    const value = {
+      versionPath,
+      filePath,
+    } as FileRevertDTO;
+    return this.api.callApi(endpoints.FileVersions, value, 'POST');
   }
 
   downloadVersion(filePath: string) {
-    this.api.callApi(endpoints.FileVersionUploadDownload, { filePath }, 'GET').subscribe();
+    return this.api.callFileDownload(endpoints.FileVersionUploadDownload, { filePath });
   }
 }
