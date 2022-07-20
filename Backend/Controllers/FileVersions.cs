@@ -32,6 +32,7 @@ public class FileVersions : Controller
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
         var versions = await _dataContext.FileVersions.Where(lvf => lvf.FileId == file.Id)
+                                                      .Include(lvf => lvf.CreatedBy)
                                                       .OrderByDescending(lvf => lvf.Created)
                                                       .ToListAsync();
         var frontendFiles = versions.Select(lvf => new FileVersionInfoDTO
