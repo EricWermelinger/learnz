@@ -37,75 +37,89 @@ public class GroupFiles : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> EditFiles(GroupFilesEditDTO request)
+    public async Task<ActionResult> AddFile(GroupFileChangeDTO request)
     {
         var user = await _userService.GetUser();
         var guid = user.Id;
-        if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == request.GroupId && gm.UserId == guid)))
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.Path);
+        if (!(await _dataContext.GroupMembers.AnyAsync(gm => gm.GroupId == request.GroupId && gm.UserId == guid)) || file == null)
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
-        
-        var addedFiles = await _dataContext.Files
-            .Where(f => request.FilesAdded.Contains(f.Id))
-            .ToListAsync();
 
-        var deletedFiles = await _dataContext.Files
-            .Where(f => request.FilesDeleted.Contains(f.Id))
-            .ToListAsync();
-
-        foreach (LearnzFile file in deletedFiles)
+        var newFile = new GroupFile
         {
-            if (!_filePolicyChecker.FileDeletable(file, guid))
-            {
-                return BadRequest(ErrorKeys.FileNotAccessible);
-            }
-        }
-        
-        var existingGroupFiles = await _dataContext.GroupFiles
-            .Where(gf => gf.GroupId == request.GroupId)
-            .ToListAsync();
+            FileId = file.Id,
+            GroupId = request.GroupId,
+        };
 
-        foreach (LearnzFile file in deletedFiles)
-        {
-            _dataContext.GroupFiles.Remove(existingGroupFiles.First(gf => gf.FileId == file.Id));
-            _dataContext.Files.Remove(file);
-        }
-
-        foreach (LearnzFile file in addedFiles)
-        {
-            await _dataContext.GroupFiles.AddAsync(new GroupFile
-            {
-                GroupId = request.GroupId,
-                FileId = file.Id
-            });
-        }
-
-        var filesEditedMessage = new GroupMessage
+        var message = new GroupMessage
         {
             GroupId = request.GroupId,
             IsInfoMessage = true,
             Date = DateTime.UtcNow,
-            Message = "filesEdited|" + user.Username,
+            Message = "fileAdded|" + user.Username,
             SenderId = guid
         };
-        _dataContext.GroupMessages.Add(filesEditedMessage);
 
+        _dataContext.GroupMessages.Add(message);
+        _dataContext.GroupFiles.Add(newFile);
         await _dataContext.SaveChangesAsync();
 
-        var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == request.GroupId)
+        await TriggerWebsockets(request.GroupId);
+
+        return Ok();
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateFile(GroupFileChangeDTO request)
+    {
+        var user = await _userService.GetUser();
+        var message = new GroupMessage
+        {
+            GroupId = request.GroupId,
+            IsInfoMessage = true,
+            Date = DateTime.UtcNow,
+            Message = "fileEdited|" + user.Username,
+            SenderId = user.Id
+        };
+        _dataContext.GroupMessages.Add(message);
+        await _dataContext.SaveChangesAsync();
+        await TriggerWebsockets(request.GroupId);
+        return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteFile(GroupFileChangeDTO request)
+    {
+        var user = await _userService.GetUser();
+        var message = new GroupMessage
+        {
+            GroupId = request.GroupId,
+            IsInfoMessage = true,
+            Date = DateTime.UtcNow,
+            Message = "fileDeleted|" + user.Username,
+            SenderId = user.Id
+        };
+        _dataContext.GroupMessages.Add(message);
+        await _dataContext.SaveChangesAsync();
+        await TriggerWebsockets(request.GroupId);
+        return Ok();
+    }
+
+    private async Task TriggerWebsockets(Guid groupId)
+    {
+        var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == groupId)
                                                              .Select(gm => gm.UserId)
                                                              .ToListAsync();
         foreach (var memberId in groupMembersIds)
         {
-            var fileOverview = await _groupQueryService.GetFiles(memberId, request.GroupId);
+            var fileOverview = await _groupQueryService.GetFiles(memberId, groupId);
             var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
-            var chatMessages = await _groupQueryService.GetMessages(memberId, request.GroupId);
-            await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, memberId, request.GroupId);
+            var chatMessages = await _groupQueryService.GetMessages(memberId, groupId);
+            await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, memberId, groupId);
             await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
-            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, request.GroupId);
+            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, groupId);
         }
-
-        return Ok();
     }
 }

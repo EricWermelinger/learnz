@@ -17,7 +17,9 @@ public class GroupQueryService : IGroupQueryService
             .Where(gf => gf.GroupId == groupId)
             .Select(gf => gf.File)
             .ToListAsync();
-        var frontendFiles = files.Select(f => _learnzFrontendFileGenerator.FrontendFileHistorized(f, userId)).ToList();
+        var frontendFiles = files.Where(f => _filePolicyChecker.FileDownloadable(f, userId))
+                                 .Select(f => _learnzFrontendFileGenerator.FrontendFileHistorized(f, userId))
+                                 .ToList();
         return frontendFiles;
     }
 

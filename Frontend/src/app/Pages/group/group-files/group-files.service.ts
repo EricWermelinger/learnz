@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
 import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
-import { GroupFilesEditDTO } from 'src/app/DTOs/Group/GroupFilesEditDTO';
+import { GroupFileChangeDTO } from 'src/app/DTOs/Group/GroupFileChangeDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
 
@@ -23,7 +23,7 @@ export class GroupFilesService {
     );
   }
 
-  editFiles(files: GroupFilesEditDTO) {
+  changeFile(files: GroupFileChangeDTO) {
     this.api.callApi(endpoints.GroupFiles, files, 'POST').subscribe();
   }
 }

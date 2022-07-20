@@ -4,7 +4,7 @@ export const endpoints = {
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
     FileVersions: 'fileVersions',
     FileVersionUploadDownload: 'fileVersionUploadDownload',
-    GroupFiles: 'groupFiles', // use get / post
+    GroupFiles: 'groupFiles', // use get / post / put / delete
     GroupInfo: 'groupInfo',
     GroupLeave: 'groupLeave',
     GroupMessages: 'groupMessages',

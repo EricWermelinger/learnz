@@ -1,5 +1,6 @@
+import { KeyValue } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { endpoints } from 'src/app/Config/endpoints';
@@ -7,7 +8,7 @@ import { FileChangePolicyDTO } from 'src/app/DTOs/File/FileChangePolicyDTO';
 import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
 import { FilePolicy, getPolicies } from 'src/app/Enums/FilePolicy';
-import { ApiService } from '../API/api.service';
+import { ApiService, HttpMethods } from '../API/api.service';
 import { FileHistoryDialogComponent } from './file-history-dialog/file-history-dialog.component';
 
 @Component({
@@ -47,6 +48,8 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     this._filePath = this.historizedFile.path;
     this._externalFilename = this.historizedFile.externalFilename;
   }
+
+  @Output() fileChanged = new EventEmitter<KeyValue<string, HttpMethods>>();
   
   constructor(
     private api: ApiService,
@@ -68,6 +71,10 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
         const body = (event.body as FilePathDTO);
         this.updateValue(body.path);
         this._externalFilename = body.externalFilename;
+        this.fileChanged.emit({
+          key: this._filePath,
+          value: 'POST'
+        });
       }
     });
   }
@@ -76,9 +83,12 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     const path = this._filePath;
     this.updateValue('');
     this._externalFilename = '';
-    this.api.callApi(this.getEndpoint(), {
-      filePath: path
-    }, 'DELETE').subscribe();
+    this.api.callApi(this.getEndpoint(), { filePath: path }, 'DELETE').subscribe(_ => {
+      this.fileChanged.emit({
+        key: this._filePath,
+        value: 'DELETE'
+      });
+    });
   }
 
   downloadFile() {
@@ -90,12 +100,19 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   }
 
   openHistory() {
-    this.matDialog.open(FileHistoryDialogComponent, {
+    let dialogRef = this.matDialog.open(FileHistoryDialogComponent, {
       data: {
         path: this._filePath,
         revertable: this._historizedFile!.editable
       }
     });
+    const sub$ = dialogRef.componentInstance.onEdit.subscribe(_ => {
+      this.fileChanged.emit({
+        key: this._filePath,
+        value: 'PUT'
+      });
+    });
+    dialogRef.afterClosed().subscribe(_ => sub$.unsubscribe());
   }
 
   setPolicy(policyNumber: number) {
@@ -103,7 +120,12 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
       filePath: this._filePath,
       policy: policyNumber,
     } as FileChangePolicyDTO;
-    this.api.callApi(endpoints.FileChangePolicy, value, 'POST').subscribe();
+    this.api.callApi(endpoints.FileChangePolicy, value, 'POST').subscribe(_ => {
+      this.fileChanged.emit({
+        key: this._filePath,
+        value: 'PUT'
+      });
+    });
   }
   
   private getEndpoint(isNewVersion: boolean = false): string {

@@ -1,5 +1,5 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { FileVersionInfoDTO } from 'src/app/DTOs/File/FileVersionInfoDTO';
@@ -16,6 +16,8 @@ export class FileHistoryDialogComponent {
   path: string;
   revertable: boolean;
 
+  onEdit = new EventEmitter();
+
   constructor(
     private fileHistoryService: FileHistoryDialogService,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -27,6 +29,7 @@ export class FileHistoryDialogComponent {
 
   revertVersion(versionPath: string) {
     this.fileHistoryService.revertVersion(versionPath, this.path).subscribe(_ => {
+      this.onEdit.emit();
       this.versions$ = this.fileHistoryService.getVersions(this.path);
     });
   }
