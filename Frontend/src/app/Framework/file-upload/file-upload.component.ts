@@ -43,10 +43,12 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
-  @Input() set historizedFile (file: FileFrontendHistorizedDTO) {
-    this._historizedFile = file;
-    this._filePath = this.historizedFile.path;
-    this._externalFilename = this.historizedFile.externalFilename;
+  @Input() set historizedFile (file: FileFrontendHistorizedDTO | null) {
+    if (!!file) {
+      this._historizedFile = file;
+      this._filePath = file.path;
+      this._externalFilename = file.externalFilename;
+    }
   }
 
   @Output() fileChanged = new EventEmitter<KeyValue<string, HttpMethods>>();
@@ -73,7 +75,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
         this._externalFilename = body.externalFilename;
         this.fileChanged.emit({
           key: this._filePath,
-          value: 'POST'
+          value: isNewVersion ? 'PUT' : 'POST'
         });
       }
     });

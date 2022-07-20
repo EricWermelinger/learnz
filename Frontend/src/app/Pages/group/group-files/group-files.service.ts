@@ -3,7 +3,7 @@ import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
 import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { GroupFileChangeDTO } from 'src/app/DTOs/Group/GroupFileChangeDTO';
-import { ApiService } from 'src/app/Framework/API/api.service';
+import { ApiService, HttpMethods } from 'src/app/Framework/API/api.service';
 import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class GroupFilesService {
     );
   }
 
-  changeFile(files: GroupFileChangeDTO) {
-    this.api.callApi(endpoints.GroupFiles, files, 'POST').subscribe();
+  fileChange(file: GroupFileChangeDTO, method: HttpMethods) {
+    this.api.callApi(endpoints.GroupFiles, file, method).subscribe();
   }
 }

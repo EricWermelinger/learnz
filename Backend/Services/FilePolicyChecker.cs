@@ -48,7 +48,6 @@ public class FilePolicyChecker : IFilePolicyChecker
         {
             case FilePolicy.Everyone:
             case FilePolicy.OnlySelfEditable:
-                return true;
             case FilePolicy.Private:
                 return file.OwnerId == userId;
             default:
