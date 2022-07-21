@@ -53,20 +53,25 @@ public class GroupFiles : Controller
             GroupId = request.GroupId,
         };
 
-        var message = new GroupMessage
+        bool visible = _filePolicyChecker.GroupFileVisible(file);
+        if (visible)
         {
-            GroupId = request.GroupId,
-            IsInfoMessage = true,
-            Date = DateTime.UtcNow,
-            Message = "fileAdded|" + user.Username,
-            SenderId = guid
-        };
+            var message = new GroupMessage
+            {
+                GroupId = request.GroupId,
+                IsInfoMessage = true,
+                Date = DateTime.UtcNow,
+                Message = "fileAdded|" + user.Username + " - " + file.ActualVersionFileNameExternal,
+                SenderId = guid
+            };
+            _dataContext.GroupMessages.Add(message);
+            await _dataContext.SaveChangesAsync();
+        }
 
-        _dataContext.GroupMessages.Add(message);
         _dataContext.GroupFiles.Add(newFile);
         await _dataContext.SaveChangesAsync();
 
-        await TriggerWebsockets(request.GroupId);
+        await TriggerWebsockets(request.GroupId, visible, guid);
 
         return Ok();
     }
@@ -75,51 +80,93 @@ public class GroupFiles : Controller
     public async Task<ActionResult> UpdateFile(GroupFileChangeDTO request)
     {
         var user = await _userService.GetUser();
-        var message = new GroupMessage
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.Path);
+        if (file == null)
         {
-            GroupId = request.GroupId,
-            IsInfoMessage = true,
-            Date = DateTime.UtcNow,
-            Message = "fileEdited|" + user.Username,
-            SenderId = user.Id
-        };
-        _dataContext.GroupMessages.Add(message);
-        await _dataContext.SaveChangesAsync();
-        await TriggerWebsockets(request.GroupId);
+            return BadRequest(ErrorKeys.FileNotAccessible);
+        }
+        bool visible = _filePolicyChecker.GroupFileVisible(file);
+        if (visible)
+        {
+            var message = new GroupMessage
+            {
+                GroupId = request.GroupId,
+                IsInfoMessage = true,
+                Date = DateTime.UtcNow,
+                Message = "fileEdited|" + user.Username + " - " + file.ActualVersionFileNameExternal,
+                SenderId = user.Id
+            };
+            _dataContext.GroupMessages.Add(message);
+            await _dataContext.SaveChangesAsync();
+        }            
+        await TriggerWebsockets(request.GroupId, visible, user.Id);
         return Ok();
     }
 
     [HttpDelete]
-    public async Task<ActionResult> DeleteFile(GroupFileChangeDTO request)
+    public async Task<ActionResult> DeleteFile(Guid groupId, string path)
     {
         var user = await _userService.GetUser();
-        var message = new GroupMessage
+        var guid = user.Id;
+
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == path);
+        if (file == null || !_filePolicyChecker.FileDeletable(file, guid))
         {
-            GroupId = request.GroupId,
-            IsInfoMessage = true,
-            Date = DateTime.UtcNow,
-            Message = "fileDeleted|" + user.Username,
-            SenderId = user.Id
-        };
-        _dataContext.GroupMessages.Add(message);
+            return BadRequest(ErrorKeys.FileNotAccessible);
+        }
+        bool visible = _filePolicyChecker.GroupFileVisible(file);
+        if (visible)
+        {
+            var message = new GroupMessage
+            {
+                GroupId = groupId,
+                IsInfoMessage = true,
+                Date = DateTime.UtcNow,
+                Message = "fileDeleted|" + user.Username + " - " + file.ActualVersionFileNameExternal,
+                SenderId = user.Id
+            };
+            _dataContext.GroupMessages.Add(message);
+        }
+        try
+        {
+            System.IO.File.Delete(path);
+        }
+        catch { }
+        var versions = await _dataContext.FileVersions.Where(lvf => lvf.FileId == file.Id).ToListAsync();
+        var groupFile = await _dataContext.GroupFiles.FirstOrDefaultAsync(gf => gf.File.ActualVersionPath == path);
+        _dataContext.RemoveRange(versions);
         await _dataContext.SaveChangesAsync();
-        await TriggerWebsockets(request.GroupId);
+        _dataContext.Remove(file);
+        await _dataContext.SaveChangesAsync();
+        await TriggerWebsockets(groupId, visible, guid);
         return Ok();
     }
 
-    private async Task TriggerWebsockets(Guid groupId)
+    private async Task TriggerWebsockets(Guid groupId, bool visible, Guid userId)
     {
-        var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == groupId)
+        if (visible)
+        {
+            var groupMembersIds = await _dataContext.GroupMembers.Where(gm => gm.GroupId == groupId)
                                                              .Select(gm => gm.UserId)
                                                              .ToListAsync();
-        foreach (var memberId in groupMembersIds)
+            foreach (var memberId in groupMembersIds)
+            {
+                var fileOverview = await _groupQueryService.GetFiles(memberId, groupId);
+                var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
+                var chatMessages = await _groupQueryService.GetMessages(memberId, groupId);
+                await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, memberId, groupId);
+                await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
+                await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, groupId);
+            }
+        }
+        else
         {
-            var fileOverview = await _groupQueryService.GetFiles(memberId, groupId);
-            var groupOverview = await _groupQueryService.GetGroupOverview(memberId);
-            var chatMessages = await _groupQueryService.GetMessages(memberId, groupId);
-            await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, memberId, groupId);
-            await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, memberId);
-            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, memberId, groupId);
+            var fileOverview = await _groupQueryService.GetFiles(userId, groupId);
+            var groupOverview = await _groupQueryService.GetGroupOverview(userId);
+            var chatMessages = await _groupQueryService.GetMessages(userId, groupId);
+            await _hubService.SendMessageToUser(nameof(GroupFiles), fileOverview, userId, groupId);
+            await _hubService.SendMessageToUser(nameof(GroupOverview), groupOverview, userId);
+            await _hubService.SendMessageToUser(nameof(GroupMessages), chatMessages, userId, groupId);
         }
     }
 }

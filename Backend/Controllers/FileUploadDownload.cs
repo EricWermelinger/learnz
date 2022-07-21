@@ -113,8 +113,12 @@ public class FileUploadDownload : Controller
     }
 
     [HttpDelete]
-    public async Task<ActionResult> DeleteFile(string filePath)
+    public async Task<ActionResult> DeleteFile(string filePath, bool ignore = false)
     {
+        if (ignore)
+        {
+            return Ok();
+        }
         var guid = _userService.GetUserGuid();
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == filePath);
         if (file == null || !_filePolicyChecker.FileDeletable(file, guid))

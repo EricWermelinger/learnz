@@ -85,9 +85,10 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     const path = this._filePath;
     this.updateValue('');
     this._externalFilename = '';
-    this.api.callApi(this.getEndpoint(), { filePath: path }, 'DELETE').subscribe(_ => {
+    const value = !!this._historizedFile ? { filePath: path, ignore: true } : { filePath: path };
+    this.api.callApi(this.getEndpoint(), value, 'DELETE').subscribe(_ => {
       this.fileChanged.emit({
-        key: this._filePath,
+        key: path,
         value: 'DELETE'
       });
     });
@@ -108,9 +109,9 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
         revertable: this._historizedFile!.editable
       }
     });
-    const sub$ = dialogRef.componentInstance.onEdit.subscribe(_ => {
+    const sub$ = dialogRef.componentInstance.onEdit.subscribe(value => {
       this.fileChanged.emit({
-        key: this._filePath,
+        key: value,
         value: 'PUT'
       });
     });

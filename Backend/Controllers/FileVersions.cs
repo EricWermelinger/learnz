@@ -45,7 +45,7 @@ public class FileVersions : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<FilePathDTO>> RevertToVersion(FileRevertDTO request)
+    public async Task<ActionResult<FileFrontendDTO>> RevertToVersion(FileRevertDTO request)
     {
         var guid = _userService.GetUserGuid();
         var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.FilePath);
@@ -75,6 +75,13 @@ public class FileVersions : Controller
 
         _dataContext.Add(newVersion);
         await _dataContext.SaveChangesAsync();
+
+        var existingFile = _dataContext.Files.First(f => f.ActualVersionPath == request.FilePath);
+        existingFile.ActualVersionPath = newVersion.Path;
+        existingFile.ActualVersionId = newVersionId;
+        existingFile.ActualVersionFileNameExternal = newVersion.FileNameExternal;
+        await _dataContext.SaveChangesAsync();
+
         var newVersionFrontend = _learnzFrontendFileGenerator.FrontendFileFromVersion(newVersion);
         return Ok(newVersionFrontend);
     }

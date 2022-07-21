@@ -69,10 +69,6 @@ public class FileVersionUploadDownload : Controller
                 string folderName = _configuration["Files:Folder"];
                 string path = Path.Combine(Directory.GetCurrentDirectory(), folderName, fileNameInternal);
 
-                existingFile.ActualVersionId = fileVersionId;
-                existingFile.ActualVersionFileNameExternal = fileNameExternal;
-                existingFile.ActualVersionPath = path;
-
                 LearnzFileVersion dbVersion = new LearnzFileVersion
                 {
                     Id = fileVersionId,
@@ -90,6 +86,13 @@ public class FileVersionUploadDownload : Controller
                 }
 
                 await _dataContext.FileVersions.AddAsync(dbVersion);
+                await _dataContext.SaveChangesAsync();
+
+                var oldFile = await _dataContext.Files.FirstAsync(lf => lf.ActualVersionPath == formPath);
+                oldFile.ActualVersionId = fileVersionId;
+                oldFile.ActualVersionFileNameExternal = fileNameExternal;
+                oldFile.ActualVersionPath = path;
+
                 await _dataContext.SaveChangesAsync();
 
                 FilePathDTO fileDto = new FilePathDTO

@@ -33,7 +33,7 @@ public class DataContext : DbContext
             .HasOne(gf => gf.File)
             .WithMany(f => f.GroupFiles)
             .HasForeignKey(gf => gf.FileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<GroupMember>()
             .HasOne(gm => gm.Group)

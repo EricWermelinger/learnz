@@ -54,4 +54,18 @@ public class FilePolicyChecker : IFilePolicyChecker
                 return false;
         }
     }
+
+    public bool GroupFileVisible(LearnzFile file)
+    {
+        switch (file.FilePolicy)
+        {
+            case FilePolicy.Everyone:
+            case FilePolicy.OnlySelfEditable:
+                return true;
+            case FilePolicy.Private:
+                return false;
+            default:
+                return false;
+        }
+    }
 }

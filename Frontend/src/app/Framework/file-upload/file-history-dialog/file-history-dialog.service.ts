@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
+import { FileFrontendDTO } from 'src/app/DTOs/File/FileFrontendDTO';
 import { FileRevertDTO } from 'src/app/DTOs/File/FileRevertDTO';
 import { FileVersionInfoDTO } from 'src/app/DTOs/File/FileVersionInfoDTO';
 import { ApiService } from '../../API/api.service';
@@ -22,7 +23,7 @@ export class FileHistoryDialogService {
       versionPath,
       filePath,
     } as FileRevertDTO;
-    return this.api.callApi(endpoints.FileVersions, value, 'POST');
+    return this.api.callApi<FileFrontendDTO>(endpoints.FileVersions, value, 'POST');
   }
 
   downloadVersion(filePath: string) {

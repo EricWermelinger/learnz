@@ -48,6 +48,18 @@ public class GroupQueryService : IGroupQueryService
 
     public async Task<List<GroupOverviewDTO>> GetGroupOverview(Guid userId)
     {
+        var groupFiles = await _dataContext.Groups.Where(grp => grp.GroupMembers.Select(gm => gm.UserId).Contains(userId))
+                                                  .SelectMany(grp => grp.GroupFiles)
+                                                  .Include(gf => gf.File)
+                                                  .ToListAsync();
+        var filesPerGroup = groupFiles.Where(f => _filePolicyChecker.GroupFileVisible(f.File) || f.File.OwnerId == userId)
+                                        .GroupBy(f => f.GroupId)
+                                        .Select(g => new
+                                        {
+                                            GroupId = g.Key,
+                                            Count = g.Count(),
+                                        })
+                                        .ToList();                                      
         var overview = await _dataContext.Groups.Where(grp => grp.GroupMembers.Select(gm => gm.UserId).Contains(userId))
             .Select(grp => new GroupOverviewDTO
             {
@@ -69,10 +81,24 @@ public class GroupQueryService : IGroupQueryService
                 LastMessageWasInfoMessage = grp.GroupMessages.Any()
                     ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().IsInfoMessage
                     : null,
-                NumberOfFiles = grp.GroupFiles.Count()
+                NumberOfFiles = 0
             })
             .OrderByDescending(grp => grp.LastMessageDateSent)
             .ToListAsync();
-        return overview;
+        List<GroupOverviewDTO> overviewWithFileCount = overview.Select(o => new GroupOverviewDTO
+        {
+            GroupId = o.GroupId,
+            GroupName = o.GroupName,
+            LastMessage = o.LastMessage,
+            LastMessageDateSent = o.LastMessageDateSent,
+            LastMessageSentUsername = o.LastMessageSentUsername,
+            LastMessageSentByMe = o.LastMessageSentByMe,
+            LastMessageWasInfoMessage = o.LastMessageWasInfoMessage,
+            ProfileImagePath = o.ProfileImagePath,
+            NumberOfFiles = filesPerGroup.Any(fpg => fpg.GroupId == o.GroupId)
+                    ? filesPerGroup.First(fpg => fpg.GroupId == o.GroupId).Count
+                    : 0
+        }).ToList();
+        return overviewWithFileCount;
     }
 }
