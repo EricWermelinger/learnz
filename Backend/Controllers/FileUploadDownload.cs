@@ -132,8 +132,6 @@ public class FileUploadDownload : Controller
         var versions = await _dataContext.FileVersions.Where(lvf => lvf.FileId == file.Id).ToListAsync();
         _dataContext.RemoveRange(versions);
         await _dataContext.SaveChangesAsync();
-        _dataContext.Remove(file);
-        await _dataContext.SaveChangesAsync();
         return Ok();
     }
 }

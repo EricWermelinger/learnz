@@ -64,7 +64,8 @@ public class GroupInfo : Controller
     [HttpPost]
     public async Task<ActionResult> UpsertGroup(GroupInfoCreateDTO request)
     {
-        var guid = _userService.GetUserGuid();
+        var user = await _userService.GetUser();
+        var guid = user.Id;
         var existingGroup = await _dataContext.Groups.FirstOrDefaultAsync(g => g.Id == request.GroupId);
         var timestamp = DateTime.UtcNow;
 
@@ -116,6 +117,21 @@ public class GroupInfo : Controller
         }
         else
         {
+            if (existingGroup.Description != request.Description || existingGroup.Name != request.Name || existingGroup.ProfileImageId != (Guid)profileImageId)
+            {
+                var editedMessage = new GroupMessage
+                {
+                    GroupId = request.GroupId,
+                    IsInfoMessage = true,
+                    Date = timestamp,
+                    Message = "groupEdited|" + user.Username,
+                    SenderId = guid
+                };
+                await _dataContext.GroupMessages.AddAsync(editedMessage);
+                await _dataContext.SaveChangesAsync();
+            }
+
+            var existingProfilImage = existingGroup.ProfileImageId;
             existingGroup.Description = request.Description;
             existingGroup.Name = request.Name;
             existingGroup.ProfileImageId = (Guid)profileImageId;
@@ -160,6 +176,12 @@ public class GroupInfo : Controller
                     SenderId = guid
                 });
                 await _dataContext.GroupMessages.AddRangeAsync(addedMembersMessage);
+            }
+            if (existingProfilImage != profileImageId)
+            {
+                var oldProfileImage = await _dataContext.Files.FirstAsync(f => f.Id == existingProfilImage);
+                _dataContext.Remove(oldProfileImage);
+                await _dataContext.SaveChangesAsync();
             }
         }
 

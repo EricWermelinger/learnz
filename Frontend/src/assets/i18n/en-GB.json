@@ -68,6 +68,7 @@
         "fileEdited":"edited Groupfile",
         "fileDeleted":"deleted Groupfile",
         "fileAdded":"added Groupfile",
+        "groupEdited":"edited Group",
         "newGroup":"New Group",
         "editGroup":"Edit Group",
         "groupInfo":"Group Info",

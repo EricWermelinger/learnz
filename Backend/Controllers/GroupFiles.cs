@@ -99,7 +99,7 @@ public class GroupFiles : Controller
             _dataContext.GroupMessages.Add(message);
             await _dataContext.SaveChangesAsync();
         }            
-        await TriggerWebsockets(request.GroupId, visible, user.Id);
+        await TriggerWebsockets(request.GroupId, true, user.Id);
         return Ok();
     }
 
