@@ -1,11 +1,12 @@
-﻿export interface UserProfileGetDTO {
+﻿import { FileFrontendDTO } from "../File/FileFrontendDTO";
+
+export interface UserProfileGetDTO {
   username: string;
   firstname: string;
   lastname: string;
   birthdate: Date;
   grade: number;
-  profileImagePath: string;
-  profileImageName: string;
+  profileImage: FileFrontendDTO;
   information: string;
   language: number;
   goodSubject1: number;

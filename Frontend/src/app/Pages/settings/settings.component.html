@@ -66,7 +66,7 @@
             <mat-option *ngFor="let subject of subjects" [value]="subject.value">{{ ('Subject.' + subject.key) | translate }}</mat-option>
         </mat-select>
     </mat-form-field>
-    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()" [translationKey]="'settings.profileImagePath'" [externalFileName]="formGroup.value.profileImageName"></app-file-upload>
+    <app-file-upload formControlName="profileImagePath" [isAnonymous]="true" [fileTypes]="fileTypes()" [translationKey]="'settings.profileImagePath'" [externalFilename]="formGroup.value.profileImage.externalFilename"></app-file-upload>
     <div class="slide-wrapper">
         <mat-slide-toggle (change)="setDarkTheme(formGroup.value.darkTheme)" formControlName="darkTheme">{{ 'settings.darkTheme' | translate }}</mat-slide-toggle>
     </div>    
@@ -76,7 +76,7 @@
     <button mat-flat-button color="primary" type="submit" (click)="save()" [disabled]="!formGroup.valid || !formGroup.dirty">
         {{ 'framework.save' | translate }}
     </button>
-    <button mat-flat-button color="accent" type="submit" (click)="changePassword()" [disabled]="!formGroup.valid || !formGroup.dirty">
+    <button mat-flat-button color="accent" type="submit" (click)="changePassword()">
         {{ 'settings.changePassword' | translate }}
     </button>
 </form>

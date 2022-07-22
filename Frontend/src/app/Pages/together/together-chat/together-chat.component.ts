@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { TogetherChatDTO } from 'src/app/DTOs/Together/TogetherChatDTO';
 import { TogetherChatSendMessageDTO } from 'src/app/DTOs/Together/TogetherChatSendMessageDTO';
@@ -29,7 +29,7 @@ export class TogetherChatComponent implements OnDestroy {
     private dialog: MatDialog,
   ) {
     this.chatId = this.activatedRoute.snapshot.paramMap.get(appRoutes.TogetherChatId) ?? '';
-    this.chat$ = this.chatService.getMessages(this.chatId);
+    this.chat$ = this.chatService.getMessages(this.chatId).pipe(takeUntil(this.destroyed$));
   }
 
   isToday(date: Date) {

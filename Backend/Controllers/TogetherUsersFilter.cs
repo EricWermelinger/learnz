@@ -10,12 +10,12 @@ public class TogetherUsersFilter : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
-    public TogetherUsersFilter(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
+    public TogetherUsersFilter(DataContext dataContext, IUserService userService, ILearnzFrontendFileGenerator learnzFrontendFileGenerator)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
     }
 
     [HttpGet]
@@ -43,7 +43,7 @@ public class TogetherUsersFilter : Controller
                                       {
                                           UserId = usr.User.Id,
                                           Username = usr.User.Username,
-                                          ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage),
+                                          ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage),
                                           Grade = usr.User.Grade,
                                           Information = usr.User.Information,
                                           GoodSubject1 = usr.User.GoodSubject1,

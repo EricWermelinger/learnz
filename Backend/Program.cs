@@ -3,6 +3,7 @@ global using Learnz.Framework;
 global using Learnz.Entities;
 global using Learnz.Entities.Enums;
 global using Learnz.DTOs;
+global using Learnz.Services;
 global using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -30,8 +31,9 @@ builder.Services.AddScoped<IFilePolicyChecker, FilePolicyChecker>();
 builder.Services.AddScoped<IFileFinder, FileFinder>();
 builder.Services.AddScoped<IFileAnonymousFinder, FileAnonymousFinder>();
 builder.Services.AddScoped<ISetPolicyChecker, SetPolicyChecker>();
-builder.Services.AddScoped<IPathToImageConverter, PathToImageConverter>();
+builder.Services.AddScoped<ILearnzFrontendFileGenerator, LearnzFrontendFileGenerator>();
 builder.Services.AddScoped<ITogetherQueryService, TogetherQueryService>();
+builder.Services.AddScoped<IGroupQueryService, GroupQueryService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(options => {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

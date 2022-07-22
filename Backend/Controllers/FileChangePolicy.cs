@@ -22,8 +22,8 @@ public class FileChangePolicy : Controller
     public async Task<ActionResult> ChangePolicy(FileChangePolicyDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.Path == request.FilePath && _filePolicyChecker.FilePolicyChangeable(f, guid));
-        if (file == null)
+        var file = await _dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == request.FilePath);
+        if (file == null || !_filePolicyChecker.FilePolicyChangeable(file, guid))
         {
             return BadRequest(ErrorKeys.FileNotAccessible);
         }
@@ -31,5 +31,4 @@ public class FileChangePolicy : Controller
         await _dataContext.SaveChangesAsync();
         return Ok();
     }
-
 }

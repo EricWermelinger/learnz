@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { map, Observable } from 'rxjs';
+import { FileFrontendDTO } from 'src/app/DTOs/File/FileFrontendDTO';
 import { UserDarkThemeDTO } from 'src/app/DTOs/User/UserDarkThemeDTO';
 import { UserProfileGetDTO } from 'src/app/DTOs/User/UserProfileGetDTO';
 import { UserProfileUploadDTO } from 'src/app/DTOs/User/UserProfileUploadDTO';
@@ -39,8 +40,12 @@ export class SettingsComponent {
       lastname: ['', Validators.required],
       birthdate: [null, Validators.required],
       grade: [null, Validators.required],
+      profileImage: {
+        externalFilename: '',
+        byteString: '',
+        path: '',
+      } as FileFrontendDTO,
       profileImagePath: '',
-      profileImageName: '',
       information: ['', Validators.required],
       languageKey: ['', Validators.required],
       goodSubject1: [null, Validators.required],
@@ -53,11 +58,12 @@ export class SettingsComponent {
     });
     this.formGroup.addValidators(() => this.validateDifferentSubjects());
     this.settings$ = this.settingsService.getUserProfile();
-    this.settings$.subscribe((user: any) => {
+    this.settings$.subscribe(user => {
       this.formGroup.patchValue(user);
       this.formGroup.patchValue({
         birthdate: user.birthdate,
         languageKey: this.languageService.getLanguageKey(user.language),
+        profileImagePath: user.profileImage.path,
       });
     });
     this.errorVisible$ = this.formGroup.valueChanges.pipe(

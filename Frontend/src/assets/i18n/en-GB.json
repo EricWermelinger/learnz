@@ -57,7 +57,32 @@
         "noSearchResults":"No search results"
     },
     "group":{
-        "group":"Group"
+        "group":"Group",
+        "chat":"Chat",
+        "files":"Files",
+        "groupFile":"Group File",
+        "groupCreated":"was Created",
+        "userDeleted":"was Removed from the Group",
+        "userAdded":"was Added to the Group",
+        "userLeft":"left the Group",
+        "fileEdited":"edited Groupfile",
+        "fileDeleted":"deleted Groupfile",
+        "fileAdded":"added Groupfile",
+        "groupEdited":"edited Group",
+        "newGroup":"New Group",
+        "editGroup":"Edit Group",
+        "groupInfo":"Group Info",
+        "leaveGroup":"Leave Group",
+        "name":"Groupname",
+        "description":"Description",
+        "profileImage":"Profile Image",
+        "groupMembers":"Group Members",
+        "user":"User",
+        "you":"You",
+        "noGroups":"No groups yet",
+        "message":"Message",
+        "noFiles":"No files yet",
+        "addFile":"Add File"
     },
     "create":{
         "create":"Create"
@@ -97,12 +122,13 @@
         "confirmPassword":"Confirm Password"
     },
     "fileUpload":{
-        "uploadSuccessful":"Upload Successful",
         "uploadFile":"Upload File",
-        "uploading":"Uploading",
-        "downloadSuccessful":"Download Successful",
-        "downloading":"Downloading",
-        "file":"File"
+        "file":"File",
+        "deleteFile":"Delete File",
+        "uploadNewVersion":"Upload New Version",
+        "viewVersionHistory":"View Version History",
+        "fileHistory":"File History",
+        "changePolicy":"Change Policy"
     },
     "errorBackend":{
         "fileUploadUnsuccessful":"File upload unsuccessful",
@@ -161,6 +187,11 @@
         "Grade10":"Grade 10",
         "Grade11":"Grade 11",
         "Grade12":"Grade 12"
+    },
+    "FilePolicy":{
+        "Private":"Private",
+        "OnlySelfEditable":"Only Self Editable",
+        "Everyone":"Public"
     },
     "languages":{
         "languages":"Language",

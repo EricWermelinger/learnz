@@ -35,9 +35,10 @@ export class WebSocketService {
     return this.connection;
   }
 
-  webSocketData<T>(event: string, startValue: T) {
+  webSocketData<T>(event: string, startValue: T, identifier?: string) {
+    const eventName = !!identifier ? `${event}|${identifier}` : event;
     const socketData = new BehaviorSubject<T>(startValue);
-    this.setupConnection().on(event, (data: any) => {
+    this.setupConnection().on(eventName, (data: any) => {
       socketData.next(data as T);
     });
     return socketData.asObservable().pipe(

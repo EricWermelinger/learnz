@@ -1,10 +1,16 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class FileFinder : IFileFinder
 {
     public async Task<Guid?> GetFileId(DataContext dataContext, Guid userId, string path, IFilePolicyChecker policyChecker)
     {
-        var file = await dataContext.Files.FirstOrDefaultAsync(f =>
-            f.Path == path && policyChecker.FileDownloadable(f, userId));
-        return file?.Id;
+        var file = await dataContext.Files.FirstOrDefaultAsync(f => f.ActualVersionPath == path);
+        if (file != null)
+        {
+            if (policyChecker.FileDownloadable(file, userId))
+            {
+                return file.Id;
+            }
+        }
+        return null;
     }
 }

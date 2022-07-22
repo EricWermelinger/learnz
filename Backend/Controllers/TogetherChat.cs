@@ -45,8 +45,8 @@ public class TogetherChat : Controller
 
         var messageUser1 = await _togetherQueryService.GetMessages(guid, request.UserId);
         var messageUser2 = await _togetherQueryService.GetMessages(request.UserId, guid);
-        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser1, guid);
-        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser2, request.UserId);
+        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser1, guid, request.UserId);
+        await _hubService.SendMessageToUser(nameof(TogetherChat), messageUser2, request.UserId, guid);
         var connectionsUser1 = await _togetherQueryService.GetConnectionOverview(guid);
         var connectionsUser2 = await _togetherQueryService.GetConnectionOverview(request.UserId);
         await _hubService.SendMessageToUser(nameof(TogetherConnectUser), connectionsUser1, guid);

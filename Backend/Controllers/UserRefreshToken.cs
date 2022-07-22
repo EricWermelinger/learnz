@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Learnz.Controllers;
 
@@ -17,7 +18,7 @@ public class UserRefreshToken : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<TokenDTO>> RefreshToken(UserRefreshTokenDTO request)
+    public async Task<ActionResult<UserTokenDTO>> RefreshToken(UserRefreshTokenDTO request)
     {
         var user = await _dataContext.Users.Where(usr => usr.RefreshToken == request.RefreshToken && usr.RefreshExpires >= DateTime.UtcNow).FirstOrDefaultAsync();
         if (user == null)
@@ -25,12 +26,11 @@ public class UserRefreshToken : Controller
             return BadRequest(ErrorKeys.InvalidLogin);
         }
 
-        var token = TokenAuthentication.CreateToken(user.Id, _configuration);
-
-        user.RefreshToken = token.RefreshToken;
-        user.RefreshExpires = token.RefreshExpires;
-        await _dataContext.SaveChangesAsync();
-
-        return Ok(token);
+        var token = TokenAuthentication.GenerateToken(user.Id, _configuration);
+        var refresh = new UserTokenDTO
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(token)
+        };
+        return Ok(refresh);
     }
 }

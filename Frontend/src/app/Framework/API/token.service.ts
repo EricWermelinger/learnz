@@ -15,13 +15,11 @@ export class TokenService {
     private errorHandler: ErrorHandlingService,
   ) { }
 
-  patchToken(token: TokenDTO, preventNavigate: boolean = false) {
+  patchToken(token: TokenDTO) {
     this.setToken(token.token);
     this.setRefreshToken(token.refreshToken);
     this.setExpired(token.refreshExpires);
-    if (!preventNavigate) {
-      this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
-    }
+    this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
   }
 
   clearToken() {
@@ -57,7 +55,7 @@ export class TokenService {
     localStorage.setItem(appConfig.APPLICATION_LANGUAGE, language);
   }
 
-  private setToken(token: string) {
+  setToken(token: string) {
     localStorage.setItem(appConfig.APPLICATION_TOKEN, token);
   }
 

@@ -1,9 +1,15 @@
+import { KeyValue } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { endpoints } from 'src/app/Config/endpoints';
+import { FileChangePolicyDTO } from 'src/app/DTOs/File/FileChangePolicyDTO';
+import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
-import { ApiService } from '../API/api.service';
+import { FilePolicy, getPolicies } from 'src/app/Enums/FilePolicy';
+import { ApiService, HttpMethods } from '../API/api.service';
+import { FileHistoryDialogComponent } from './file-history-dialog/file-history-dialog.component';
 
 @Component({
   selector: 'app-file-upload',
@@ -24,65 +30,112 @@ import { ApiService } from '../API/api.service';
 })
 export class FileUploadComponent implements ControlValueAccessor, Validator {
 
-  progress: number = 0;
-  message: string = '';
   _filePath: string = '';
-  _externalFileName: string = '';
+  _externalFilename: string = '';
+  _historizedFile: FileFrontendHistorizedDTO | null = null;
+  policies = getPolicies();
   @Input() set filePath(filePath: string) {
     this._filePath = filePath;
   }
-  @Input() set externalFileName(externalFileName: string) {
-    this._externalFileName = externalFileName;
+  @Input() set externalFilename(externalFilename: string) {
+    this._externalFilename = externalFilename;
   }
   @Input() isAnonymous: boolean = false;
   @Input() fileTypes: string = '';
   @Input() translationKey: string = '';
+  @Input() set historizedFile (file: FileFrontendHistorizedDTO | null) {
+    if (!!file) {
+      this._historizedFile = file;
+      this._filePath = file.path;
+      this._externalFilename = file.externalFilename;
+    }
+  }
+
+  @Output() fileChanged = new EventEmitter<KeyValue<string, HttpMethods>>();
   
   constructor(
     private api: ApiService,
+    private matDialog: MatDialog,
   ) { }
 
-  uploadFile(files: any) {
+  uploadFile(files: any, isNewVersion: boolean = false) {
     if (files.length === 0) {
       return;
     }
-    this.message = 'fileUpload.uploading';
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
-    this.api.callFileUpload(endpoint, formData).subscribe((event: any) => {
-      if (event.type === HttpEventType.UploadProgress) {
-        this.progress = this.sanitizePercent(event.loaded, event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.message = 'fileUpload.uploadSuccessful';
+    if (isNewVersion) {
+      formData.append('path', this._filePath);
+    }
+    this.api.callFileUpload(this.getEndpoint(isNewVersion), formData).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
         const body = (event.body as FilePathDTO);
         this.updateValue(body.path);
-        this._externalFileName = body.externalFileName;
-        this.progress = 0;
+        this._externalFilename = body.externalFilename;
+        this.fileChanged.emit({
+          key: this._filePath,
+          value: isNewVersion ? 'PUT' : 'POST'
+        });
       }
     });
   }
 
   removeFile() {
+    const path = this._filePath;
     this.updateValue('');
-    this._externalFileName = '';
-    this.message = '';
-    this.progress = 0;
+    this._externalFilename = '';
+    const value = !!this._historizedFile ? { filePath: path, ignore: true } : { filePath: path };
+    this.api.callApi(this.getEndpoint(), value, 'DELETE').subscribe(_ => {
+      this.fileChanged.emit({
+        key: path,
+        value: 'DELETE'
+      });
+    });
   }
 
   downloadFile() {
-    this.message = 'fileUpload.downloading';
-    const endpoint = this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
-    this.api.callFileDownload(endpoint, { filePath: this._filePath }).subscribe((event: any) => {
-      if (event.type === HttpEventType.DownloadProgress) {
-        this.progress = this.sanitizePercent(event.loaded, event.total);
-      } else if (event.type === HttpEventType.Response) {
-        this.message = 'fileUpload.downloadSuccessful';
-        this.progress = 0;
+    this.api.callFileDownload(this.getEndpoint(), { filePath: this._filePath }).subscribe((event: any) => {
+      if (event.type === HttpEventType.Response) {
         this.download(event);
       }
     });
+  }
+
+  openHistory() {
+    let dialogRef = this.matDialog.open(FileHistoryDialogComponent, {
+      data: {
+        path: this._filePath,
+        revertable: this._historizedFile!.editable
+      }
+    });
+    const sub$ = dialogRef.componentInstance.onEdit.subscribe(value => {
+      this.fileChanged.emit({
+        key: value,
+        value: 'PUT'
+      });
+    });
+    dialogRef.afterClosed().subscribe(_ => sub$.unsubscribe());
+  }
+
+  setPolicy(policyNumber: number) {
+    const value = {
+      filePath: this._filePath,
+      policy: policyNumber,
+    } as FileChangePolicyDTO;
+    this.api.callApi(endpoints.FileChangePolicy, value, 'POST').subscribe(_ => {
+      this.fileChanged.emit({
+        key: this._filePath,
+        value: 'PUT'
+      });
+    });
+  }
+  
+  private getEndpoint(isNewVersion: boolean = false): string {
+    if (isNewVersion) {
+      return endpoints.FileVersionUploadDownload;
+    }
+    return this.isAnonymous ? endpoints.FileUploadDownloadAnonymous : endpoints.FileUploadDownload;
   }
 
   private download(data: any) {
@@ -90,16 +143,11 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
     const a = document.createElement('a');
     a.setAttribute('style', 'display:none;');
     document.body.appendChild(a);
-    a.download = this._externalFileName;
+    a.download = this._externalFilename;
     a.href = URL.createObjectURL(downloadedFile);
     a.target = '_blank';
     a.click();
     document.body.removeChild(a);
-  }
-
-  private sanitizePercent(loaded: number, total: number): number {
-    const percent = Math.round(loaded * 100 / total);
-    return percent === 100 ? 99 : percent;
   }
 
   touched = false;

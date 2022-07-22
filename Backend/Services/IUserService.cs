@@ -1,5 +1,4 @@
-﻿namespace Learnz.Framework;
-
+﻿namespace Learnz.Services;
 public interface IUserService
 {
     public Task<User> GetUser();

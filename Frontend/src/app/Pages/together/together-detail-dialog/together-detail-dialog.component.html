@@ -7,7 +7,9 @@
                     <div class="username">{{ profile.username }}</div>
                 </ng-template>
                 <div class="grade">{{ translateGrade(profile.grade) | translate }}</div>
-                <img [src]="profile.profileImagePath" />
+                <div class="img-wrap">
+                    <img [src]="profile.profileImagePath" />
+                </div>
                 <div class="information">{{ profile.information }}</div>
             </div>
             <div class="good-bad">

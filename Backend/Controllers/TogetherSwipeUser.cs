@@ -11,15 +11,15 @@ public class TogetherSwipeUser : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
     private readonly HubService _hubService;
     private readonly ITogetherQueryService _togetherQueryService;
 
-    public TogetherSwipeUser(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter, IHubContext<LearnzHub> learnzHub, ITogetherQueryService togetherQueryService)
+    public TogetherSwipeUser(DataContext dataContext, IUserService userService, ILearnzFrontendFileGenerator learnzFrontendFileGenerator, IHubContext<LearnzHub> learnzHub, ITogetherQueryService togetherQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
         _hubService = new HubService(learnzHub);
         _togetherQueryService = togetherQueryService;
     }
@@ -65,7 +65,7 @@ public class TogetherSwipeUser : Controller
                                               UserId = usr.User.Id,
                                               Username = usr.User.Username,
                                               Grade = usr.User.Grade,
-                                              ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage),
+                                              ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage),
                                               Information = usr.User.Information,
                                               GoodSubject1 = usr.User.GoodSubject1,
                                               GoodSubject2 = usr.User.GoodSubject2,
@@ -124,7 +124,7 @@ public class TogetherSwipeUser : Controller
                                                                             UserId = usr.Id,
                                                                             Username = usr.Username,
                                                                             Grade = usr.Grade,
-                                                                            ProfileImagePath = _pathToImageConverter.PathToImage(usr.ProfileImage.Path),
+                                                                            ProfileImagePath = _learnzFrontendFileGenerator.PathToImage(usr.ProfileImage.Path),
                                                                             Information = usr.Information,
                                                                             GoodSubject1 = usr.GoodSubject1,
                                                                             GoodSubject2 = usr.GoodSubject2,

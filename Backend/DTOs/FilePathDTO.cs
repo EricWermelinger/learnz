@@ -3,5 +3,5 @@
 public class FilePathDTO
 {
     public string Path { get; set; }
-    public string ExternalFileName { get; set; }
+    public string ExternalFilename { get; set; }
 }

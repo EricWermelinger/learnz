@@ -78,7 +78,7 @@ public class FileUploadDownloadAnonymous : Controller
                 FilePathDTO fileDto = new FilePathDTO
                 {
                     Path = dbFile.Path,
-                    ExternalFileName = dbFile.FileNameExternal
+                    ExternalFilename = dbFile.FileNameExternal
                 };
                 return Ok(fileDto);
             }
@@ -88,5 +88,20 @@ public class FileUploadDownloadAnonymous : Controller
         {
             return BadRequest(ErrorKeys.FileUploadUnsuccessful);
         }
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteFile(string filePath)
+    {
+        var file = await _dataContext.FilesAnonymous.FirstOrDefaultAsync(f => f.Path == filePath);
+        if (file == null)
+        {
+            return BadRequest(ErrorKeys.FileNotAccessible);
+        }
+        try
+        {
+            System.IO.File.Delete(filePath);
+        } catch { }
+        return Ok();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class FilePolicyChecker : IFilePolicyChecker
 {
     public bool FileEditable(LearnzFile file, Guid userId)
@@ -9,7 +9,7 @@ public class FilePolicyChecker : IFilePolicyChecker
                 return true;
             case FilePolicy.Private:
             case FilePolicy.OnlySelfEditable:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -22,7 +22,7 @@ public class FilePolicyChecker : IFilePolicyChecker
             case FilePolicy.Everyone:
             case FilePolicy.OnlySelfEditable:
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -36,7 +36,7 @@ public class FilePolicyChecker : IFilePolicyChecker
             case FilePolicy.OnlySelfEditable:
                 return true;
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return file.OwnerId == userId;
             default:
                 return false;
         }
@@ -48,9 +48,22 @@ public class FilePolicyChecker : IFilePolicyChecker
         {
             case FilePolicy.Everyone:
             case FilePolicy.OnlySelfEditable:
+            case FilePolicy.Private:
+                return file.OwnerId == userId;
+            default:
+                return false;
+        }
+    }
+
+    public bool GroupFileVisible(LearnzFile file)
+    {
+        switch (file.FilePolicy)
+        {
+            case FilePolicy.Everyone:
+            case FilePolicy.OnlySelfEditable:
                 return true;
             case FilePolicy.Private:
-                return file.CreatedById == userId;
+                return false;
             default:
                 return false;
         }

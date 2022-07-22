@@ -19,7 +19,7 @@ export class TogetherChatService {
   getMessages(userId: string): Observable<TogetherChatDTO> {
     return merge(
       this.api.callApi<TogetherChatDTO>(endpoints.TogetherChat, { userId }, 'GET'),
-      this.ws.webSocketData<TogetherChatDTO>(endpoints.TogetherChat, {} as TogetherChatDTO),
+      this.ws.webSocketData<TogetherChatDTO>(endpoints.TogetherChat, {} as TogetherChatDTO, userId),
     );
   }
 

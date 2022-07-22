@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public interface ISetPolicyChecker
 {
     public bool SetEditable(CreateSet set, Guid userId);

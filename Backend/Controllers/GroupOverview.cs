@@ -10,39 +10,21 @@ public class GroupOverview : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    private readonly IPathToImageConverter _pathToImageConverter;
-    public GroupOverview(DataContext dataContext, IUserService userService, IPathToImageConverter pathToImageConverter)
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
+    private readonly IGroupQueryService _groupQueryService;
+    public GroupOverview(DataContext dataContext, IUserService userService, ILearnzFrontendFileGenerator learnzFrontendFileGenerator, IGroupQueryService groupQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
-        _pathToImageConverter = pathToImageConverter;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
+        _groupQueryService = groupQueryService;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<GroupOverviewDTO>>> GetGroups()
     {
         var guid = _userService.GetUserGuid();
-        var overview = await _dataContext.Groups.Where(grp => grp.GroupMembers.Select(gm => gm.Id).Contains(guid))
-            .Select(grp => new GroupOverviewDTO
-            {
-                GroupId = grp.Id,
-                GroupName = grp.Name,
-                ProfileImagePath = _pathToImageConverter.PathToImage(grp.ProfileImage.Path),
-                LastMessage = grp.GroupMessages.Any()
-                    ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Message
-                    : null,
-                LastMessageDateSent = grp.GroupMessages.Any()
-                    ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().Date
-                    : null,
-                LastMessageSentByMe = grp.GroupMessages.Any()
-                    ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().SenderId == guid
-                    : null,
-                LastMessageWasInfoMessage = grp.GroupMessages.Any()
-                    ? grp.GroupMessages.OrderByDescending(grp => grp.Date).First().IsInfoMessage
-                    : null,
-                NumberOfFiles = grp.GroupFiles.Count()
-            })
-            .ToListAsync();
+        var overview = await _groupQueryService.GetGroupOverview(guid);
         return Ok(overview);
     }
 }

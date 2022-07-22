@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { TogetherAskAnswerDTO } from 'src/app/DTOs/Together/TogetherAskAnswerDTO';
 import { TogetherAskOverviewDTO } from 'src/app/DTOs/Together/TogetherAskOverviewDTO';
 import { TogetherAskUserDTO } from 'src/app/DTOs/Together/TogetherAskUserDTO';
@@ -16,20 +16,21 @@ import { TogetherAskService } from './together-ask.service';
   templateUrl: './together-ask.component.html',
   styleUrls: ['./together-ask.component.scss']
 })
-export class TogetherAskComponent {
+export class TogetherAskComponent implements OnDestroy {
 
   asks$: Observable<TogetherAskOverviewDTO>;
   filter: FormGroup;
   subjects = getSubjects();
   grades = getGrades();
   filterResult$: Observable<TogetherUserProfileDTO[]>;
+  private destroyed$ = new Subject<void>();
 
   constructor(
     private askService: TogetherAskService,
     private dialog: MatDialog,
     private formBuilder: FormBuilder,
   ) {
-    this.asks$ = this.askService.getOpenAsks();
+    this.asks$ = this.askService.getOpenAsks().pipe(takeUntil(this.destroyed$));
     this.filter = this.formBuilder.group({
       username: '',
       grade: -1,
@@ -73,5 +74,10 @@ export class TogetherAskComponent {
   
   isEmpty(users: TogetherUserProfileDTO[]) {
     return users.length === 0;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

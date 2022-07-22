@@ -1,4 +1,4 @@
-﻿namespace Learnz.Framework;
+﻿namespace Learnz.Services;
 public class SetPolicyChecker : ISetPolicyChecker
 {
     public bool SetDeletable(CreateSet set, Guid userId)

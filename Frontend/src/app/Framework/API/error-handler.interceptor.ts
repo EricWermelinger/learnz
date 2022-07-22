@@ -7,7 +7,7 @@ import { ApiService } from './api.service';
 import { ErrorHandlingService } from './error-handling.service';
 import { TokenService } from './token.service';
 import { UserRefreshTokenDTO } from 'src/app/DTOs/User/UserRefreshTokenDTO';
-import { TokenDTO } from 'src/app/DTOs/User/TokenDTO';
+import { UserTokenDTO } from 'src/app/DTOs/User/UserTokenDTO';
 
 @Injectable()
 export class ErrorHandlerInterceptor implements HttpInterceptor {
@@ -41,11 +41,11 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
           this.tokenService.clearToken();
         }
         if (error.status === 401) {
-          return this.api.callApi<TokenDTO>(endpoints.UserRefreshToken,  {
+          return this.api.callApi<UserTokenDTO>(endpoints.UserRefreshToken,  {
             refreshToken: this.tokenService.getRefreshToken(),
           } as UserRefreshTokenDTO, 'POST').pipe(
             tap(token => {
-              this.tokenService.patchToken(token, true);
+              this.tokenService.setToken(token.token);
             }),
             switchMap(token => next.handle(this.cloneRequest(request, token.token))),
           );

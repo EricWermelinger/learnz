@@ -6,6 +6,8 @@ import { ChallengeComponent } from './Pages/challenge/challenge.component';
 import { CreateComponent } from './Pages/create/create.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { DrawComponent } from './Pages/draw/draw.component';
+import { GroupChatComponent } from './Pages/group/group-chat/group-chat.component';
+import { GroupFilesComponent } from './Pages/group/group-files/group-files.component';
 import { GroupComponent } from './Pages/group/group.component';
 import { LearnComponent } from './Pages/learn/learn.component';
 import { LoginComponent } from './Pages/login/login.component';
@@ -31,6 +33,8 @@ const routes: Routes = [
       { path: appRoutes.TogetherConnect, component: TogetherConnectComponent },
       { path: appRoutes.TogetherSwipe, component: TogetherSwipeComponent },
       { path: appRoutes.Group, component: GroupComponent },
+      { path: `${appRoutes.GroupChat}/:${appRoutes.GroupChatId}`, component: GroupChatComponent },
+      { path: `${appRoutes.GroupFiles}/:${appRoutes.GroupFilesId}`, component: GroupFilesComponent },
       { path: appRoutes.Create, component: CreateComponent },
       { path: appRoutes.Learn, component: LearnComponent },
       { path: appRoutes.Challenge, component: ChallengeComponent },
