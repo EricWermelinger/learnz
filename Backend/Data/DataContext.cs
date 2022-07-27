@@ -136,7 +136,7 @@ public class DataContext : DbContext
             .WithMany(cqd => cqd.Answers)
             .HasForeignKey(cqa => cqa.QuestionDistributeId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         modelBuilder.Entity<CreateQuestionMathematic>()
             .HasOne(cqd => cqd.Set)
             .WithMany(cs => cs.QuestionMathematics)
@@ -199,15 +199,30 @@ public class DataContext : DbContext
     }
 
     public virtual DbSet<User> Users { get; set; }
+    
     public virtual DbSet<TogetherAsk> TogetherAsks { get; set; }
     public virtual DbSet<TogetherConnection> TogetherConnections { get; set; }
     public virtual DbSet<TogetherSwipe> TogetherSwipes { get; set; }
     public virtual DbSet<TogetherMessage> TogetherMessages { get; set; }
+    
     public virtual DbSet<Group> Groups { get; set; }
     public virtual DbSet<GroupMember> GroupMembers { get; set; }
     public virtual DbSet<GroupFile> GroupFiles { get; set; }
     public virtual DbSet<GroupMessage> GroupMessages { get; set; }
+    
     public virtual DbSet<LearnzFile> Files { get; set; }
     public virtual DbSet<LearnzFileAnonymous> FilesAnonymous { get; set; }
     public virtual DbSet<LearnzFileVersion> FileVersions { get; set; }
+    
+    public virtual DbSet<CreateSet> CreateSets { get; set; }
+    public virtual DbSet<CreateQuestionDistribute> CreateQuestionDistributes { get; set; }
+    public virtual DbSet<CreateQuestionDistributeAnswer> CreateQuestionDistributeAnswers { get; set; }
+    public virtual DbSet<CreateQuestionMathematic> CreateQuestionMathematics { get; set; }
+    public virtual DbSet<CreateQuestionMathematicVariable> CreateQuestionMathematicVariables { get; set; }
+    public virtual DbSet<CreateQuestionMultipleChoice> CreateQuestionMultipleChoices { get; set; }
+    public virtual DbSet<CreateQuestionMultipleChoiceAnswer> CreateQuestionMultipleChoiceAnswers { get; set; }
+    public virtual DbSet<CreateQuestionOpenQuestion> CreateQuestionOpenQuestions { get; set; }
+    public virtual DbSet<CreateQuestionTextField> CreateQuestionTextFields { get; set; }
+    public virtual DbSet<CreateQuestionTrueFalse> CreateQuestionTrueFalses { get; set; }
+    public virtual DbSet<CreateQuestionWord> CreateQuestionWords { get; set; }
 }
