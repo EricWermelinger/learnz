@@ -64,18 +64,4 @@ public class CreateSetHeader : Controller
             return Ok();
         }
     }
-
-    [HttpDelete]
-    public async Task<ActionResult> DeleteSet(Guid setId)
-    {
-        var guid = _userService.GetUserGuid();
-        var existing = await _dataContext.CreateSets.FirstOrDefaultAsync(crs => crs.Id == setId);
-        if (existing == null || !_setPolicyChecker.SetDeletable(existing, guid))
-        {
-            return BadRequest(ErrorKeys.SetNotAccessible);
-        }
-        _dataContext.CreateSets.Remove(existing);
-        await _dataContext.SaveChangesAsync();
-        return Ok();
-    }
 }
