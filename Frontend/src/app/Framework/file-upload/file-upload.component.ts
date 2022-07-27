@@ -7,7 +7,7 @@ import { endpoints } from 'src/app/Config/endpoints';
 import { FileChangePolicyDTO } from 'src/app/DTOs/File/FileChangePolicyDTO';
 import { FileFrontendHistorizedDTO } from 'src/app/DTOs/File/FileFrontendHistorizedDTO';
 import { FilePathDTO } from 'src/app/DTOs/File/FilePathDTO';
-import { FilePolicy, getPolicies } from 'src/app/Enums/FilePolicy';
+import { getFilePolicies } from 'src/app/Enums/FilePolicy';
 import { ApiService, HttpMethods } from '../API/api.service';
 import { FileHistoryDialogComponent } from './file-history-dialog/file-history-dialog.component';
 
@@ -33,7 +33,7 @@ export class FileUploadComponent implements ControlValueAccessor, Validator {
   _filePath: string = '';
   _externalFilename: string = '';
   _historizedFile: FileFrontendHistorizedDTO | null = null;
-  policies = getPolicies();
+  policies = getFilePolicies();
   @Input() set filePath(filePath: string) {
     this._filePath = filePath;
   }
