@@ -1,5 +1,8 @@
 ﻿todo:
 
+open todos:
+create -> implement last sets
+
 create
 get sets for edit: own (created), public (by policy) filter by subject (main & second) & title
 create set (upsert, overview without questions)

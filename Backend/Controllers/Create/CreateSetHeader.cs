@@ -18,6 +18,26 @@ public class CreateSetHeader : Controller
         _setPolicyChecker = setPolicyChecker;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<CreateUpsertSetHeaderDTO>> GetHeaderOfSet(Guid setId)
+    {
+        var guid = _userService.GetUserGuid();
+        var set = await _dataContext.CreateSets.FirstOrDefaultAsync(crs => crs.Id == setId);
+        if (set == null || !_setPolicyChecker.SetUsable(set, guid))
+        {
+            return BadRequest(ErrorKeys.SetNotAccessible);
+        }
+
+        var setDto = new CreateUpsertSetHeaderDTO
+        {
+            Name = set.Name,
+            Description = set.Description,
+            SubjectMain = set.SubjectMain,
+            SubjectSecond = set.SubjectSecond
+        };
+        return Ok(setDto);
+    }
+
     [HttpPost]
     public async Task<ActionResult> UpsertSet(CreateUpsertSetHeaderDTO request)
     {

@@ -1,10 +1,15 @@
 export const endpoints = {
+    CreateFilterSets: 'createFilterSets', // use get
+    CreateLastSets: 'createLastSets', // use get
+    CreateOwnSets: 'createOwnSets', // use get
+    CreateSetHeader: 'createSetHeader', // use get / post
+    CreateSetQuestions: 'createSetQuestions', // use get / post
     FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
     FileVersions: 'fileVersions',
     FileVersionUploadDownload: 'fileVersionUploadDownload',
-    GroupFiles: 'groupFiles', // use get / post / put / delete
+    GroupFiles: 'groupFiles',
     GroupInfo: 'groupInfo',
     GroupLeave: 'groupLeave',
     GroupMessages: 'groupMessages',
