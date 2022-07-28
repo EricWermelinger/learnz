@@ -211,8 +211,183 @@ public class CreateSetQuestions : Controller
             }
         }
 
-        // todo do the same for other question typess
+        var mathExistingQuestions = _dataContext.CreateQuestionMathematics.Where(q => q.SetId == setId).ToList();
+        var mathUpdatedQuestions = request.QuestionsMathematic.Select(q => new CreateQuestionMathematic
+        {
+            Id = q.Id,
+            Question = q.Question,
+            Answer = q.Answer,
+            Digits = q.Digits,
+            SetId = setId
+        }).ToList();
+        foreach (var question in mathUpdatedQuestions)
+        {
+            var existingQuestion = mathExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.Question = question.Question;
+                existingQuestion.Answer = question.Answer;
+                existingQuestion.Digits = question.Digits;
+            }
+            else
+            {
+                _dataContext.CreateQuestionMathematics.Add(question);
+            }
+        }
+        var mathExistingVariables = _dataContext.CreateQuestionMathematicVariables.Where(v => mathExistingQuestions.Select(q => q.Id).Contains(v.QuestionMathematicId)).ToList();
+        var mathUpdatedVariables = request.QuestionsMathematic.SelectMany(q => q.Variables!.Select(a => new { Variable = a, QuestionId = q.Id })).Select(a => new CreateQuestionMathematicVariable
+        {
+            Id = a.Variable.Id,
+            Digits = a.Variable.Digits,
+            Display = a.Variable.Display,
+            Interval = a.Variable.Interval,
+            Max = a.Variable.Max,
+            Min = a.Variable.Min,
+            QuestionMathematicId = a.QuestionId
+        }).ToList();
+        foreach (var variable in mathUpdatedVariables)
+        {
+            var existingVariable = mathExistingVariables.FirstOrDefault(v => v.Id == variable.Id);
+            if (existingVariable != null)
+            {
+                existingVariable.Digits = variable.Digits;
+                existingVariable.Display = variable.Display;
+                existingVariable.Interval = variable.Interval;
+                existingVariable.Max = variable.Max;
+                existingVariable.Min = variable.Min;
+            }
+            else
+            {
+                _dataContext.CreateQuestionMathematicVariables.Add(variable);
+            }
+        }
 
+        var mcExistingQuestions = _dataContext.CreateQuestionMultipleChoices.Where(q => q.SetId == setId).ToList();
+        var mcUpdatedQuestions = request.QuestionsMultipleChoice.Select(q => new CreateQuestionMultipleChoice
+        {
+            Id = q.Id,
+            Question = q.Question,
+            SetId = setId
+        }).ToList();
+        foreach (var question in mcUpdatedQuestions)
+        {
+            var existingQuestion = mcExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.Question = question.Question;
+            }
+            else
+            {
+                _dataContext.CreateQuestionMultipleChoices.Add(question);
+            }
+        }
+        var mcExistingAnswers = _dataContext.CreateQuestionMultipleChoiceAnswers.Where(a => mcExistingQuestions.Select(q => q.Id).Contains(a.QuestionMultipleChoiceId)).ToList();
+        var mcUpdatedAnswers = request.QuestionsMultipleChoice.SelectMany(q => q.Answers!.Select(a => new { Answer = a, QuestionId = q.Id })).Select(a => new CreateQuestionMultipleChoiceAnswer
+        {
+            Id = a.Answer.Id,
+            Answer = a.Answer.Answer,
+            QuestionMultipleChoiceId = a.QuestionId
+        }).ToList();
+        foreach (var answer in mcUpdatedAnswers)
+        {
+            var existingAnswer = mcExistingAnswers.FirstOrDefault(a => a.Id == answer.Id);
+            if (existingAnswer != null)
+            {
+                existingAnswer.Answer = answer.Answer;
+            }
+            else
+            {
+                _dataContext.CreateQuestionMultipleChoiceAnswers.Add(answer);
+            }
+        }
+
+        var oqExistingQuestions = _dataContext.CreateQuestionOpenQuestions.Where(q => q.SetId == setId).ToList();
+        var oqUpdatedQuestions = request.QuestionsOpenQuestion.Select(q => new CreateQuestionOpenQuestion
+        {
+            Id = q.Id,
+            Question = q.Question,
+            Answer = q.Answer,
+            SetId = setId
+        }).ToList();
+        foreach (var question in oqUpdatedQuestions)
+        {
+            var existingQuestion = oqExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.Question = question.Question;
+                existingQuestion.Answer = question.Answer;
+            }
+            else
+            {
+                _dataContext.CreateQuestionOpenQuestions.Add(question);
+            }
+        }
+
+        var tfExistingQuestions = _dataContext.CreateQuestionTextFields.Where(q => q.SetId == setId).ToList();
+        var tfUpdatedQuestions = request.QuestionsTextField.Select(q => new CreateQuestionTextField
+        {
+            Id = q.Id,
+            Question = q.Question,
+            SetId = setId
+        }).ToList();
+        foreach (var question in tfUpdatedQuestions)
+        {
+            var existingQuestion = tfExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.Question = question.Question;
+            }
+            else
+            {
+                _dataContext.CreateQuestionTextFields.Add(question);
+            }
+        }
+
+        var trueFalseExistingQuestions = _dataContext.CreateQuestionTrueFalses.Where(q => q.SetId == setId).ToList();
+        var trueFalseUpdatedQuestions = request.QuestionsTrueFalse.Select(q => new CreateQuestionTrueFalse
+        {
+            Id = q.Id,
+            Question = q.Question,
+            Answer = q.Answer,
+            SetId = setId
+        }).ToList();
+        foreach (var question in trueFalseUpdatedQuestions)
+        {
+            var existingQuestion = trueFalseExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.Question = question.Question;
+                existingQuestion.Answer = question.Answer;
+            }
+            else
+            {
+                _dataContext.CreateQuestionTrueFalses.Add(question);
+            }
+        }
+
+        var wordExistingQuestions = _dataContext.CreateQuestionWords.Where(q => q.SetId == setId).ToList();
+        var wordUpdatedQuestions = request.QuestionsWord.Select(q => new CreateQuestionWord
+        {
+            Id = q.Id,
+            LanguageSubjectMain = q.LanguageSubjectMain,
+            LanguageSubjectSecond = q.LanguageSubjectSecond,
+            SetId = setId
+        }).ToList();
+        foreach (var question in wordUpdatedQuestions)
+        {
+            var existingQuestion = wordExistingQuestions.FirstOrDefault(q => q.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                existingQuestion.LanguageSubjectMain = question.LanguageSubjectMain;
+                existingQuestion.LanguageSubjectSecond = question.LanguageSubjectSecond;
+            }
+            else
+            {
+                _dataContext.CreateQuestionWords.Add(question);
+            }
+        }
+
+        await _dataContext.SaveChangesAsync();
         return Ok();
     }
 }
