@@ -27,6 +27,14 @@ public class CreateFilterSets : Controller
                                                             || (subjectSecond == null && crs.SubjectMain == subjectMain))
                                                                 && (name == null || name == "" || crs.Name.Contains(name)))
                                                 .Include(crs => crs.CreatedBy)
+                                                .Select(crs => new
+                                                {
+                                                    Set = crs,
+                                                    TieBreaker = Guid.NewGuid()
+                                                })
+                                                .OrderBy(x => x.TieBreaker)
+                                                .Take(20)
+                                                .Select(x => x.Set)
                                                 .ToListAsync();
         var setsWithPolicy = sets.Select(crs => new CreateSetOverviewDTO
         {

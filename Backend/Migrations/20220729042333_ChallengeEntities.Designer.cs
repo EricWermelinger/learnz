@@ -4,6 +4,7 @@ using Learnz.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Learnz.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220729042333_ChallengeEntities")]
+    partial class ChallengeEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,14 +58,7 @@ namespace Learnz.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ChallengeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChallengeQuestionPosedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsRight")
@@ -72,14 +67,15 @@ namespace Learnz.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ChallengeId");
-
-                    b.HasIndex("ChallengeQuestionPosedId");
 
                     b.HasIndex("UserId");
 
@@ -110,38 +106,6 @@ namespace Learnz.Migrations
                     b.HasIndex("ChallengeId");
 
                     b.ToTable("ChallengeQuestionsMathematicResolved");
-                });
-
-            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ChallengeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChallengeId");
-
-                    b.ToTable("ChallengeQuestiosnPosed");
                 });
 
             modelBuilder.Entity("Learnz.Entities.ChallengeUser", b =>
@@ -840,12 +804,6 @@ namespace Learnz.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Learnz.Entities.ChallengeQuestionPosed", "ChallengeQuestionPosed")
-                        .WithMany("ChallengeQuestionAnswers")
-                        .HasForeignKey("ChallengeQuestionPosedId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Learnz.Entities.User", "User")
                         .WithMany("ChallengeQuestionAnswers")
                         .HasForeignKey("UserId")
@@ -854,8 +812,6 @@ namespace Learnz.Migrations
 
                     b.Navigation("Challenge");
 
-                    b.Navigation("ChallengeQuestionPosed");
-
                     b.Navigation("User");
                 });
 
@@ -863,17 +819,6 @@ namespace Learnz.Migrations
                 {
                     b.HasOne("Learnz.Entities.Challenge", "Challenge")
                         .WithMany("ChallengeQuestionMathematicResolveds")
-                        .HasForeignKey("ChallengeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Challenge");
-                });
-
-            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
-                {
-                    b.HasOne("Learnz.Entities.Challenge", "Challenge")
-                        .WithMany("ChallengeQuestionsPosed")
                         .HasForeignKey("ChallengeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1228,14 +1173,7 @@ namespace Learnz.Migrations
 
                     b.Navigation("ChallengeQuestionMathematicResolveds");
 
-                    b.Navigation("ChallengeQuestionsPosed");
-
                     b.Navigation("ChallengeUsers");
-                });
-
-            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
-                {
-                    b.Navigation("ChallengeQuestionAnswers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>

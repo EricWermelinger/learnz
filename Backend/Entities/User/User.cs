@@ -38,4 +38,7 @@ public class User
     public ICollection<GroupMessage> GroupMessages { get; set; }
     public ICollection<CreateSet> CreateSetCreated { get; set; }
     public ICollection<CreateSet> CreateSetModified { get; set; }
+    public ICollection<Challenge> ChallengeOwners { get; set; }
+    public ICollection<ChallengeQuestionAnswer> ChallengeQuestionAnswers { get; set; }
+    public ICollection<ChallengeUser> ChallengeUsers { get; set; }
 }

@@ -21,4 +21,5 @@ public class CreateSet
     public ICollection<CreateQuestionTextField> QuestionTextFields { get; set; }
     public ICollection<CreateQuestionTrueFalse> QuestionTrueFalses { get; set; }
     public ICollection<CreateQuestionWord> QuestionWords { get; set; }
+    public ICollection<Challenge> Challenges { get; set; }
 }

@@ -1,12 +1,7 @@
 ﻿todo:
 
-open todos:
+create:
 create -> implement last sets
-
-create
-get sets for edit: own (created), public (by policy) filter by subject (main & second) & title
-create set (upsert, overview without questions)
-create questions (upsert) check for added & deleted
 
 learn
 get sets: recently learned, own, public (by policy) filter by subject (main & second) & title
