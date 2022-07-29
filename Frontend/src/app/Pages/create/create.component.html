@@ -1,0 +1,20 @@
+<button type="button" mat-flat-button color="primary" (click)="newSet()">
+    {{ 'create.newSet' }}
+</button>
+<mat-tab-group>
+    <mat-tab [label]="'create.latestSets' | translate">
+        <div *ngIf="latest$ | async as latest">
+            <app-create-set-banner *ngFor="let set of latest" [set]="set"></app-create-set-banner>
+        </div>
+    </mat-tab>
+    <mat-tab [label]="'create.findSet' | translate">
+        <div *ngIf="filtered$ | async as filtered">
+            <app-create-set-banner *ngFor="let set of filtered" [set]="set"></app-create-set-banner>
+        </div>
+    </mat-tab>
+    <mat-tab [label]="'create.ownSets' | translate">
+        <div *ngIf="own$ | async as own">
+            <app-create-set-banner *ngFor="let set of own" [set]="set"></app-create-set-banner>
+        </div>
+    </mat-tab>
+</mat-tab-group>

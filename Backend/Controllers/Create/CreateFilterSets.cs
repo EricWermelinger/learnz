@@ -19,12 +19,12 @@ public class CreateFilterSets : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CreateSetOverviewDTO>>> GetSets(Subject? subjectMain, Subject? subjectSecond, string name)
+    public async Task<ActionResult<List<CreateSetOverviewDTO>>> GetSets(int? subjectMain, int? subjectSecond, string name)
     {
         var guid = _userService.GetUserGuid();
-        var sets = await _dataContext.CreateSets.Where(crs => ((subjectMain != null && subjectSecond != null && ((crs.SubjectMain == subjectMain && crs.SubjectSecond == subjectSecond) || (crs.SubjectMain == subjectSecond && crs.SubjectSecond == subjectMain)))
-                                                            || subjectMain == null
-                                                            || (subjectSecond == null && crs.SubjectMain == subjectMain))
+        var sets = await _dataContext.CreateSets.Where(crs => ((subjectMain != null && subjectMain != -1 && subjectSecond != null && subjectSecond != -1 && (((int)crs.SubjectMain == subjectMain && (crs.SubjectSecond == null ? 0 : (int)crs.SubjectSecond) == subjectSecond) || ((int)crs.SubjectMain == subjectSecond && (crs.SubjectSecond == null ? 0 : (int)crs.SubjectSecond) == subjectMain)))
+                                                            || subjectMain == null || subjectMain == -1
+                                                            || (subjectSecond == null && subjectSecond != -1 && (int)crs.SubjectMain == subjectMain))
                                                                 && (name == null || name == "" || crs.Name.Contains(name)))
                                                 .Include(crs => crs.CreatedBy)
                                                 .Select(crs => new

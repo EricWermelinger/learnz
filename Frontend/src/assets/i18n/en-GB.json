@@ -85,7 +85,12 @@
         "addFile":"Add File"
     },
     "create":{
-        "create":"Create"
+        "create":"Create",
+        "latestSets":"Latest Sets",
+        "ownSets":"Own Sets",
+        "findSet":"Find Set",
+        "newSet":"New Set",
+        "createdBy":"Created by"
     },
     "learn":{
         "learn":"Learn"

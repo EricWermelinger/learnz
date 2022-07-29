@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { CreateSetOverviewDTO } from 'src/app/DTOs/Create/CreateSetOverviewDTO';
+import { CreateSetDialogComponent } from './create-set-dialog/create-set-dialog.component';
 import { CreateService } from './create.service';
 
 @Component({
@@ -8,8 +13,31 @@ import { CreateService } from './create.service';
 })
 export class CreateComponent {
 
+  own$: Observable<CreateSetOverviewDTO[]>;
+  latest$: Observable<CreateSetOverviewDTO[]>;
+  filtered$: Observable<CreateSetOverviewDTO[]>;
+  filter: FormGroup;
+
   constructor(
     private createService: CreateService,
-  ) { }
+    private formBuilder: FormBuilder,
+    private dialog: MatDialog,
+  ) {
+    this.filter = this.formBuilder.group({
+      subjectMain: -1,
+      subjectSecond: -1,
+      name: '',
+    });
+    this.own$ = this.createService.getOwn();
+    this.latest$ = this.createService.getLatest();
+    this.filtered$ = this.createService.getFiltered(-1, -1, '');
+  }
 
+  filterApply() {
+    this.filtered$ = this.createService.getFiltered(this.filter.value.subjectMain, this.filter.value.subjectSecond, this.filter.value.name);
+  }
+
+  newSet() {
+    this.dialog.open(CreateSetDialogComponent, { data: null });
+  }
 }

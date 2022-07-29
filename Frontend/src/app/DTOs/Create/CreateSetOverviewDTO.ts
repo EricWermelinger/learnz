@@ -1,11 +1,9 @@
-import { Subject } from "src/app/Enums/Subject";
-
 export interface CreateSetOverviewDTO {
   setId: string;
   name: string;
   description: string;
-  subjectMain: Subject;
-  subjectSecond: Subject | null;
+  subjectMain: number;
+  subjectSecond: number | null;
   numberOfQuestions: number;
   owner: string;
   usable: boolean;
