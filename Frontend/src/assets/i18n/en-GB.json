@@ -90,7 +90,14 @@
         "ownSets":"Own Sets",
         "findSet":"Find Set",
         "newSet":"New Set",
-        "createdBy":"Created by"
+        "createdBy":"Created by",
+        "name":"Set Name",
+        "description":"Description",
+        "subjectMain":"Main Subject",
+        "subjectSecond":"Secondary Subject",
+        "setPolicy":"Set Policy",
+        "items":"Items",
+        "filter":"Filter"
     },
     "learn":{
         "learn":"Learn"
@@ -196,6 +203,11 @@
         "Grade12":"Grade 12"
     },
     "FilePolicy":{
+        "Private":"Private",
+        "OnlySelfEditable":"Only Self Editable",
+        "Everyone":"Public"
+    },
+    "SetPolicy":{
         "Private":"Private",
         "OnlySelfEditable":"Only Self Editable",
         "Everyone":"Public"

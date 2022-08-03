@@ -8,4 +8,5 @@ export interface CreateUpsertSetHeaderDTO {
     subjectMain: Subject;
     subjectSecond: Subject | null;
     setPolicy: SetPolicy;
+    isEditable: boolean;
 }

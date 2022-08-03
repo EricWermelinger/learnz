@@ -41,6 +41,7 @@ import { GroupFilesComponent } from './Pages/group/group-files/group-files.compo
 import { FileHistoryDialogComponent } from './Framework/file-upload/file-history-dialog/file-history-dialog.component';
 import { CreateSetBannerComponent } from './Pages/create/create-set-banner/create-set-banner.component';
 import { CreateSetDialogComponent } from './Pages/create/create-set-dialog/create-set-dialog.component';
+import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-set-edit.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -77,6 +78,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FileHistoryDialogComponent,
     CreateSetBannerComponent,
     CreateSetDialogComponent,
+    CreateSetEditComponent,
   ],
   imports: [
     BrowserModule,

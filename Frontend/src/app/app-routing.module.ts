@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { appRoutes } from './Config/appRoutes';
 import { AppGuard } from './Framework/API/app.guard';
 import { ChallengeComponent } from './Pages/challenge/challenge.component';
+import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-set-edit.component';
 import { CreateComponent } from './Pages/create/create.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { DrawComponent } from './Pages/draw/draw.component';
@@ -36,6 +37,7 @@ const routes: Routes = [
       { path: `${appRoutes.GroupChat}/:${appRoutes.GroupChatId}`, component: GroupChatComponent },
       { path: `${appRoutes.GroupFiles}/:${appRoutes.GroupFilesId}`, component: GroupFilesComponent },
       { path: appRoutes.Create, component: CreateComponent },
+      { path: `${appRoutes.Create}/:${appRoutes.CreateSetEditId}`, component: CreateSetEditComponent },
       { path: appRoutes.Learn, component: LearnComponent },
       { path: appRoutes.Challenge, component: ChallengeComponent },
       { path: appRoutes.Test, component: TestComponent },

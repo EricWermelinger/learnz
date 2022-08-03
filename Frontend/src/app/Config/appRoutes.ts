@@ -16,6 +16,7 @@ export const appRoutes = {
     GroupFiles: 'group-files',
     GroupFilesId: 'filesId',
     Create: 'create',
+    CreateSetEditId: 'setId',
     Learn: 'learn',
     Challenge: 'challenge',
     Test: 'test',

@@ -1,24 +1,24 @@
-<div>
+<mat-card class="card">
     <div>
-        <div>{{ translateSubject(set!.subjectMain) | translate }}</div>
+        <div class="main-text">{{ translateSubject(set!.subjectMain) | translate }}</div>
         <div *ngIf="set!.subjectSecond">{{ translateSubject(set!.subjectSecond) | translate }}</div>
     </div>
     <div>
-        {{ set!.name }}
-        {{ set!.description }}
+        <div class="main-text">{{ set!.name }}</div>
+        <div>{{ set!.description }}</div>
     </div>
     <div>
-        {{ set!.numberOfQuestions }} {{ 'create.items' | translate }}
-        {{ 'create.createdBy' | translate }}: {{ set!.owner }}
+        <div class="main-text">{{ set!.numberOfQuestions }} {{ 'create.items' | translate }}</div>
+        <div>{{ 'create.createdBy' | translate }}: {{ set!.owner }}</div>
     </div>
-    <button *ngIf="set!.usable" type="button" mat-flat-button color="primary">
-        {{ 'learn.learn' }}
+    <button *ngIf="set!.usable" mat-icon-button>
+        <mat-icon>school</mat-icon>
     </button>
-    <button *ngIf="set!.usable" type="button" mat-flat-button color="primary">
-        {{ 'test.test' }}
+    <button *ngIf="set!.usable" mat-icon-button>
+        <mat-icon>poll</mat-icon>
     </button>
-    <button *ngIf="set!.usable" type="button" mat-flat-button color="primary">
-        {{ 'challenge.challenge' }}
+    <button *ngIf="set!.usable" mat-icon-button>
+        <mat-icon>assignment_turned_in</mat-icon>
     </button>
     <button *ngIf="set!.editable" mat-icon-button>
         <mat-icon>edit</mat-icon>
@@ -26,4 +26,4 @@
     <button *ngIf="set!.usable" mat-icon-button>
         <mat-icon>remove_red_eye</mat-icon>
     </button>
-</div>
+</mat-card>

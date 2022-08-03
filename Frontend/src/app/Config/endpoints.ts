@@ -1,8 +1,8 @@
 export const endpoints = {
-    CreateFilterSets: 'createFilterSets', // use get
+    CreateFilterSets: 'createFilterSets',
     CreateLastSets: 'createLastSets', // use get
-    CreateOwnSets: 'createOwnSets', // use get
-    CreateSetHeader: 'createSetHeader', // use get / post
+    CreateOwnSets: 'createOwnSets',
+    CreateSetHeader: 'createSetHeader', // use get
     CreateSetQuestions: 'createSetQuestions', // use get / post
     FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',

@@ -33,7 +33,8 @@ public class CreateSetHeader : Controller
             Name = set.Name,
             Description = set.Description,
             SubjectMain = set.SubjectMain,
-            SubjectSecond = set.SubjectSecond
+            SubjectSecond = set.SubjectSecond,
+            IsEditable = _setPolicyChecker.SetEditable(set, guid)
         };
         return Ok(setDto);
     }

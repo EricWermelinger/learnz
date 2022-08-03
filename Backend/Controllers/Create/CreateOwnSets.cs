@@ -11,11 +11,13 @@ public class CreateOwnSets : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly ISetPolicyChecker _setPolicyChecker;
-    public CreateOwnSets(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker)
+    private readonly ICreateQueryService _createQueryService;
+    public CreateOwnSets(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker, ICreateQueryService createQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
         _setPolicyChecker = setPolicyChecker;
+        _createQueryService = createQueryService;
     }
 
     [HttpGet]
@@ -33,13 +35,7 @@ public class CreateOwnSets : Controller
             Owner = crs.CreatedBy.Username,
             SubjectMain = crs.SubjectMain,
             SubjectSecond = crs.SubjectSecond,
-            NumberOfQuestions = crs.QuestionDistributes.Count()
-                                + crs.QuestionMathematics.Count()
-                                + crs.QuestionMultipleChoices.Count()
-                                + crs.QuestionOpenQuestions.Count()
-                                + crs.QuestionTextFields.Count()
-                                + crs.QuestionTrueFalses.Count()
-                                + crs.QuestionWords.Count(),
+            NumberOfQuestions = _createQueryService.NumberOfWords(crs),
             Usable = _setPolicyChecker.SetUsable(crs, guid),
             Editable = _setPolicyChecker.SetEditable(crs, guid)
         })
