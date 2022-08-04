@@ -42,6 +42,7 @@ import { FileHistoryDialogComponent } from './Framework/file-upload/file-history
 import { CreateSetBannerComponent } from './Pages/create/create-set-banner/create-set-banner.component';
 import { CreateSetDialogComponent } from './Pages/create/create-set-dialog/create-set-dialog.component';
 import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-set-edit.component';
+import { CreateQuestionOpenComponent } from './Pages/create/create-question-types/create-question-open/create-question-open.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -79,6 +80,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CreateSetBannerComponent,
     CreateSetDialogComponent,
     CreateSetEditComponent,
+    CreateQuestionOpenComponent,
   ],
   imports: [
     BrowserModule,

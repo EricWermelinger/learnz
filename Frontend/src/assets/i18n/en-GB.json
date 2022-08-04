@@ -100,7 +100,12 @@
         "filter":"Filter",
         "editSettings":"Edit Settings",
         "settings":"Settings",
-        "questions":"Questions"
+        "questions":"Questions",
+        "question":"Question",
+        "answer":"Answer",
+        "questionType":"Question Type",
+        "editQuestions":"Edit Questions",
+        "addQuestion":"Add Question"
     },
     "learn":{
         "learn":"Learn"
@@ -214,6 +219,15 @@
         "Private":"Private",
         "OnlySelfEditable":"Only Self Editable",
         "Everyone":"Public"
+    },
+    "QuestionType":{
+        "Distribute":"Distribute",
+        "Mathematic":"Mathematic",
+        "MultipleChoice":"Multiple Choice",
+        "OpenQuestion":"Open Question",
+        "TextField":"Text Field",
+        "TrueFalse":"True False",
+        "Word":"Word"
     },
     "languages":{
         "languages":"Language",

@@ -22,7 +22,7 @@ export class CreateSetEditService {
   }
 
   getQuestions$(setId: string) {
-    return this.api.callApi<CreateUpsertSetQuestionsDTO[]>(endpoints.CreateSetQuestions, { setId }, 'GET');
+    return this.api.callApi<CreateUpsertSetQuestionsDTO>(endpoints.CreateSetQuestions, { setId }, 'GET');
   }
 
   setQuestions(value: CreateUpsertSetQuestionsDTO) {
