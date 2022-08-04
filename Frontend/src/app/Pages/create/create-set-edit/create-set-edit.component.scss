@@ -9,3 +9,18 @@
 .questions {
     margin-top: 32px;
 }
+.formAdd {
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    button {
+        height: 36px;
+    }
+}
+.space {
+    margin-bottom: 32px;
+}
+.question {
+    margin-bottom: 32px;
+}

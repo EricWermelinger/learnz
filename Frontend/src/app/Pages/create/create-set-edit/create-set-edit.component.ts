@@ -26,6 +26,7 @@ export class CreateSetEditComponent {
   _setQuestions$ = new BehaviorSubject<CreateUpsertSetQuestionsDTO>({} as CreateUpsertSetQuestionsDTO);
   setQuestions$: Observable<{ questions: CreateUpsertSetQuestionsDTO, editable: boolean }>;
   isEditMode$ = new BehaviorSubject<boolean>(false);
+  currentFormValue: CreateUpsertSetQuestionsDTO = { } as any;
   formGroupAddQuestion: FormGroup;
   questionTypes = getQuestionTypes();
 
@@ -37,7 +38,10 @@ export class CreateSetEditComponent {
   ) {
     this.setId = this.activatedRoute.snapshot.paramMap.get(appRoutes.CreateSetEditId) ?? '';
     this.setHeader$ = this.editSetService.getHeader$(this.setId);
-    this.editSetService.getQuestions$(this.setId).subscribe(x => this._setQuestions$.next(x));
+    this.editSetService.getQuestions$(this.setId).subscribe(questions => {
+      this._setQuestions$.next(questions);
+      this.currentFormValue = questions;
+    });
     this.formGroupAddQuestion = this.formBuilder.group({
       questionType: [null, Validators.required],
     });
@@ -55,6 +59,7 @@ export class CreateSetEditComponent {
     const isEdit = this.activatedRoute.snapshot.queryParamMap.get(appRoutes.Edit) === 'true';
     if (isEdit) {
       this.editHeader(this.setId);
+      this.editQuestions();
     }
   }
 
@@ -90,14 +95,16 @@ export class CreateSetEditComponent {
         break;
     }
     this._setQuestions$.next(nextValue);
+    this.currentFormValue = nextValue;
   }
 
   editQuestions() {
     this.isEditMode$.next(true);
   }
 
-  save(openQuestions: CreateQuestionOpenQuestionDTO[]) {
-    console.log(openQuestions);
+  save() {
+    this.editSetService.setQuestions(this.currentFormValue);
+    this.isEditMode$.next(false);
   }
 
   translateSetPolicy(setPolicy: number) {
@@ -110,5 +117,37 @@ export class CreateSetEditComponent {
 
   isEmpty(value: any[]) {
     return (value ?? []).length === 0;
+  }
+
+  questionChange(value: any) {
+    const questionId = value.id;
+    const questionsDistribute = this.currentFormValue.questionsDistribute.map(q => q.id === questionId ? value : q);
+    const questionsMathematic = this.currentFormValue.questionsMathematic.map(q => q.id === questionId ? value : q);
+    const questionsMultipleChoice = this.currentFormValue.questionsMultipleChoice.map(q => q.id === questionId ? value : q);
+    const questionsOpenQuestion = this.currentFormValue.questionsOpenQuestion.map(q => q.id === questionId ? value : q);
+    const questionsTrueFalse = this.currentFormValue.questionsTrueFalse.map(q => q.id === questionId ? value : q);
+    const questionsTextField = this.currentFormValue.questionsTextField.map(q => q.id === questionId ? value : q);
+    const questionsWord = this.currentFormValue.questionsWord.map(q => q.id === questionId ? value : q);
+    this.currentFormValue = {
+      setId: this.currentFormValue.setId,
+      questionsDistribute,
+      questionsMathematic,
+      questionsMultipleChoice,
+      questionsOpenQuestion,
+      questionsTrueFalse,
+      questionsTextField,
+      questionsWord,
+    };
+  }
+
+  questionDelete(questionId: string) {
+    this.currentFormValue.questionsDistribute = this.currentFormValue.questionsDistribute.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsMathematic = this.currentFormValue.questionsMathematic.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsMultipleChoice = this.currentFormValue.questionsMultipleChoice.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsOpenQuestion = this.currentFormValue.questionsOpenQuestion.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsTrueFalse = this.currentFormValue.questionsTrueFalse.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsTextField = this.currentFormValue.questionsTextField.filter(q =>  q.id !== questionId);
+    this.currentFormValue.questionsWord = this.currentFormValue.questionsWord.filter(q =>  q.id !== questionId);
+    this._setQuestions$.next(this.currentFormValue);
   }
 }

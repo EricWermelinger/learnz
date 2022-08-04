@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateQuestionOpenQuestionDTO } from 'src/app/DTOs/Create/CreateQuestionOpenQuestionDTO';
 import { FormGroupTyped } from 'src/app/Material/types';
@@ -11,16 +11,28 @@ import { FormGroupTyped } from 'src/app/Material/types';
 export class CreateQuestionOpenComponent {
 
   formGroup: FormGroupTyped<CreateQuestionOpenQuestionDTO>;
-  @Input() question: CreateQuestionOpenQuestionDTO = { } as CreateQuestionOpenQuestionDTO;
+  @Input() set question (q: CreateQuestionOpenQuestionDTO) {
+    this.formGroup.patchValue(q);
+  }
   @Input() editable: boolean = false;
+  @Output() questionChange: EventEmitter<CreateQuestionOpenQuestionDTO> = new EventEmitter();
+  @Output() questionDelete: EventEmitter<string> = new EventEmitter();
 
   constructor(
     private formBuilder: FormBuilder,
   ) {
     this.formGroup = this.formBuilder.group({
-      id: this.question.id,
-      answer: this.question.answer,
-      question: this.question.question,
+      id: '',
+      answer: '',
+      question: '',
     }) as FormGroupTyped<CreateQuestionOpenQuestionDTO>;
+  }
+
+  deleteQuestion() {
+    this.questionDelete.emit(this.formGroup.value.id);
+  }
+
+  changeQuestion() {
+    this.questionChange.emit(this.formGroup.value);
   }
 }

@@ -26,6 +26,6 @@ export class CreateSetEditService {
   }
 
   setQuestions(value: CreateUpsertSetQuestionsDTO) {
-    this.api.callApi(endpoints.CreateSetQuestions, { value }, 'POST').subscribe();
+    this.api.callApi(endpoints.CreateSetQuestions, { ...value }, 'POST').subscribe();
   }
 }

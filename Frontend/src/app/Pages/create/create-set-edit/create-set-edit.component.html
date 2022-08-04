@@ -19,7 +19,7 @@
     <div *ngIf="setQuestions$ | async as questionEdit" class="questions">
         <h2>{{ 'create.questions' | translate }}</h2>
         <div *ngIf="setHeader.isEditable">
-            <form [formGroup]="formGroupAddQuestion">
+            <form [formGroup]="formGroupAddQuestion" class="formAdd">
                 <mat-form-field>
                     <mat-label>{{ 'create.questionType' | translate }}</mat-label>
                     <mat-select formControlName="questionType">
@@ -29,11 +29,14 @@
                 <button mat-button color="primary" [disabled]="!formGroupAddQuestion.valid" (click)="addQuestion()">{{ 'create.addQuestion' | translate }}</button>
                 <button mat-button color="primary" (click)="editQuestions()">{{ 'create.editQuestions' | translate }}</button>
             </form>
+            <mat-divider class="space"></mat-divider>
         </div>
         <div *ngIf="!isEmpty(questionEdit.questions.questionsOpenQuestion)">
             <h3>{{ 'QuestionType.OpenQuestion' | translate }}</h3>
-            <app-create-question-open *ngFor="let question of questionEdit.questions.questionsOpenQuestion" [question]="question" [editable]="questionEdit.editable"></app-create-question-open>
+            <div *ngFor="let question of questionEdit.questions.questionsOpenQuestion" class="question">
+                <app-create-question-open [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-open>
+            </div>
         </div>
-        <button mat-button color="primary" (click)="save(questionEdit.questions.questionsOpenQuestion)">{{ 'framework.save' | translate }}</button>
+        <button *ngIf="questionEdit.editable" mat-button color="primary" (click)="save()">{{ 'framework.save' | translate }}</button>
     </div>
 </div>
