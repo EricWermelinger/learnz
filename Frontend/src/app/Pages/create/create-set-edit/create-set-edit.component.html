@@ -1,1 +1,20 @@
-<p>create-set-edit works!</p>
+<div *ngIf="setHeader$ | async as setHeader">
+    <h2>{{ 'create.settings' | translate }}</h2>
+    <div class="info">
+        <div>{{ 'create.name' | translate }}:</div>
+        <div>{{ setHeader.name }}</div>
+        <div>{{ 'create.description' | translate }}:</div>
+        <div>{{ setHeader.description }}</div>
+        <div>{{ 'create.subjectMain' | translate }}:</div>
+        <div>{{ ('Subject.' + translateSubject(setHeader.subjectMain)) | translate }}</div>
+        <div>{{ 'create.subjectSecond' | translate }}:</div>
+        <div>{{ setHeader.subjectSecond != null ? (('Subject.' + translateSubject(setHeader.subjectSecond)) | translate) : '-' }}</div>
+        <div>{{ 'create.setPolicy' | translate }}:</div>
+        <div>{{ ('SetPolicy.' + translateSetPolicy(setHeader.setPolicy)) | translate }}</div>
+        <div *ngIf="setHeader.isEditable"></div>
+        <button *ngIf="setHeader.isEditable" class="create" type="button" mat-flat-button color="primary" (click)="editHeader(setHeader.id)">{{ 'create.editSettings' | translate }}</button>
+    </div>
+</div>
+<div *ngIf="setQuestions$ | async as questions" class="questions">
+    <h2>{{ 'create.questions' | translate }}</h2>
+</div>

@@ -1,10 +1,10 @@
-﻿import { CreateQuestionDistributeDTO } from "./createQuestionDistributeDTO";
-import { CreateQuestionMathematicDTO } from "./createQuestionMathematicDTO";
-import { CreateQuestionMultipleChoiceDTO } from "./createQuestionMultipleChoiceDTO";
-import { CreateQuestionOpenQuestionDTO } from "./createQuestionOpenQuestionDTO";
-import { CreateQuestionTextFieldDTO } from "./createQuestionTextFieldDTO";
-import { CreateQuestionTrueFalseDTO } from "./createQuestionTrueFalseDTO";
-import { CreateQuestionWordDTO } from "./createQuestionWordDTO";
+﻿import { CreateQuestionDistributeDTO } from "./CreateQuestionDistributeDTO";
+import { CreateQuestionMathematicDTO } from "./CreateQuestionMathematicDTO";
+import { CreateQuestionMultipleChoiceDTO } from "./CreateQuestionMultipleChoiceDTO";
+import { CreateQuestionOpenQuestionDTO } from "./CreateQuestionOpenQuestionDTO";
+import { CreateQuestionTextFieldDTO } from "./CreateQuestionTextFieldDTO";
+import { CreateQuestionTrueFalseDTO } from "./CreateQuestionTrueFalseDTO";
+import { CreateQuestionWordDTO } from "./CreateQuestionWordDTO";
 
 export interface CreateUpsertSetQuestionsDTO {
     setId: string;

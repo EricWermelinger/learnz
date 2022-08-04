@@ -1,0 +1,11 @@
+.info {
+    display: grid;
+    grid-template-columns: 120px 120px;
+    :nth-child(2n) {
+        font-weight: bold;
+    }
+    gap: 16px;
+}
+.questions {
+    margin-top: 32px;
+}

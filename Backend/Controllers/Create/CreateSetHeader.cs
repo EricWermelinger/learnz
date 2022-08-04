@@ -30,10 +30,12 @@ public class CreateSetHeader : Controller
 
         var setDto = new CreateUpsertSetHeaderDTO
         {
+            Id = setId,
             Name = set.Name,
             Description = set.Description,
             SubjectMain = set.SubjectMain,
             SubjectSecond = set.SubjectSecond,
+            SetPolicy = set.SetPolicy,
             IsEditable = _setPolicyChecker.SetEditable(set, guid)
         };
         return Ok(setDto);

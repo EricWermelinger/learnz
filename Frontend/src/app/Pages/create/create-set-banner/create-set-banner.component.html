@@ -11,7 +11,7 @@
         <div class="main-text">{{ set!.numberOfQuestions }} {{ 'create.items' | translate }}</div>
         <div>{{ 'create.createdBy' | translate }}: {{ set!.owner }}</div>
     </div>
-    <button *ngIf="set!.usable" mat-icon-button>
+    <button *ngIf="set!.usable; else notUsable" mat-icon-button>
         <mat-icon>school</mat-icon>
     </button>
     <button *ngIf="set!.usable" mat-icon-button>
@@ -20,10 +20,19 @@
     <button *ngIf="set!.usable" mat-icon-button>
         <mat-icon>assignment_turned_in</mat-icon>
     </button>
-    <button *ngIf="set!.editable" mat-icon-button>
-        <mat-icon>edit</mat-icon>
-    </button>
-    <button *ngIf="set!.usable" mat-icon-button>
+    <button *ngIf="set!.usable" mat-icon-button (click)="viewSet(set!.setId)">
         <mat-icon>remove_red_eye</mat-icon>
     </button>
+    <ng-template #notUsable>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </ng-template>
+    <button *ngIf="set!.editable; else notEditable" mat-icon-button (click)="editSet(set!.setId)">
+        <mat-icon>edit</mat-icon>
+    </button>
+    <ng-template #notEditable>
+        <div></div>
+    </ng-template>
 </mat-card>

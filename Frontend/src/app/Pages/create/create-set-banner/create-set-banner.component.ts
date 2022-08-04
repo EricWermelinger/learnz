@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { appRoutes } from 'src/app/Config/appRoutes';
 import { CreateSetOverviewDTO } from 'src/app/DTOs/Create/CreateSetOverviewDTO';
 import { getSubjects } from 'src/app/Enums/Subject';
 
@@ -10,9 +12,19 @@ import { getSubjects } from 'src/app/Enums/Subject';
 export class CreateSetBannerComponent {
 
   @Input() set: CreateSetOverviewDTO | undefined;
-  constructor() { }
+  constructor(
+    private router: Router,
+  ) { }
 
   translateSubject(subject: number) {
     return 'Subject.' + getSubjects().filter(s => s.value === subject)[0].key;
+  }
+
+  viewSet(setId: string) {
+    this.router.navigate([appRoutes.App, appRoutes.Create, setId]);
+  }
+
+  editSet(setId: string) {
+    this.router.navigate([appRoutes.App, appRoutes.Create, setId], { queryParams: { [appRoutes.Edit]: true }});
   }
 }

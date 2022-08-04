@@ -97,7 +97,10 @@
         "subjectSecond":"Secondary Subject",
         "setPolicy":"Set Policy",
         "items":"Items",
-        "filter":"Filter"
+        "filter":"Filter",
+        "editSettings":"Edit Settings",
+        "settings":"Settings",
+        "questions":"Questions"
     },
     "learn":{
         "learn":"Learn"
