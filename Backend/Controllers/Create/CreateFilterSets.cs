@@ -29,6 +29,13 @@ public class CreateFilterSets : Controller
                                                             || ((subjectSecond == null || subjectSecond == -1 || subjectMain == subjectSecond) && (int)crs.SubjectMain == subjectMain))
                                                                 && (name == null || name == "" || crs.Name.Contains(name)))
                                                 .Include(crs => crs.CreatedBy)
+                                                .Include(crs => crs.QuestionDistributes)
+                                                .Include(crs => crs.QuestionMathematics)
+                                                .Include(crs => crs.QuestionMultipleChoices)
+                                                .Include(crs => crs.QuestionOpenQuestions)
+                                                .Include(crs => crs.QuestionTextFields)
+                                                .Include(crs => crs.QuestionTrueFalses)
+                                                .Include(crs => crs.QuestionWords)
                                                 .Select(crs => new
                                                 {
                                                     Set = crs,

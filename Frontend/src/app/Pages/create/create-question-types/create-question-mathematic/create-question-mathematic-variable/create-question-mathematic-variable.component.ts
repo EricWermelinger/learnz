@@ -11,7 +11,7 @@ import { FormGroupTyped } from 'src/app/Material/types';
 export class CreateQuestionMathematicVariableComponent {
 
   formGroup: FormGroupTyped<CreateQuestionMathematicVariableDTO>;
-  @Input() set answer (a: CreateQuestionMathematicVariableDTO) {
+  @Input() set variable (a: CreateQuestionMathematicVariableDTO) {
     this.formGroup.patchValue(a);
   }
   @Input() editable: boolean = false;

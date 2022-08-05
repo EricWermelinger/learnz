@@ -31,34 +31,55 @@
             </form>
             <mat-divider class="space"></mat-divider>
         </div>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsDistribute)">
+            <h3>{{ 'QuestionType.Distribute' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsDistribute" class="question">
+                <app-create-question-distribute [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-distribute>
+            </div>
+            <mat-divider class="space"></mat-divider>
+        </div>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsMathematic)">
+            <h3>{{ 'QuestionType.Mathematic' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsMathematic" class="question">
+                <app-create-question-mathematic [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-mathematic>
+            </div>
+            <mat-divider class="space"></mat-divider>
+        </div>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsMultipleChoice)">
+            <h3>{{ 'QuestionType.MultipleChoice' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsMultipleChoice" class="question">
+                <app-create-question-multiple-choice [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-multiple-choice>
+            </div>
+            <mat-divider class="space"></mat-divider>
+        </div>
         <div *ngIf="!isEmpty(questionEdit.questions.questionsOpenQuestion)">
             <h3>{{ 'QuestionType.OpenQuestion' | translate }}</h3>
             <div *ngFor="let question of questionEdit.questions.questionsOpenQuestion" class="question">
                 <app-create-question-open [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-open>
             </div>
+            <mat-divider class="space"></mat-divider>
         </div>
-        <mat-divider class="space"></mat-divider>
         <div *ngIf="!isEmpty(questionEdit.questions.questionsTextField)">
             <h3>{{ 'QuestionType.TextField' | translate }}</h3>
             <div *ngFor="let question of questionEdit.questions.questionsTextField" class="question">
                 <app-create-question-text-field [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-text-field>
             </div>
+            <mat-divider class="space"></mat-divider>
         </div>
-        <mat-divider class="space"></mat-divider>
         <div *ngIf="!isEmpty(questionEdit.questions.questionsTrueFalse)">
             <h3>{{ 'QuestionType.TrueFalse' | translate }}</h3>
             <div *ngFor="let question of questionEdit.questions.questionsTrueFalse" class="question">
                 <app-create-question-true-false [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-true-false>
             </div>
+            <mat-divider class="space"></mat-divider>
         </div>
-        <mat-divider class="space"></mat-divider>
         <div *ngIf="!isEmpty(questionEdit.questions.questionsWord)">
             <h3>{{ 'QuestionType.Word' | translate }}</h3>
             <div *ngFor="let question of questionEdit.questions.questionsWord" class="question">
                 <app-create-question-word [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-word>
             </div>
+            <mat-divider class="space"></mat-divider>
         </div>
-        <mat-divider class="space"></mat-divider>
         <button *ngIf="questionEdit.editable" mat-button color="primary" (click)="save()">{{ 'framework.save' | translate }}</button>
     </div>
 </div>

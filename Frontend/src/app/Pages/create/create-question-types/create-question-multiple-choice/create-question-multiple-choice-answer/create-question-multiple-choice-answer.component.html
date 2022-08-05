@@ -7,7 +7,7 @@
         <mat-form-field>
             <input matInput type="text" formControlName="answer" [placeholder]="'create.answer' | translate" (change)="changeAnswer()">
         </mat-form-field>
-        <mat-slide-toggle (change)="changeAnswer()" formControlName="isRight">{{ 'create.isRight' | translate }}</mat-slide-toggle>\
+        <mat-slide-toggle (change)="changeAnswer()" formControlName="isRight">{{ 'create.isRight' | translate }}</mat-slide-toggle>
         <button mat-icon-button (click)="deleteAnswer()">
             <mat-icon>delete</mat-icon>
         </button>
