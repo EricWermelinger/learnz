@@ -109,7 +109,15 @@
         "answerTrue":"True",
         "answerFalse":"False",
         "languageSubjectMain":"Word in main Language",
-        "languageSubjectSecond":"Word in secondary Language"
+        "languageSubjectSecond":"Word in secondary Language",
+        "leftSide":"Left Side",
+        "rightSide":"Right Side",
+        "isRight":"Is correct Answer",
+        "display":"Display Value",
+        "min":"Minimum",
+        "max":"Maximum",
+        "digits":"Digits",
+        "interval":"Interval"
     },
     "learn":{
         "learn":"Learn"

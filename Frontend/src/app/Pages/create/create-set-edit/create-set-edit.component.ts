@@ -13,6 +13,12 @@ import { getSubjects } from 'src/app/Enums/Subject';
 import { CreateSetDialogComponent } from '../create-set-dialog/create-set-dialog.component';
 import { CreateSetEditService } from './create-set-edit.service';
 import { v4 as guid } from 'uuid';
+import { CreateQuestionTextFieldDTO } from 'src/app/DTOs/Create/CreateQuestionTextFieldDTO';
+import { CreateQuestionTrueFalseDTO } from 'src/app/DTOs/Create/CreateQuestionTrueFalseDTO';
+import { CreateQuestionWordDTO } from 'src/app/DTOs/Create/CreateQuestionWordDTO';
+import { CreateQuestionDistributeDTO } from 'src/app/DTOs/Create/CreateQuestionDistributeDTO';
+import { CreateQuestionMathematicDTO } from 'src/app/DTOs/Create/CreateQuestionMathematicDTO';
+import { CreateQuestionMultipleChoiceDTO } from 'src/app/DTOs/Create/CreateQuestionMultipleChoiceDTO';
 
 @Component({
   selector: 'app-create-set-edit',
@@ -84,12 +90,55 @@ export class CreateSetEditComponent {
       ...this._setQuestions$.value,
     };
     switch (questionType) {
+      case 'Distribute':
+        nextValue.questionsDistribute = [...nextValue.questionsDistribute, { 
+          id: guid(),
+          question: '',
+          answers: [],
+        } as CreateQuestionDistributeDTO];
+        break;
+      case 'Mathematic':
+        nextValue.questionsMathematic = [...nextValue.questionsMathematic, {
+          id: guid(),
+          answer: '',
+          digits: 0,
+          question: '',
+          variables: [],
+        } as CreateQuestionMathematicDTO];
+        break;
+      case 'MultipleChoice':
+        nextValue.questionsMultipleChoice = [...nextValue.questionsMultipleChoice, {
+          id: guid(),
+          question: '',
+          answers: [],
+        } as CreateQuestionMultipleChoiceDTO];
+        break;
       case 'OpenQuestion':
         nextValue.questionsOpenQuestion = [...nextValue.questionsOpenQuestion, { 
           id: guid(),
           question: '',
           answer: '',
         } as CreateQuestionOpenQuestionDTO];
+        break;
+      case 'TextField':
+        nextValue.questionsTextField = [...nextValue.questionsTextField, {
+          id: guid(),
+          question: '',
+        } as CreateQuestionTextFieldDTO];
+        break;
+      case 'TrueFalse':
+        nextValue.questionsTrueFalse = [...nextValue.questionsTrueFalse, {
+          id: guid(),
+          question: '',
+          answer: true,
+        } as CreateQuestionTrueFalseDTO];
+        break;
+      case 'Word':
+        nextValue.questionsWord = [...nextValue.questionsWord, {
+          id: guid(),
+          languageSubjectMain: '',
+          languageSubjectSecond: '',
+        } as CreateQuestionWordDTO];
         break;
       default:
         break;

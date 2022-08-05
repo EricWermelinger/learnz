@@ -1,4 +1,4 @@
-﻿import { CreateQuestionMathematicVariableDTO } from "./createQuestionMathematicVariableDTO";
+﻿import { CreateQuestionMathematicVariableDTO } from "./CreateQuestionMathematicVariableDTO";
 
 export interface CreateQuestionMathematicDTO {
     id: string;

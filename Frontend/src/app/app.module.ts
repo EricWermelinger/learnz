@@ -50,6 +50,9 @@ import { CreateQuestionTextFieldComponent } from './Pages/create/create-question
 import { CreateQuestionWordComponent } from './Pages/create/create-question-types/create-question-word/create-question-word.component';
 import { CreateQuestionMultipleChoiceComponent } from './Pages/create/create-question-types/create-question-multiple-choice/create-question-multiple-choice.component';
 import { CreateQuestionDistributeComponent } from './Pages/create/create-question-types/create-question-distribute/create-question-distribute.component';
+import { CreateQuestionDistributeAnswerComponent } from './Pages/create/create-question-types/create-question-distribute/create-question-distribute-answer/create-question-distribute-answer.component';
+import { CreateQuestionMathematicVariableComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic-variable/create-question-mathematic-variable.component';
+import { CreateQuestionMultipleChoiceAnswerComponent } from './Pages/create/create-question-types/create-question-multiple-choice/create-question-multiple-choice-answer/create-question-multiple-choice-answer.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -95,6 +98,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     CreateQuestionWordComponent,
     CreateQuestionMultipleChoiceComponent,
     CreateQuestionDistributeComponent,
+    CreateQuestionDistributeAnswerComponent,
+    CreateQuestionMathematicVariableComponent,
+    CreateQuestionMultipleChoiceAnswerComponent,
   ],
   imports: [
     BrowserModule,
