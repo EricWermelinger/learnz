@@ -37,6 +37,28 @@
                 <app-create-question-open [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-open>
             </div>
         </div>
+        <mat-divider class="space"></mat-divider>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsTextField)">
+            <h3>{{ 'QuestionType.TextField' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsTextField" class="question">
+                <app-create-question-text-field [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-text-field>
+            </div>
+        </div>
+        <mat-divider class="space"></mat-divider>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsTrueFalse)">
+            <h3>{{ 'QuestionType.TrueFalse' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsTrueFalse" class="question">
+                <app-create-question-true-false [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-true-false>
+            </div>
+        </div>
+        <mat-divider class="space"></mat-divider>
+        <div *ngIf="!isEmpty(questionEdit.questions.questionsWord)">
+            <h3>{{ 'QuestionType.Word' | translate }}</h3>
+            <div *ngFor="let question of questionEdit.questions.questionsWord" class="question">
+                <app-create-question-word [question]="question" [editable]="questionEdit.editable" (questionChange)="questionChange($event)" (questionDelete)="questionDelete($event)"></app-create-question-word>
+            </div>
+        </div>
+        <mat-divider class="space"></mat-divider>
         <button *ngIf="questionEdit.editable" mat-button color="primary" (click)="save()">{{ 'framework.save' | translate }}</button>
     </div>
 </div>

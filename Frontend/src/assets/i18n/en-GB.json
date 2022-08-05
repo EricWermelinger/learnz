@@ -105,7 +105,11 @@
         "answer":"Answer",
         "questionType":"Question Type",
         "editQuestions":"Edit Questions",
-        "addQuestion":"Add Question"
+        "addQuestion":"Add Question",
+        "answerTrue":"True",
+        "answerFalse":"False",
+        "languageSubjectMain":"Word in main Language",
+        "languageSubjectSecond":"Word in secondary Language"
     },
     "learn":{
         "learn":"Learn"
