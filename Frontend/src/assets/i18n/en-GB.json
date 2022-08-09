@@ -117,7 +117,9 @@
         "min":"Minimum",
         "max":"Maximum",
         "digits":"Digits",
-        "interval":"Interval"
+        "interval":"Interval",
+        "addAnswer":"Add Answer",
+        "addVariable":"Add Variable"
     },
     "learn":{
         "learn":"Learn"

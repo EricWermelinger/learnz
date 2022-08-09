@@ -6,8 +6,8 @@
         <mat-form-field>
             <input matInput type="text" formControlName="question" [placeholder]="'create.question' | translate" (change)="changeQuestion()">
         </mat-form-field>
-        <button mat-icon-button (click)="addQuestion()">
-            <mat-icon>add</mat-icon>
+        <button mat-button (click)="addQuestion()">
+            {{ 'create.addAnswer' | translate }}
         </button>
         <button mat-icon-button (click)="deleteQuestion()">
             <mat-icon>delete</mat-icon>

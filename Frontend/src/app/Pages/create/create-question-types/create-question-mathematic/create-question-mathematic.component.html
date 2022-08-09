@@ -1,5 +1,6 @@
-<div *ngIf="!editable; else editMode">
+<div *ngIf="!editable; else editMode" class="line">
     <app-create-question-readonly-field [label]="'create.question' | translate" [value]="formGroup.value.question"></app-create-question-readonly-field>
+    <div></div>
     <app-create-question-readonly-field [label]="'create.answer' | translate" [value]="formGroup.value.answer"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.digits' | translate" [value]="'' + formGroup.value.digits"></app-create-question-readonly-field>
 </div>
@@ -14,8 +15,8 @@
         <mat-form-field>
             <input matInput type="number" formControlName="digits" [placeholder]="'create.digits' | translate" (change)="changeQuestion()">
         </mat-form-field>
-        <button mat-icon-button (click)="addQuestion()">
-            <mat-icon>add</mat-icon>
+        <button mat-button (click)="addQuestion()">
+            {{ 'create.addVariable' | translate }}
         </button>
         <button mat-icon-button (click)="deleteQuestion()">
             <mat-icon>delete</mat-icon>

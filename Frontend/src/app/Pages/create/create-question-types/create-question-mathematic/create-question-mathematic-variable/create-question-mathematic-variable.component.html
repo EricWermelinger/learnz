@@ -1,4 +1,4 @@
-<div *ngIf="!editable; else editMode">
+<div *ngIf="!editable; else editMode" class="line">
     <app-create-question-readonly-field [label]="'create.display' | translate" [value]=" formGroup.value.display"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.min' | translate" [value]="'' +formGroup.value.min"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.max' | translate" [value]="'' +formGroup.value.max"></app-create-question-readonly-field>

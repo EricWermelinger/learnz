@@ -1,7 +1,7 @@
 ﻿todo:
 
 create:
-create -> implement last sets
+create implement last sets by: set modified, set learned, set tested, set challenged and check for policy
 
 learn
 get sets: recently learned, own, public (by policy) filter by subject (main & second) & title

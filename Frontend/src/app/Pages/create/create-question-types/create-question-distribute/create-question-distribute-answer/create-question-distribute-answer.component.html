@@ -1,4 +1,4 @@
-<div *ngIf="!editable; else editMode">
+<div *ngIf="!editable; else editMode" class="line">
     <app-create-question-readonly-field [label]="'create.leftSide' | translate" [value]="formGroup.value.leftSide"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.rightSide' | translate" [value]="formGroup.value.rightSide"></app-create-question-readonly-field>
 </div>

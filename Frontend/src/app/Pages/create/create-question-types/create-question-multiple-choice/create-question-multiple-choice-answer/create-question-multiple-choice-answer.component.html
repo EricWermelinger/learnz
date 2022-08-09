@@ -1,4 +1,4 @@
-<div *ngIf="!editable; else editMode">
+<div *ngIf="!editable; else editMode" class="line">
     <app-create-question-readonly-field [label]="'create.answer' | translate" [value]="formGroup.value.answer"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.isRight' | translate" [value]="formGroup.value.isRight ? ('create.answerTrue' | translate) : ('create.answerFalse' | translate)"></app-create-question-readonly-field>
 </div>
@@ -7,7 +7,9 @@
         <mat-form-field>
             <input matInput type="text" formControlName="answer" [placeholder]="'create.answer' | translate" (change)="changeAnswer()">
         </mat-form-field>
-        <mat-slide-toggle (change)="changeAnswer()" formControlName="isRight">{{ 'create.isRight' | translate }}</mat-slide-toggle>
+        <div class="toggle">
+            <mat-slide-toggle (change)="changeAnswer()" formControlName="isRight">{{ 'create.isRight' | translate }}</mat-slide-toggle>
+        </div>
         <button mat-icon-button (click)="deleteAnswer()">
             <mat-icon>delete</mat-icon>
         </button>

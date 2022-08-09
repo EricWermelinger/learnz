@@ -1,4 +1,4 @@
-<div *ngIf="!editable; else editMode">
+<div *ngIf="!editable; else editMode" class="line">
     <app-create-question-readonly-field [label]="'create.languageSubjectMain' | translate" [value]="formGroup.value.languageSubjectMain"></app-create-question-readonly-field>
     <app-create-question-readonly-field [label]="'create.languageSubjectSecond' | translate" [value]="formGroup.value.languageSubjectSecond"></app-create-question-readonly-field>
 </div>

@@ -91,14 +91,14 @@ export class CreateSetEditComponent {
     };
     switch (questionType) {
       case 'Distribute':
-        nextValue.questionsDistribute = [...nextValue.questionsDistribute, { 
+        nextValue.questionsDistribute = [...nextValue.questionsDistribute ?? [], { 
           id: guid(),
           question: '',
           answers: [],
         } as CreateQuestionDistributeDTO];
         break;
       case 'Mathematic':
-        nextValue.questionsMathematic = [...nextValue.questionsMathematic, {
+        nextValue.questionsMathematic = [...nextValue.questionsMathematic ?? [], {
           id: guid(),
           answer: '',
           digits: 0,
@@ -107,34 +107,34 @@ export class CreateSetEditComponent {
         } as CreateQuestionMathematicDTO];
         break;
       case 'MultipleChoice':
-        nextValue.questionsMultipleChoice = [...nextValue.questionsMultipleChoice, {
+        nextValue.questionsMultipleChoice = [...nextValue.questionsMultipleChoice ?? [], {
           id: guid(),
           question: '',
           answers: [],
         } as CreateQuestionMultipleChoiceDTO];
         break;
       case 'OpenQuestion':
-        nextValue.questionsOpenQuestion = [...nextValue.questionsOpenQuestion, { 
+        nextValue.questionsOpenQuestion = [...nextValue.questionsOpenQuestion ?? [], { 
           id: guid(),
           question: '',
           answer: '',
         } as CreateQuestionOpenQuestionDTO];
         break;
       case 'TextField':
-        nextValue.questionsTextField = [...nextValue.questionsTextField, {
+        nextValue.questionsTextField = [...nextValue.questionsTextField ?? [], {
           id: guid(),
           question: '',
         } as CreateQuestionTextFieldDTO];
         break;
       case 'TrueFalse':
-        nextValue.questionsTrueFalse = [...nextValue.questionsTrueFalse, {
+        nextValue.questionsTrueFalse = [...nextValue.questionsTrueFalse ?? [], {
           id: guid(),
           question: '',
           answer: true,
         } as CreateQuestionTrueFalseDTO];
         break;
       case 'Word':
-        nextValue.questionsWord = [...nextValue.questionsWord, {
+        nextValue.questionsWord = [...nextValue.questionsWord ?? [], {
           id: guid(),
           languageSubjectMain: '',
           languageSubjectSecond: '',
