@@ -1,6 +1,9 @@
 ﻿namespace Learnz.Framework;
 public static class ErrorKeys
 {
+    public static string ChallengeAlreadyAnswered = "challengeAlreadyAnswered";
+    public static string ChallengeAnswerNotPossible = "challengeAnswerNotPossible";
+    public static string ChallengeNotAccessible = "challengeNotAccessible";
     public static string FileUploadUnsuccessful = "fileUploadUnsuccessful";
     public static string FileNotAccessible = "fileNotAccessible";
     public static string FileNotProvided = "fileNotProvided";

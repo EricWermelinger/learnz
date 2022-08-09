@@ -16,4 +16,25 @@ public class ChallengeAnswer : Controller
         _userService = userService;
     }
 
+    [HttpPost]
+    public async Task<ActionResult> Answer(ChallengeAnswerDTO request)
+    {
+        var guid = _userService.GetUserGuid();
+        var challenge = await _dataContext.Challenges.Include(chl => chl.ChallengeQuestionAnswers).Include(chl => chl.ChallengeQuestionsPosed).FirstOrDefaultAsync(chl => chl.ChallengeUsers.Select(chu => chu.UserId).Contains(guid));
+        if (challenge == null)
+        {
+            return BadRequest(ErrorKeys.ChallengeNotAccessible);
+        }
+        if (challenge.ChallengeQuestionAnswers.Any(ans => ans.UserId == guid && ans.ChallengeQuestionPosedId == request.QuestionId))
+        {
+            return BadRequest(ErrorKeys.ChallengeAlreadyAnswered);
+        }
+        var question = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.Id == request.QuestionId && qst.IsActive == true);
+        if (question == null)
+        {
+            return BadRequest(ErrorKeys.ChallengeAnswerNotPossible);
+        }
+        bool isRight = false;
+        // todo continue here
+    }
 }

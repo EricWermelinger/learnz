@@ -5,6 +5,9 @@ create implement last sets by: set modified, set learned, set tested, set challe
 
 challenge:
 
+- Frontend DTOs
+- Frontend Endpoints
+
 ChallengeActive used for all interactions -> WebSocket (ws active)
 active:
 - Challenge Name, Set (on begin only)
@@ -26,14 +29,11 @@ get result -> ChallengeResult GET (trigger active Result state from Answered or 
 
 start challenge / go to next question / go to result / save result on last question / end challenge -> ChallengeFlow POST
 
-export result -> ChallengeExport POST
-
 all in all:
 - ChallengeActive GET with WebSocket -> in challengeId
 - ChallengeOpen GET / POST / PUT / DELETE
 - ChallengeAnswer POST -> in answer as string
 - ChallengeFlow POST -> in challengeId
-- ChallengeExport POST -> in challengeId
 
 States:
 - BeforeGame -> ChallengeQuestionPosed Count = 0

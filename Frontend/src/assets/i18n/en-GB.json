@@ -172,6 +172,9 @@
         "changePolicy":"Change Policy"
     },
     "errorBackend":{
+        "challengeAlreadyAnswered":"You have already answered this question.",
+        "challengeAnswerNotPossible":"You can't answer this question anymore.",
+        "challengeNotAccessible":"Challenge not accessible",
         "fileUploadUnsuccessful":"File upload unsuccessful",
         "fileUploadUnsuccessful_title":"Upload unsuccessful",
         "fileNotAccessible":"File not accessible",
