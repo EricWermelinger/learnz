@@ -6,4 +6,5 @@
     subjectSecond: number | null;
     setPolicy: number;
     isEditable: boolean;
+    isPolicyEditable: boolean;
 }

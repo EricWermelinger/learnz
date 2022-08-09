@@ -63,15 +63,17 @@ export class CreateSetEditComponent {
       }),
     );
     const isEdit = this.activatedRoute.snapshot.queryParamMap.get(appRoutes.Edit) === 'true';
+    const isPolicyEditable = this.activatedRoute.snapshot.queryParamMap.get(appRoutes.EditPolicy) === 'true';
     if (isEdit) {
-      this.editHeader(this.setId);
+      this.editHeader(this.setId, isPolicyEditable);
       this.editQuestions();
     }
   }
 
-  editHeader(setId: string) {
+  editHeader(setId: string, isPolicyEditable: boolean) {
     const dialog = this.dialog.open(CreateSetDialogComponent, { data: {
       isNew: false,
+      isPolicyEditable,
       setId,
     }});
     dialog.afterClosed().subscribe(_ => this.setHeader$ = this.editSetService.getHeader$(this.setId));

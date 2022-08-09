@@ -1,3 +1,0 @@
-todo:
-create mathematic evaluate in frontend
-create test everything

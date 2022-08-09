@@ -37,7 +37,8 @@ public class CreateOwnSets : Controller
             SubjectSecond = crs.SubjectSecond,
             NumberOfQuestions = _createQueryService.NumberOfWords(crs),
             Usable = _setPolicyChecker.SetUsable(crs, guid),
-            Editable = _setPolicyChecker.SetEditable(crs, guid)
+            Editable = _setPolicyChecker.SetEditable(crs, guid),
+            PolicyEditable = _setPolicyChecker.SetPolicyEditable(crs, guid)
         })
         .Where(set => set.Usable);
         return Ok(setsWithPolicy);

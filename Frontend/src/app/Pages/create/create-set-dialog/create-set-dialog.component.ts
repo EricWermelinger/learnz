@@ -17,6 +17,7 @@ import { appRoutes } from 'src/app/Config/appRoutes';
 export class CreateSetDialogComponent {
 
   formGroup: FormGroupTyped<CreateUpsertSetHeaderDTO>;
+  isPolicyEditable: boolean;
   subjects = getSubjects();
   policies = getSetPolicies();
   
@@ -35,6 +36,7 @@ export class CreateSetDialogComponent {
       subjectMain: [null, Validators.required],
       subjectSecond: null,
     }) as any as FormGroupTyped<CreateUpsertSetHeaderDTO>;
+    this.isPolicyEditable = this.data.isPolicyEditable;
     if (this.data.isNew as boolean) {
       this.formGroup.controls.id.patchValue(this.data.setId as string);
     } else {

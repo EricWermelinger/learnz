@@ -29,7 +29,7 @@
         <div></div>
         <div></div>
     </ng-template>
-    <button *ngIf="set!.editable; else notEditable" mat-icon-button (click)="editSet(set!.setId)">
+    <button *ngIf="set!.editable; else notEditable" mat-icon-button (click)="editSet(set!.setId, set!.policyEditable)">
         <mat-icon>edit</mat-icon>
     </button>
     <ng-template #notEditable>

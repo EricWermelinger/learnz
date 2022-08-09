@@ -24,7 +24,11 @@ export class CreateSetBannerComponent {
     this.router.navigate([appRoutes.App, appRoutes.Create, setId]);
   }
 
-  editSet(setId: string) {
-    this.router.navigate([appRoutes.App, appRoutes.Create, setId], { queryParams: { [appRoutes.Edit]: true }});
+  editSet(setId: string, policyEditable: boolean) {
+    if (policyEditable) {
+      this.router.navigate([appRoutes.App, appRoutes.Create, setId], { queryParams: { [appRoutes.Edit]: true, [appRoutes.EditPolicy]: true }});
+    } else {
+      this.router.navigate([appRoutes.App, appRoutes.Create, setId], { queryParams: { [appRoutes.Edit]: true }});
+    }
   }
 }

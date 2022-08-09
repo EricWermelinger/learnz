@@ -28,6 +28,11 @@ public class SetPolicyChecker : ISetPolicyChecker
         }
     }
 
+    public bool SetPolicyEditable(CreateSet set, Guid userId)
+    {
+        return set.CreatedById == userId;
+    }
+
     public bool SetUsable(CreateSet set, Guid userId)
     {
         switch (set.SetPolicy)

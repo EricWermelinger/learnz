@@ -10,4 +10,5 @@ public class CreateSetOverviewDTO
     public string Owner { get; set; }
     public bool Usable { get; set; }
     public bool Editable { get; set; }
+    public bool PolicyEditable { get; set; }
 }

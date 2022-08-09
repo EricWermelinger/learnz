@@ -87,12 +87,14 @@ export class CreateQuestionMathematicComponent {
     let maxError = false;
     try {
       minEvaluated = mathjs.evaluate(answerMin);
+      minEvaluated = mathjs.round(minEvaluated, this.formGroup.value.digits);
     } catch {
       minEvaluated = 'create.errorOccured';
       minError = true;
     }
     try {
       maxEvaluated = mathjs.evaluate(answerMax);
+      maxEvaluated = mathjs.round(maxEvaluated, this.formGroup.value.digits);
     } catch {
       maxEvaluated = 'create.errorOccured';
       maxError = true;

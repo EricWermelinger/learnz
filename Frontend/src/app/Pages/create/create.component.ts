@@ -44,6 +44,7 @@ export class CreateComponent {
     const setId = guid();
     this.dialog.open(CreateSetDialogComponent, { data: {
       isNew: true,
+      isPolicyEditable: true,
       setId,
     }});
   }

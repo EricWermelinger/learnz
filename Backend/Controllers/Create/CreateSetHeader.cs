@@ -36,7 +36,8 @@ public class CreateSetHeader : Controller
             SubjectMain = set.SubjectMain,
             SubjectSecond = set.SubjectSecond,
             SetPolicy = set.SetPolicy,
-            IsEditable = _setPolicyChecker.SetEditable(set, guid)
+            IsEditable = _setPolicyChecker.SetEditable(set, guid),
+            IsPolicyEditable = _setPolicyChecker.SetPolicyEditable(set, guid)
         };
         return Ok(setDto);
     }
@@ -76,11 +77,12 @@ public class CreateSetHeader : Controller
             {
                 return BadRequest(ErrorKeys.SetNotAccessible);
             }
+            var policyEditable = _setPolicyChecker.SetPolicyEditable(existing, guid);
             existing.Name = request.Name;
             existing.Description = request.Description;
             existing.Modified = timestamp;
             existing.ModifiedById = guid;
-            existing.SetPolicy = request.SetPolicy;
+            existing.SetPolicy = policyEditable ? request.SetPolicy : existing.SetPolicy;
             existing.SubjectMain = request.SubjectMain;
             existing.SubjectSecond = request.SubjectSecond;
             await _dataContext.SaveChangesAsync();

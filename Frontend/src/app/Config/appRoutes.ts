@@ -1,6 +1,7 @@
 export const appRoutes = {
     Empty: '',
     Edit: 'edit',
+    EditPolicy: 'edit-policy',
     App: 'app',
     Login: 'login',
     SignUp: 'signUp',

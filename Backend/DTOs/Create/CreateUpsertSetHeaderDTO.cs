@@ -8,4 +8,5 @@ public class CreateUpsertSetHeaderDTO
     public Subject? SubjectSecond { get; set; }
     public SetPolicy SetPolicy { get; set; }
     public bool IsEditable { get; set; }
+    public bool IsPolicyEditable { get; set; }
 }

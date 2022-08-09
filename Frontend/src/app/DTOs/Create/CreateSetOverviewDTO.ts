@@ -8,4 +8,5 @@ export interface CreateSetOverviewDTO {
   owner: string;
   usable: boolean;
   editable: boolean;
+  policyEditable: boolean;
 }
