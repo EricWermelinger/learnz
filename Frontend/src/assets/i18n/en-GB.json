@@ -85,7 +85,48 @@
         "addFile":"Add File"
     },
     "create":{
-        "create":"Create"
+        "create":"Create",
+        "latestSets":"Latest Sets",
+        "ownSets":"Own Sets",
+        "findSet":"Find Set",
+        "newSet":"New Set",
+        "createdBy":"Created by",
+        "name":"Set Name",
+        "description":"Description",
+        "subjectMain":"Main Subject",
+        "subjectSecond":"Secondary Subject",
+        "setPolicy":"Set Policy",
+        "items":"Items",
+        "filter":"Filter",
+        "editSettings":"Edit Settings",
+        "settings":"Settings",
+        "questions":"Questions",
+        "question":"Question",
+        "answer":"Answer",
+        "questionType":"Question Type",
+        "editQuestions":"Edit Questions",
+        "addQuestion":"Add Question",
+        "answerTrue":"True",
+        "answerFalse":"False",
+        "languageSubjectMain":"Word in main Language",
+        "languageSubjectSecond":"Word in secondary Language",
+        "leftSide":"Left Side",
+        "rightSide":"Right Side",
+        "isRight":"Is correct Answer",
+        "display":"Display Value",
+        "min":"Minimum",
+        "max":"Maximum",
+        "digits":"Digits",
+        "interval":"Interval",
+        "addAnswer":"Add Answer",
+        "addVariable":"Add Variable",
+        "checkMathematic":"Check Question",
+        "answerMin":"Answer at Minimum of Variables",
+        "answerMax":"Answer at Maximum of Variables",
+        "minEvaluated":"Answer at Minimum evaluated",
+        "maxEvaluated":"Answer at Maximum evaluated",
+        "evaluateQuestion":"Evaluate Question",
+        "errorOccured":"Error Occured while evaluating"
     },
     "learn":{
         "learn":"Learn"
@@ -153,6 +194,8 @@
         "passwordNotMatch_title":"Password not match",
         "togetherNoUserFound":"No User found",
         "togetherNoUserFound_title":"No User found",
+        "setNotAccessible":"Set is currently not Accessible",
+        "setNotAccessible_title":"Set not Accessible",
         "unknownError":"Unknown error",
         "unknownError_title":"Unknown error"
     },
@@ -192,6 +235,20 @@
         "Private":"Private",
         "OnlySelfEditable":"Only Self Editable",
         "Everyone":"Public"
+    },
+    "SetPolicy":{
+        "Private":"Private",
+        "OnlySelfEditable":"Only Self Editable",
+        "Everyone":"Public"
+    },
+    "QuestionType":{
+        "Distribute":"Distribute",
+        "Mathematic":"Mathematic",
+        "MultipleChoice":"Multiple Choice",
+        "OpenQuestion":"Open Question",
+        "TextField":"Text Field",
+        "TrueFalse":"True False",
+        "Word":"Word"
     },
     "languages":{
         "languages":"Language",

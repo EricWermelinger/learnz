@@ -1,19 +1,9 @@
 ﻿todo:
 
-create
-get sets for edit: own (created), public (by policy) filter by subject (main & second) & title
-create set (upsert, overview without questions)
-create questions (upsert) check for added & deleted
+create:
+create implement last sets by: set modified, set learned, set tested, set challenged and check for policy
 
-learn
-get sets: recently learned, own, public (by policy) filter by subject (main & second) & title
-get previous results
-start session
-get questions (all / only hard ones)
-answer question
-get result
-
-challenge
+challenge:
 get open challenges
 open new challenge
 join challenge
@@ -26,7 +16,15 @@ get next question
 get result
 end challenge
 
-test
+learn:
+get sets: recently learned, own, public (by policy) filter by subject (main & second) & title
+get previous results
+start session
+get questions (all / only hard ones)
+answer question
+get result
+
+test:
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title
 start test
@@ -34,5 +32,9 @@ get questions
 answer question
 finish try
 get result (when group test, only points, till access allowance is given)
+
+draw:
+
+dashboard:
 
 test everything

@@ -1,5 +1,7 @@
 export const appRoutes = {
     Empty: '',
+    Edit: 'edit',
+    EditPolicy: 'edit-policy',
     App: 'app',
     Login: 'login',
     SignUp: 'signUp',
@@ -16,6 +18,7 @@ export const appRoutes = {
     GroupFiles: 'group-files',
     GroupFilesId: 'filesId',
     Create: 'create',
+    CreateSetEditId: 'setId',
     Learn: 'learn',
     Challenge: 'challenge',
     Test: 'test',

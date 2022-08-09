@@ -39,6 +39,21 @@ import { GroupInfoDialogComponent } from './Pages/group/group-info-dialog/group-
 import { GroupChatComponent } from './Pages/group/group-chat/group-chat.component';
 import { GroupFilesComponent } from './Pages/group/group-files/group-files.component';
 import { FileHistoryDialogComponent } from './Framework/file-upload/file-history-dialog/file-history-dialog.component';
+import { CreateSetBannerComponent } from './Pages/create/create-set-banner/create-set-banner.component';
+import { CreateSetDialogComponent } from './Pages/create/create-set-dialog/create-set-dialog.component';
+import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-set-edit.component';
+import { CreateQuestionOpenComponent } from './Pages/create/create-question-types/create-question-open/create-question-open.component';
+import { CreateQuestionReadonlyFieldComponent } from './Pages/create/create-question-readonly-field/create-question-readonly-field.component';
+import { CreateQuestionMathematicComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic.component';
+import { CreateQuestionTrueFalseComponent } from './Pages/create/create-question-types/create-question-true-false/create-question-true-false.component';
+import { CreateQuestionTextFieldComponent } from './Pages/create/create-question-types/create-question-text-field/create-question-text-field.component';
+import { CreateQuestionWordComponent } from './Pages/create/create-question-types/create-question-word/create-question-word.component';
+import { CreateQuestionMultipleChoiceComponent } from './Pages/create/create-question-types/create-question-multiple-choice/create-question-multiple-choice.component';
+import { CreateQuestionDistributeComponent } from './Pages/create/create-question-types/create-question-distribute/create-question-distribute.component';
+import { CreateQuestionDistributeAnswerComponent } from './Pages/create/create-question-types/create-question-distribute/create-question-distribute-answer/create-question-distribute-answer.component';
+import { CreateQuestionMathematicVariableComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic-variable/create-question-mathematic-variable.component';
+import { CreateQuestionMultipleChoiceAnswerComponent } from './Pages/create/create-question-types/create-question-multiple-choice/create-question-multiple-choice-answer/create-question-multiple-choice-answer.component';
+import { CreateQuestionMathematicCheckDialogComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic-check-dialog/create-question-mathematic-check-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -73,6 +88,21 @@ export function HttpLoaderFactory(http: HttpClient) {
     GroupChatComponent,
     GroupFilesComponent,
     FileHistoryDialogComponent,
+    CreateSetBannerComponent,
+    CreateSetDialogComponent,
+    CreateSetEditComponent,
+    CreateQuestionOpenComponent,
+    CreateQuestionReadonlyFieldComponent,
+    CreateQuestionMathematicComponent,
+    CreateQuestionTrueFalseComponent,
+    CreateQuestionTextFieldComponent,
+    CreateQuestionWordComponent,
+    CreateQuestionMultipleChoiceComponent,
+    CreateQuestionDistributeComponent,
+    CreateQuestionDistributeAnswerComponent,
+    CreateQuestionMathematicVariableComponent,
+    CreateQuestionMultipleChoiceAnswerComponent,
+    CreateQuestionMathematicCheckDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -12,5 +12,6 @@ public static class ErrorKeys
     public static string UsernameTaken = "usernameTaken";
     public static string PasswordNotMatch = "passwordNotMatch";
     public static string TogetherNoUserFound = "togetherNoUserFound";
+    public static string SetNotAccessible = "setNotAccessible";
     public static string UnknownError = "unknownError";
 }

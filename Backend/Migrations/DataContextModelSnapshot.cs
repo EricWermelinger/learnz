@@ -22,6 +22,149 @@ namespace Learnz.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Learnz.Entities.Challenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreateSetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreateSetId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Challenges");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ChallengeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChallengeQuestionPosedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsRight")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.HasIndex("ChallengeQuestionPosedId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChallengeQuestionAnswers");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionMathematicResolved", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Answer")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("ChallengeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Digits")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.ToTable("ChallengeQuestionsMathematicResolved");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ChallengeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.ToTable("ChallengeQuestiosnPosed");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChallengeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChallengeUsers");
+                });
+
             modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
                 {
                     b.Property<Guid>("Id")
@@ -39,7 +182,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionDistribute");
+                    b.ToTable("CreateQuestionDistributes");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionDistributeAnswer", b =>
@@ -63,7 +206,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("QuestionDistributeId");
 
-                    b.ToTable("CreateQuestionDistributeAnswer");
+                    b.ToTable("CreateQuestionDistributeAnswers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematic", b =>
@@ -90,7 +233,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionMathematic");
+                    b.ToTable("CreateQuestionMathematics");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionMathematicVariable", b =>
@@ -122,7 +265,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("QuestionMathematicId");
 
-                    b.ToTable("CreateQuestionMathematicVariable");
+                    b.ToTable("CreateQuestionMathematicVariables");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoice", b =>
@@ -142,7 +285,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionMultipleChoice");
+                    b.ToTable("CreateQuestionMultipleChoices");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionMultipleChoiceAnswer", b =>
@@ -165,7 +308,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("QuestionMultipleChoiceId");
 
-                    b.ToTable("CreateQuestionMultipleChoiceAnswer");
+                    b.ToTable("CreateQuestionMultipleChoiceAnswers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionOpenQuestion", b =>
@@ -189,7 +332,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionOpenQuestion");
+                    b.ToTable("CreateQuestionOpenQuestions");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionTextField", b =>
@@ -209,7 +352,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionTextField");
+                    b.ToTable("CreateQuestionTextFields");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionTrueFalse", b =>
@@ -232,7 +375,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionTrueFalse");
+                    b.ToTable("CreateQuestionTrueFalses");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateQuestionWord", b =>
@@ -256,7 +399,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("SetId");
 
-                    b.ToTable("CreateQuestionWord");
+                    b.ToTable("CreateQuestionWords");
                 });
 
             modelBuilder.Entity("Learnz.Entities.CreateSet", b =>
@@ -300,7 +443,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.ToTable("CreateSet");
+                    b.ToTable("CreateSets");
                 });
 
             modelBuilder.Entity("Learnz.Entities.Group", b =>
@@ -670,6 +813,93 @@ namespace Learnz.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.Challenge", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "CreateSet")
+                        .WithMany("Challenges")
+                        .HasForeignKey("CreateSetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "Owner")
+                        .WithMany("ChallengeOwners")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreateSet");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionAnswer", b =>
+                {
+                    b.HasOne("Learnz.Entities.Challenge", "Challenge")
+                        .WithMany("ChallengeQuestionAnswers")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.ChallengeQuestionPosed", "ChallengeQuestionPosed")
+                        .WithMany("ChallengeQuestionAnswers")
+                        .HasForeignKey("ChallengeQuestionPosedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "User")
+                        .WithMany("ChallengeQuestionAnswers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("ChallengeQuestionPosed");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionMathematicResolved", b =>
+                {
+                    b.HasOne("Learnz.Entities.Challenge", "Challenge")
+                        .WithMany("ChallengeQuestionMathematicResolveds")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
+                {
+                    b.HasOne("Learnz.Entities.Challenge", "Challenge")
+                        .WithMany("ChallengeQuestionsPosed")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeUser", b =>
+                {
+                    b.HasOne("Learnz.Entities.Challenge", "Challenge")
+                        .WithMany("ChallengeUsers")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "User")
+                        .WithMany("ChallengeUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
                 {
                     b.HasOne("Learnz.Entities.CreateSet", "Set")
@@ -992,6 +1222,22 @@ namespace Learnz.Migrations
                     b.Navigation("ProfileImage");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.Challenge", b =>
+                {
+                    b.Navigation("ChallengeQuestionAnswers");
+
+                    b.Navigation("ChallengeQuestionMathematicResolveds");
+
+                    b.Navigation("ChallengeQuestionsPosed");
+
+                    b.Navigation("ChallengeUsers");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.ChallengeQuestionPosed", b =>
+                {
+                    b.Navigation("ChallengeQuestionAnswers");
+                });
+
             modelBuilder.Entity("Learnz.Entities.CreateQuestionDistribute", b =>
                 {
                     b.Navigation("Answers");
@@ -1009,6 +1255,8 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.CreateSet", b =>
                 {
+                    b.Navigation("Challenges");
+
                     b.Navigation("QuestionDistributes");
 
                     b.Navigation("QuestionMathematics");
@@ -1049,6 +1297,12 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.User", b =>
                 {
+                    b.Navigation("ChallengeOwners");
+
+                    b.Navigation("ChallengeQuestionAnswers");
+
+                    b.Navigation("ChallengeUsers");
+
                     b.Navigation("CreateSetCreated");
 
                     b.Navigation("CreateSetModified");

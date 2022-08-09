@@ -136,7 +136,7 @@ public class DataContext : DbContext
             .WithMany(cqd => cqd.Answers)
             .HasForeignKey(cqa => cqa.QuestionDistributeId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         modelBuilder.Entity<CreateQuestionMathematic>()
             .HasOne(cqd => cqd.Set)
             .WithMany(cs => cs.QuestionMathematics)
@@ -196,18 +196,93 @@ public class DataContext : DbContext
             .WithMany(u => u.LearnzFileOwner)
             .HasForeignKey(f => f.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Challenge>()
+           .HasOne(c => c.CreateSet)
+           .WithMany(s => s.Challenges)
+           .HasForeignKey(c => c.CreateSetId)
+           .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Challenge>()
+            .HasOne(c => c.Owner)
+            .WithMany(u => u.ChallengeOwners)
+            .HasForeignKey(c => c.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeQuestionAnswer>()
+            .HasOne(cqa => cqa.Challenge)
+            .WithMany(c => c.ChallengeQuestionAnswers)
+            .HasForeignKey(cqa => cqa.ChallengeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeQuestionAnswer>()
+            .HasOne(cqa => cqa.User)
+            .WithMany(u => u.ChallengeQuestionAnswers)
+            .HasForeignKey(cqa => cqa.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeQuestionAnswer>()
+            .HasOne(cqa => cqa.ChallengeQuestionPosed)
+            .WithMany(cqp => cqp.ChallengeQuestionAnswers)
+            .HasForeignKey(cqa => cqa.ChallengeQuestionPosedId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeUser>()
+            .HasOne(cu => cu.Challenge)
+            .WithMany(c => c.ChallengeUsers)
+            .HasForeignKey(cu => cu.ChallengeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeUser>()
+            .HasOne(cu => cu.User)
+            .WithMany(u => u.ChallengeUsers)
+            .HasForeignKey(cu => cu.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeQuestionMathematicResolved>()
+            .HasOne(cqmr => cqmr.Challenge)
+            .WithMany(c => c.ChallengeQuestionMathematicResolveds)
+            .HasForeignKey(cqmr => cqmr.ChallengeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ChallengeQuestionPosed>()
+            .HasOne(cqp => cqp.Challenge)
+            .WithMany(c => c.ChallengeQuestionsPosed)
+            .HasForeignKey(cqp => cqp.ChallengeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
+    
     public virtual DbSet<TogetherAsk> TogetherAsks { get; set; }
     public virtual DbSet<TogetherConnection> TogetherConnections { get; set; }
     public virtual DbSet<TogetherSwipe> TogetherSwipes { get; set; }
     public virtual DbSet<TogetherMessage> TogetherMessages { get; set; }
+    
     public virtual DbSet<Group> Groups { get; set; }
     public virtual DbSet<GroupMember> GroupMembers { get; set; }
     public virtual DbSet<GroupFile> GroupFiles { get; set; }
     public virtual DbSet<GroupMessage> GroupMessages { get; set; }
+    
     public virtual DbSet<LearnzFile> Files { get; set; }
     public virtual DbSet<LearnzFileAnonymous> FilesAnonymous { get; set; }
     public virtual DbSet<LearnzFileVersion> FileVersions { get; set; }
+    
+    public virtual DbSet<CreateSet> CreateSets { get; set; }
+    public virtual DbSet<CreateQuestionDistribute> CreateQuestionDistributes { get; set; }
+    public virtual DbSet<CreateQuestionDistributeAnswer> CreateQuestionDistributeAnswers { get; set; }
+    public virtual DbSet<CreateQuestionMathematic> CreateQuestionMathematics { get; set; }
+    public virtual DbSet<CreateQuestionMathematicVariable> CreateQuestionMathematicVariables { get; set; }
+    public virtual DbSet<CreateQuestionMultipleChoice> CreateQuestionMultipleChoices { get; set; }
+    public virtual DbSet<CreateQuestionMultipleChoiceAnswer> CreateQuestionMultipleChoiceAnswers { get; set; }
+    public virtual DbSet<CreateQuestionOpenQuestion> CreateQuestionOpenQuestions { get; set; }
+    public virtual DbSet<CreateQuestionTextField> CreateQuestionTextFields { get; set; }
+    public virtual DbSet<CreateQuestionTrueFalse> CreateQuestionTrueFalses { get; set; }
+    public virtual DbSet<CreateQuestionWord> CreateQuestionWords { get; set; }
+
+    public virtual DbSet<Challenge> Challenges { get; set; }
+    public virtual DbSet<ChallengeQuestionAnswer> ChallengeQuestionAnswers { get; set; }
+    public virtual DbSet<ChallengeUser> ChallengeUsers { get; set; }
+    public virtual DbSet<ChallengeQuestionMathematicResolved> ChallengeQuestionsMathematicResolved { get; set; }
+    public virtual DbSet<ChallengeQuestionPosed> ChallengeQuestiosnPosed { get; set; }
 }
