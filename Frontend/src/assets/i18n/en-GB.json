@@ -119,7 +119,14 @@
         "digits":"Digits",
         "interval":"Interval",
         "addAnswer":"Add Answer",
-        "addVariable":"Add Variable"
+        "addVariable":"Add Variable",
+        "checkMathematic":"Check Question",
+        "answerMin":"Answer at Minimum of Variables",
+        "answerMax":"Answer at Maximum of Variables",
+        "minEvaluated":"Answer at Minimum evaluated",
+        "maxEvaluated":"Answer at Maximum evaluated",
+        "evaluateQuestion":"Evaluate Question",
+        "errorOccured":"Error Occured while evaluating"
     },
     "learn":{
         "learn":"Learn"

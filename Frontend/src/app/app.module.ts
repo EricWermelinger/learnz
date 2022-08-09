@@ -53,6 +53,7 @@ import { CreateQuestionDistributeComponent } from './Pages/create/create-questio
 import { CreateQuestionDistributeAnswerComponent } from './Pages/create/create-question-types/create-question-distribute/create-question-distribute-answer/create-question-distribute-answer.component';
 import { CreateQuestionMathematicVariableComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic-variable/create-question-mathematic-variable.component';
 import { CreateQuestionMultipleChoiceAnswerComponent } from './Pages/create/create-question-types/create-question-multiple-choice/create-question-multiple-choice-answer/create-question-multiple-choice-answer.component';
+import { CreateQuestionMathematicCheckDialogComponent } from './Pages/create/create-question-types/create-question-mathematic/create-question-mathematic-check-dialog/create-question-mathematic-check-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -101,6 +102,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CreateQuestionDistributeAnswerComponent,
     CreateQuestionMathematicVariableComponent,
     CreateQuestionMultipleChoiceAnswerComponent,
+    CreateQuestionMathematicCheckDialogComponent,
   ],
   imports: [
     BrowserModule,

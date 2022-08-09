@@ -9,6 +9,7 @@ export class CreateQuestionReadonlyFieldComponent {
 
   @Input() label: string = '';
   @Input() value: string = '';
+  @Input() twice: boolean = false;
 
   constructor() { }
 }

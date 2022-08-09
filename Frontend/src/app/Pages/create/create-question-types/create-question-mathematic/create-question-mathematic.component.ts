@@ -4,6 +4,9 @@ import { CreateQuestionMathematicDTO } from 'src/app/DTOs/Create/CreateQuestionM
 import { CreateQuestionMathematicVariableDTO } from 'src/app/DTOs/Create/CreateQuestionMathematicVariableDTO';
 import { FormGroupTyped } from 'src/app/Material/types';
 import { v4 as guid } from 'uuid';
+import * as mathjs from 'mathjs'
+import { MatDialog } from '@angular/material/dialog';
+import { CreateQuestionMathematicCheckDialogComponent } from './create-question-mathematic-check-dialog/create-question-mathematic-check-dialog.component';
 
 @Component({
   selector: 'app-create-question-mathematic',
@@ -24,6 +27,7 @@ export class CreateQuestionMathematicComponent {
 
   constructor(
     private formBuilder: FormBuilder,
+    private dialog: MatDialog,
   ) {
     this.formGroup = this.formBuilder.group({
       id: '',
@@ -65,5 +69,46 @@ export class CreateQuestionMathematicComponent {
   changeAnswer(answer: CreateQuestionMathematicVariableDTO) {
     this.currentChildValue = this.currentChildValue.map(a => a.id === answer.id ? answer : a);
     this.changeQuestion();
+  }
+
+  checkQuestion() {
+    const question = this.formGroup.value.question;
+    const answerPlain = this.formGroup.value.answer;
+    const variables = this.currentChildValue;
+    const answerMin = variables.reduce((acc, v) => {
+      return acc.replace(v.display, (v.min ?? 0).toString());
+    }, answerPlain);
+    const answerMax = variables.reduce((acc, v) => {
+      return acc.replace(v.display, (v.max ?? 0).toString());
+    }, answerPlain);
+    let minEvaluated;
+    let minError = false;
+    let maxEvaluated;
+    let maxError = false;
+    try {
+      minEvaluated = mathjs.evaluate(answerMin);
+    } catch {
+      minEvaluated = 'create.errorOccured';
+      minError = true;
+    }
+    try {
+      maxEvaluated = mathjs.evaluate(answerMax);
+    } catch {
+      maxEvaluated = 'create.errorOccured';
+      maxError = true;
+    }
+    this.dialog.open(CreateQuestionMathematicCheckDialogComponent, {
+      data: {
+        question,
+        answer: answerPlain,
+        answerMin,
+        answerMax,
+        minEvaluated,
+        maxEvaluated,
+        minError,
+        maxError,
+      },
+      width: '520px',
+    });
   }
 }

@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div [ngClass]="{ 'wrapper': true, 'twice': twice }">
     <div>{{ label }}:</div>
     <div class="value">{{ value }}</div>
 </div>
