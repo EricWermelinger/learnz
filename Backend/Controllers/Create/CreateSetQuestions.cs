@@ -49,7 +49,9 @@ public class CreateSetQuestions : Controller
                 {
                     Id = qda.Id,
                     LeftSide = qda.LeftSide,
-                    RightSide = qda.RightSide
+                    LeftSideId = qda.LeftSideId,
+                    RightSide = qda.RightSide,
+                    RightSideId = qda.RightSideId
                 }).ToList()
             }).ToList(),
             QuestionsMathematic = set.QuestionMathematics.Select(qm => new CreateQuestionMathematicDTO
@@ -194,7 +196,9 @@ public class CreateSetQuestions : Controller
         {
             Id = a.Answer.Id,
             LeftSide = a.Answer.LeftSide,
+            LeftSideId = a.Answer.LeftSideId,
             RightSide = a.Answer.RightSide,
+            RightSideId = a.Answer.RightSideId,
             QuestionDistributeId = a.QuestionId
         }).ToList();
         foreach (var answer in distUpdatedAnswers)
@@ -203,7 +207,9 @@ public class CreateSetQuestions : Controller
             if (existingAnswer != null)
             {
                 existingAnswer.LeftSide = answer.LeftSide;
+                existingAnswer.LeftSideId = answer.LeftSideId;
                 existingAnswer.RightSide = answer.RightSide;
+                existingAnswer.RightSideId = answer.RightSideId;
             }
             else
             {

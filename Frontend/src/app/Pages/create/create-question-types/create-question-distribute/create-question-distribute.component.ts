@@ -48,7 +48,9 @@ export class CreateQuestionDistributeComponent {
     this.currentChildValue = [...this.currentChildValue, {
       id: guid(),
       leftSide: '',
+      leftSideId: guid(),
       rightSide: '',
+      rightSideId: guid(),
     } as CreateQuestionDistributeAnswerDTO];
   }
 
