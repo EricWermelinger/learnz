@@ -11,11 +11,13 @@ public class ChallengeOpen : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly ISetPolicyChecker _setPolicyChecker;
-    public ChallengeOpen(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker)
+    private readonly IChallengeQueryService _challengeQueryService;
+    public ChallengeOpen(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker, IChallengeQueryService challengeQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
         _setPolicyChecker = setPolicyChecker;
+        _challengeQueryService = challengeQueryService;
     }
 
     [HttpGet]
@@ -80,7 +82,7 @@ public class ChallengeOpen : Controller
         };
         _dataContext.ChallengeUsers.Add(challengeUser);
         await _dataContext.SaveChangesAsync();
-        // todo trigger websocket player
+        await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
         return Ok();
     }
 
@@ -95,7 +97,7 @@ public class ChallengeOpen : Controller
         }
         challenge.State = ChallengeState.Ended;
         await _dataContext.SaveChangesAsync();
-        // todo trigger websocket cancel
+        await _challengeQueryService.TriggerWebsocketAllUsers(challengeId);
         return Ok();
     }
 }

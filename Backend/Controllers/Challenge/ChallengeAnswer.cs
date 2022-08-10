@@ -10,10 +10,12 @@ public class ChallengeAnswer : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public ChallengeAnswer(DataContext dataContext, IUserService userService)
+    private readonly IChallengeQueryService _challengeQueryService;
+    public ChallengeAnswer(DataContext dataContext, IUserService userService, IChallengeQueryService challengeQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _challengeQueryService = challengeQueryService;
     }
 
     [HttpPost]
@@ -35,7 +37,7 @@ public class ChallengeAnswer : Controller
             return BadRequest(ErrorKeys.ChallengeAnswerNotPossible);
         }
         
-        bool isRight = question.Answer.ToLower().Trim() == request.Answer.ToLower().Trim();
+        bool isRight = await IsAnswerRight(question, request.Answer);
         double millisLeft = (question.Expires - DateTime.UtcNow).TotalMilliseconds;
         int points = isRight && millisLeft > 0 ? Convert.ToInt32(Math.Ceiling(millisLeft / 200)) : 0;
         var answer = new ChallengeQuestionAnswer
@@ -50,16 +52,53 @@ public class ChallengeAnswer : Controller
         _dataContext.ChallengeQuestionAnswers.Add(answer);
         await _dataContext.SaveChangesAsync();
 
-        // todo trigger websocket answered
+        await _challengeQueryService.TriggerWebsocket(challenge.Id, guid);
 
         int peopleAnswered = await _dataContext.ChallengeQuestionAnswers.Where(cqa => cqa.ChallengeQuestionPosedId == question.Id).DistinctBy(cqa => cqa.UserId).CountAsync();
         int playerInGame = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challenge.Id).CountAsync();
-        if (peopleAnswered == playerInGame)
+        if (peopleAnswered == playerInGame && challenge.State == ChallengeState.Question)
         {
-            // todo change to result, set question inactive
-            // todo trigger websocket result
+            var challengeDb = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challenge.Id);
+            challengeDb.State = ChallengeState.Result;
+            var questionPosed = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.Id == request.QuestionId && qst.IsActive == true);
+            if (questionPosed != null)
+            {
+                questionPosed.IsActive = false;
+            }
+            await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
         }
 
         return Ok();
+    }
+
+    private async Task<bool> IsAnswerRight(ChallengeQuestionPosed question, string answer)
+    {
+        var posed = await _challengeQueryService.GetQuestionById(question.QuestionId);
+        if (posed == null)
+        {
+            return false;
+        }
+        switch (posed.QuestionType)
+        {
+            case QuestionType.Distribute:
+            case QuestionType.MultipleChoice:
+                string delimiter = posed.QuestionType == QuestionType.Distribute ? "||" : "|";
+                var distributeShould = question.Answer.ToLower().Split(delimiter).OrderBy(x => x);
+                var distributeGive = answer.ToLower().Split(delimiter).OrderBy(x => x);
+                if (distributeShould.Count() != distributeGive.Count())
+                {
+                    return false;
+                }
+                for (int i = 0; i < distributeShould.Count(); i++)
+                {
+                    if (distributeShould.ElementAt(i) != distributeGive.ElementAt(i))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            default:
+                return question.Answer.ToLower().Trim() == answer.ToLower().Trim();
+        }
     }
 }
