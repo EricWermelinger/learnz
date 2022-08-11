@@ -36,4 +36,8 @@ export class ChallengeComponent {
       }
     });
   }
+
+  isEmpty(value: any[]) {
+    return value.length === 0;
+  }
 }

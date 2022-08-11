@@ -1,5 +1,14 @@
 <div *ngIf="openChallenges$ | async as openChallenges">
-    <div *ngFor="let challenge of openChallenges" class="challenge">
+    <div class="top">
+        <div>
+            <h2>{{ 'challenge.openChallenges' | translate }}</h2>
+        </div>
+        <div>
+            <button mat-button color="primary" (click)="createNewChallenge()">{{ 'challenge.createNew' | translate }}</button>
+        </div>
+    </div>
+    <h3 *ngIf="isEmpty(openChallenges)">{{ 'challenge.noOpenChallenge' | translate }}</h3>
+    <mat-card *ngFor="let challenge of openChallenges" class="challenge">
         <div class="info">
             <div>{{ 'challenge.name' | translate }}:</div>
             <div>{{ challenge.name }}</div>
@@ -26,5 +35,5 @@
         <button *ngIf="challenge.isOwner" mat-icon-button (click)="cancelChallenge(challenge.challengeId)">
             <mat-icon>delete</mat-icon>
         </button>
-    </div>
+    </mat-card>
 </div>

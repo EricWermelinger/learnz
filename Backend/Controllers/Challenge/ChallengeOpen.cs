@@ -49,7 +49,7 @@ public class ChallengeOpen : Controller
             return BadRequest(ErrorKeys.ChallengeNotAccessible);
         }
         var set = await _dataContext.CreateSets.FirstOrDefaultAsync(set => set.Id == request.CreateSetId);
-        if (set == null || _setPolicyChecker.SetUsable(set, guid))
+        if (set == null || !_setPolicyChecker.SetUsable(set, guid))
         {
             return BadRequest(ErrorKeys.SetNotAccessible);
         }

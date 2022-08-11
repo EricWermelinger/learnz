@@ -136,7 +136,10 @@
         "name":"Challenge Name",
         "setName":"Set",
         "createChallenge":"Create Challenge",
-        "numberOfPlayers":"Players"
+        "numberOfPlayers":"Players",
+        "openChallenges":"Open Challenges",
+        "createNew":"Create New",
+        "noOpenChallenge":"No open challenges"
     },
     "test":{
         "test":"Test"

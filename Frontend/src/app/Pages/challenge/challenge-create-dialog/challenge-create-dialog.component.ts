@@ -3,10 +3,13 @@ import { ChallengeCreateDialogService } from './challenge-create-dialog.service'
 import { v4 as guid } from 'uuid';
 import { FormGroupTyped } from 'src/app/Material/types';
 import { ChallengeCreateDTO } from 'src/app/DTOs/Challenge/ChallengeCreateDTO';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { BehaviorSubject, Observable, startWith, switchMap } from 'rxjs';
+import { KeyValue } from '@angular/common';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-challenge-create-dialog',
@@ -19,6 +22,9 @@ export class ChallengeCreateDialogComponent {
   setEditable: boolean;
   setName: string = '';
   challengeId: string;
+  filterSetControl = new FormControl('');
+  filteredOptions$: Observable<KeyValue<string, string>[]>;
+  _filteredOptions$ = new BehaviorSubject<KeyValue<string, string>[]>([]);
 
   constructor(
     private challengeCreateService: ChallengeCreateDialogService,
@@ -38,6 +44,11 @@ export class ChallengeCreateDialogComponent {
       this.setName = data.setName as string;
       this.formGroup.controls.createSetId.patchValue(data.setId as string);
     }
+    this.filteredOptions$ = this.filterSetControl.valueChanges.pipe(
+      startWith(''),
+      switchMap(filter => this.challengeCreateService.getFilteredSets(filter ?? '')),
+    );
+    this.filteredOptions$.subscribe(options => this._filteredOptions$.next(options));
   }
 
   save() {
@@ -49,5 +60,9 @@ export class ChallengeCreateDialogComponent {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  selectSet(event: MatAutocompleteSelectedEvent): void {
+    this.formGroup.controls.createSetId.patchValue(event.option.value);
   }
 }

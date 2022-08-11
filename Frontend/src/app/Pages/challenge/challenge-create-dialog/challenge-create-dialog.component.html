@@ -9,7 +9,15 @@
         <div class="bold">{{ setName }}</div>
     </div>
     <ng-template #setAutocomplete >
-        <!-- todo create set autocomplete -->
+        <mat-form-field>
+            <mat-label>{{ 'challenge.setName' | translate }}</mat-label>
+            <input type="text" matInput [formControl]="filterSetControl" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectSet($event)">
+              <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option.value">
+                {{ option.key }}
+              </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
     </ng-template>
     <div class="buttons">
         <button mat-button (click)="cancel()">{{ 'framework.cancel' | translate }}</button>
