@@ -1,9 +1,13 @@
 export const endpoints = {
+    ChallengeActive: 'challengeActive', // use get
+    ChallengeAnswer: 'challengeAnswer', // use post
+    ChallengeFlow: 'challengeFlow', // use post
+    ChallengeOpen: 'challengeOpen', // use get post put delete
     CreateFilterSets: 'createFilterSets',
     CreateLastSets: 'createLastSets', // use get
     CreateOwnSets: 'createOwnSets',
     CreateSetHeader: 'createSetHeader',
-    CreateSetQuestions: 'createSetQuestions', // use post
+    CreateSetQuestions: 'createSetQuestions',
     FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
