@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { CreateSetOverviewDTO } from 'src/app/DTOs/Create/CreateSetOverviewDTO';
 import { getSubjects } from 'src/app/Enums/Subject';
+import { ChallengeCreateDialogComponent } from '../../challenge/challenge-create-dialog/challenge-create-dialog.component';
 
 @Component({
   selector: 'app-create-set-banner',
@@ -14,6 +16,7 @@ export class CreateSetBannerComponent {
   @Input() set: CreateSetOverviewDTO | undefined;
   constructor(
     private router: Router,
+    private dialog: MatDialog,
   ) { }
 
   translateSubject(subject: number) {
@@ -30,5 +33,15 @@ export class CreateSetBannerComponent {
     } else {
       this.router.navigate([appRoutes.App, appRoutes.Create, setId], { queryParams: { [appRoutes.Edit]: true }});
     }
+  }
+  
+  challengeSet(setId: string, setName: string) {
+    this.dialog.open(ChallengeCreateDialogComponent, {
+      data: {
+        setEditable: true,
+        setName: setName,
+        setId: setId,
+      }
+    });
   }
 }

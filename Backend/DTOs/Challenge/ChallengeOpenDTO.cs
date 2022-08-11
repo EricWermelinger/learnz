@@ -7,4 +7,5 @@ public class ChallengeOpenDTO
     public Subject SubjectMain { get; set; }
     public Subject? SubjectSecond { get; set; }
     public int NumberOfPlayers { get; set; }
+    public bool IsOwner { get; set; }
 }

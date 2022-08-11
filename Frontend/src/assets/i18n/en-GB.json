@@ -132,7 +132,11 @@
         "learn":"Learn"
     },
     "challenge":{
-        "challenge":"Challenge"
+        "challenge":"Challenge",
+        "name":"Challenge Name",
+        "setName":"Set",
+        "createChallenge":"Create Challenge",
+        "numberOfPlayers":"Players"
     },
     "test":{
         "test":"Test"

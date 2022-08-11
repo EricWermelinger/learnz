@@ -1,0 +1,10 @@
+.challenge {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 40px 40px;
+    gap: 16px;
+    margin-bottom: 16px;
+    .info:last-child {
+        margin-top: 4px;
+        font-size: 16px;
+    }
+}

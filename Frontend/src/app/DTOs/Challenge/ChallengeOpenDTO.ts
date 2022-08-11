@@ -7,4 +7,5 @@ export interface ChallengeOpenDTO {
     subjectMain: Subject;
     subjectSecond: Subject | null;
     numberOfPlayers: number;
+    isOwner: boolean;
 }

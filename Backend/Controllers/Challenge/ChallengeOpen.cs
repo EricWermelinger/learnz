@@ -23,6 +23,7 @@ public class ChallengeOpen : Controller
     [HttpGet]
     public async Task<ActionResult<List<ChallengeOpenDTO>>> OpenChallenges()
     {
+        var guid = _userService.GetUserGuid();
         var challenges = await _dataContext.Challenges.Where(chl => chl.State == ChallengeState.BeforeGame)
                                                 .Select(chl => new ChallengeOpenDTO
                                                 {
@@ -31,7 +32,8 @@ public class ChallengeOpen : Controller
                                                     CreateSetName = chl.CreateSet.Name,
                                                     SubjectMain = chl.CreateSet.SubjectMain,
                                                     SubjectSecond = chl.CreateSet.SubjectSecond,
-                                                    NumberOfPlayers = chl.ChallengeUsers.Count
+                                                    NumberOfPlayers = chl.ChallengeUsers.Count,
+                                                    IsOwner = chl.OwnerId == guid
                                                 })
                                                 .ToListAsync();
         return Ok(challenges);
