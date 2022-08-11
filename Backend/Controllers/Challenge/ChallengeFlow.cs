@@ -177,7 +177,7 @@ public class ChallengeFlow : Controller
             {
                 case QuestionType.Distribute:
                     var newQuestionDistribute = await _dataContext.CreateQuestionDistributes.FirstAsync(qst => qst.Id == nextQuestionId);
-                    var newQuestionDistributeAnswers = await _dataContext.CreateQuestionDistributeAnswers.Where(ans => ans.QuestionDistributeId == newQuestionDistribute.Id).Select(ans => ans.LeftSide + "|" + ans.RightSide).ToListAsync();
+                    var newQuestionDistributeAnswers = await _dataContext.CreateQuestionDistributeAnswers.Where(ans => ans.QuestionDistributeId == newQuestionDistribute.Id).Select(ans => ans.LeftSideId.ToString() + "|" + ans.RightSideId.ToString()).ToListAsync();
                     nextQuestion.Answer = string.Join("||", newQuestionDistributeAnswers);
                     break;
                 case QuestionType.Mathematic:
@@ -211,7 +211,7 @@ public class ChallengeFlow : Controller
                     break;
                 case QuestionType.MultipleChoice:
                     var newQuestionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.FirstAsync(qst => qst.Id == nextQuestionId);
-                    var newQuestionMutlipleChoiceAnswers = await _dataContext.CreateQuestionMultipleChoiceAnswers.Where(ans => ans.IsRight && ans.QuestionMultipleChoiceId == newQuestionMultipleChoice.Id).Select(ans => ans.Answer).ToListAsync();
+                    var newQuestionMutlipleChoiceAnswers = await _dataContext.CreateQuestionMultipleChoiceAnswers.Where(ans => ans.IsRight && ans.QuestionMultipleChoiceId == newQuestionMultipleChoice.Id).Select(ans => ans.Id.ToString()).ToListAsync();
                     nextQuestion.Answer = string.Join('|', newQuestionMutlipleChoiceAnswers);
                     break;
                 case QuestionType.OpenQuestion:

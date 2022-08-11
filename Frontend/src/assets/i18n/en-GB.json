@@ -140,7 +140,11 @@
         "openChallenges":"Open Challenges",
         "createNew":"Create New",
         "noOpenChallenge":"No open challenges",
-        "waitingForPlayers":"Waiting for other Players to start"
+        "waitingForPlayersToJoin":"Waiting for other Players to start",
+        "waitingForPlayersToAnswer":"Waiting for other Players to answer",
+        "currently":"Currently",
+        "players":"Players",
+        "proceed":"Proceed"
     },
     "test":{
         "test":"Test"
@@ -169,6 +173,12 @@
         "oldPassword":"Old Password",
         "newPassword":"New Password",
         "confirmPassword":"Confirm Password"
+    },
+    "generalQuestion":{
+        "question":"Question",
+        "roundBy":"Round by",
+        "digits":"Digits",
+        "translateTo":"Translate to"
     },
     "fileUpload":{
         "uploadFile":"Upload File",

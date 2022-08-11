@@ -1,0 +1,10 @@
+<h3>{{ 'generalQuestion.question' | translate }}</h3>
+<div>{{ question.question }}</div>
+<div *ngIf="question.questionType == 'Mathematic'">{{ 'generalQuestion.roundBy' | translate }} {{ question.description }} {{ 'generalQuestion.digits' | translate }}</div>
+<div *ngIf="question.questionType == 'Word'">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubject(question.description ?? '') }}</div>
+<!-- todo answers -->
+<!-- distribute show connections
+mathematic show number field
+multiple choice show cards for multiple
+open, text, word show text field
+true false show buttons -->

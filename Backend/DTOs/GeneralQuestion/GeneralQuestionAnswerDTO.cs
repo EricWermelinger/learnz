@@ -1,5 +1,5 @@
 ﻿namespace Learnz.DTOs;
-public class ChallengeAnswerDTO
+public class GeneralQuestionAnswerDTO
 {
     public Guid ChallengeId { get; set; }
     public Guid QuestionId { get; set; }

@@ -1,7 +1,7 @@
 ﻿import { QuestionType } from "src/app/Enums/QuestionType";
-import { ChallengeQuestionAnswerDTO } from "./ChallengeQuestionAnswerDTO";
+import { ChallengeQuestionAnswerDTO } from "../Challenge/ChallengeQuestionAnswerDTO";
 
-export interface ChallengeQuestionDTO {
+export interface GeneralQuestionQuestionDTO {
     question: string;
     description: string | null;
     questionType: QuestionType;

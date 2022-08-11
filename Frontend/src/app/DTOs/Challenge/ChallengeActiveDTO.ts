@@ -1,12 +1,12 @@
-﻿import { ChallengePlayerResultDTO } from "./ChallengePlayerResultDTO";
-import { ChallengeQuestionDTO } from "./ChallengeQuestionDTO";
+﻿import { GeneralQuestionQuestionDTO } from "../GeneralQuestion/GeneralQuestionQuestionDTO";
+import { ChallengePlayerResultDTO } from "./ChallengePlayerResultDTO";
 
 export interface ChallengeActiveDTO {
     name: string;
     result: ChallengePlayerResultDTO[];
     cancelled: boolean;
     isOwner: boolean;
-    question: ChallengeQuestionDTO | null;
+    question: GeneralQuestionQuestionDTO | null;
     lastQuestionPoint: number | null;
     state: number;
 }

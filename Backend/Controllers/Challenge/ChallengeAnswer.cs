@@ -19,7 +19,7 @@ public class ChallengeAnswer : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> Answer(ChallengeAnswerDTO request)
+    public async Task<ActionResult> Answer(GeneralQuestionAnswerDTO request)
     {
         var guid = _userService.GetUserGuid();
         var challenge = await _dataContext.Challenges.Include(chl => chl.ChallengeQuestionAnswers).Include(chl => chl.ChallengeQuestionsPosed).FirstOrDefaultAsync(chl => chl.ChallengeUsers.Select(chu => chu.UserId).Contains(guid));

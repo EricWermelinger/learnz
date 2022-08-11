@@ -1,5 +1,5 @@
 ﻿namespace Learnz.DTOs;
-public class ChallengeQuestionDTO
+public class GeneralQuestionQuestionDTO
 {
     public string Question { get; set; }
     public string? Description { get; set; }

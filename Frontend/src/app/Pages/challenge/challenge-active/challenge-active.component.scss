@@ -1,0 +1,10 @@
+.top {
+    display: flex;
+    justify-content: space-between;
+}
+.players {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 200px 200px 200px;
+    gap: 16px;
+}

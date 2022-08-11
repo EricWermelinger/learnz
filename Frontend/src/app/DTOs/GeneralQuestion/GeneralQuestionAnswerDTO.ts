@@ -1,4 +1,4 @@
-﻿export interface ChallengeAnswerDTO {
+﻿export interface GeneralQuestionAnswerDTO {
     challengeId: string;
     questionId: string;
     answer: string;

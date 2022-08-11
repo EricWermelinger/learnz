@@ -1,6 +1,30 @@
-<h2 *ngIf="challengeName$ | async as name">{{ name }}</h2>
+<div *ngIf="challengeName$ | async as name" class="top">
+    <h2>{{ name }}</h2>
+    <div *ngIf="isOwner$ | async as isOwner">
+        <button *ngIf="isOwner" mat-button color="primary" (click)="challengeNextFlow()">{{ 'challenge.proceed' | translate }}</button>
+    </div>
+</div>
 <div *ngIf="state$ | async as state" [ngSwitch]="state">
     <div *ngSwitchCase="'BeforeGame'">
-        <div>{{ 'challenge.waitingForPlayers' | translate }}</div>
+        <div *ngIf="result$ | async as result">
+            <h3>{{ 'challenge.waitingForPlayersToJoin' | translate }}</h3>
+            <div>{{ 'challenge.currently' | translate }} {{ getLength(result) }} {{ 'challenge.players' | translate }}</div>
+            <div class="players">
+                <mat-card *ngFor="let player of result">
+                    <div>{{ player.username }}</div>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="'Question'">
+        <div *ngIf="question$ | async as question">
+            <app-general-question [question]="question" (answered)="challengeAnswer($event)"></app-general-question>
+        </div>
+    </div>
+    <div *ngSwitchCase="'Answer'">
+        <h3>{{ 'challenge.waitingForPlayersToAnswer' | translate }}</h3>
+    </div>
+    <div *ngSwitchCase="'Result'">
+        <!-- todo -->
     </div>
 </div>

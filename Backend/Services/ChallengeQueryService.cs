@@ -30,11 +30,13 @@ public class ChallengeQueryService : IChallengeQueryService
     public async Task TriggerWebsocketAllUsers(Guid challengeId)
     {
         var userIds = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).Select(chu => chu.UserId).ToListAsync();
+        var ownerId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.OwnerId).FirstAsync();
         var challengeActive = await GetActiveChallenge(challengeId);
         foreach (Guid userId in userIds)
         {
             await TriggerWebsocket(challengeActive, challengeId, userId);
         }
+        await TriggerWebsocket(challengeActive, challengeId, ownerId);
     }
 
     public async Task<ChallengeActiveDTO> GetActiveChallenge(Guid challengeId)
@@ -80,22 +82,37 @@ public class ChallengeQueryService : IChallengeQueryService
 
     public async Task<List<ChallengePlayerResultDTO>> GetResult(Guid challengeId)
     {
+        var users = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).Select(chu => new { UserId = chu.UserId, Username = chu.User.Username }).ToListAsync();
+        if (users == null)
+        {
+            return new List<ChallengePlayerResultDTO>();
+        }
         var resultRows = await _dataContext.ChallengeQuestionAnswers
                                         .Where(qsa => qsa.ChallengeId == challengeId)
                                         .Select(qsa => new { Username = qsa.User.Username, UserId = qsa.UserId, Points = qsa.Points })
                                         .GroupBy(rsr => new { UserId = rsr.UserId, Username = rsr.Username })
-                                        .Select(grp => new ChallengePlayerResultDTO { Username = grp.Key.Username, Points = grp.Sum(grp => grp.Points) })
+                                        .Select(grp => new { UserId = grp.Key.UserId, Username = grp.Key.Username, Points = grp.Sum(grp => grp.Points) })
                                         .ToListAsync();
-
-        return resultRows ?? new List<ChallengePlayerResultDTO>();
+        var result = new List<ChallengePlayerResultDTO>();
+        foreach (var user in users)
+        {
+            var correspondingRow = resultRows.FirstOrDefault(r => r.UserId == user.UserId);
+            var resultUser = new ChallengePlayerResultDTO
+            {
+                Username = user.Username,
+                Points = correspondingRow == null ? 0 : correspondingRow.Points
+            };
+            result.Add(resultUser);
+        }
+        return result.OrderByDescending(r => r.Points).ToList();
     }
 
-    public async Task<ChallengeQuestionDTO?> GetQuestionById(Guid questionId)
+    public async Task<GeneralQuestionQuestionDTO?> GetQuestionById(Guid questionId)
     {
         var questionDistribute = await _dataContext.CreateQuestionDistributes.Include(qst => qst.Answers).FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionDistribute != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = questionDistribute.Question,
                 QuestionType = QuestionType.Distribute,
@@ -107,7 +124,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var questionMathematic = await _dataContext.ChallengeQuestionsMathematicResolved.FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionMathematic != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = questionMathematic.Question,
                 Description = questionMathematic.Digits.ToString(),
@@ -118,7 +135,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var questionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.Include(qst => qst.Answers).FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionMultipleChoice != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = questionMultipleChoice.Question,
                 AnswerSetOne = questionMultipleChoice.Answers.Select(cqa => new ChallengeQuestionAnswerDTO { Answer = cqa.Answer, AnswerId = cqa.Id }).Select(q => new { Question = q, Shuffle = Guid.NewGuid() }).OrderBy(q => q.Shuffle).Select(q => q.Question).ToList(),
@@ -129,7 +146,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var openQuestion = await _dataContext.CreateQuestionOpenQuestions.FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (openQuestion != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = openQuestion.Question,
                 QuestionType = QuestionType.OpenQuestion
@@ -139,7 +156,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var questionTrueFalse = await _dataContext.CreateQuestionTrueFalses.FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionTrueFalse != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = questionTrueFalse.Question,
                 QuestionType = QuestionType.TrueFalse
@@ -149,7 +166,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var questionWord = await _dataContext.CreateQuestionWords.FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionWord != null)
         {
-            return new ChallengeQuestionDTO
+            return new GeneralQuestionQuestionDTO
             {
                 Question = questionWord.LanguageSubjectMain,
                 Description = questionWord.LanguageSubjectSecond.ToString(),
