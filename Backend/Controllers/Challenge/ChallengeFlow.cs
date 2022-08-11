@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Learnz.Controllers;
 
@@ -181,7 +182,32 @@ public class ChallengeFlow : Controller
                     break;
                 case QuestionType.Mathematic:
                     var newQuestionMathematic = await _dataContext.CreateQuestionMathematics.FirstAsync(qst => qst.Id == nextQuestionId);
-                    // todo insert resolved
+                    var newQuestionVariables = await _dataContext.CreateQuestionMathematicVariables.Where(vrb => vrb.QuestionMathematicId == newQuestionMathematic.Id).ToListAsync();
+                    string mathematicQuestion = newQuestionMathematic.Question;
+                    foreach (var variable in newQuestionVariables)
+                    {
+                        if (variable != null)
+                        {
+                            Random random = new();
+                            int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval);
+                            int randomStep = random.Next(0, steps);
+                            double variableValue = Math.Round(variable.Min + randomStep * variable.Interval, variable.Digits);
+                            mathematicQuestion = mathematicQuestion.Replace(variable.Display, variableValue.ToString());
+                        }
+                    }
+                    string mathematicAnswer = ComputeMathematic(mathematicQuestion);
+                    var questionMathematicResolved = new ChallengeQuestionMathematicResolved
+                    {
+                        Id = Guid.NewGuid(),
+                        ChallengeId = challengeId,
+                        Digits = newQuestionMathematic.Digits,
+                        Question = mathematicQuestion,
+                        Answer = Convert.ToDouble(mathematicAnswer),
+                    };
+                    _dataContext.ChallengeQuestionsMathematicResolved.Add(questionMathematicResolved);
+                    await _dataContext.SaveChangesAsync();
+                    nextQuestion.QuestionId = questionMathematicResolved.Id;
+                    nextQuestion.Answer = questionMathematicResolved.Answer.ToString();
                     break;
                 case QuestionType.MultipleChoice:
                     var newQuestionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.FirstAsync(qst => qst.Id == nextQuestionId);
@@ -202,5 +228,20 @@ public class ChallengeFlow : Controller
                     break;
             }
         }
+    }
+
+    private string ComputeMathematic(string mathematicQuestion)
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            var mathematicAnswerObj = dt.Compute(mathematicQuestion, "");
+            if (mathematicAnswerObj != null)
+            {
+                return mathematicAnswerObj.ToString();
+            }
+        }
+        catch { }
+        return "";
     }
 }

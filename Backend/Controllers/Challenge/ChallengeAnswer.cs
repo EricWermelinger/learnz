@@ -73,6 +73,10 @@ public class ChallengeAnswer : Controller
 
     private async Task<bool> IsAnswerRight(ChallengeQuestionPosed question, string answer)
     {
+        if (string.IsNullOrEmpty(question.Answer))
+        {
+            return false;
+        }
         var posed = await _challengeQueryService.GetQuestionById(question.QuestionId);
         if (posed == null)
         {
