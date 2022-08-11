@@ -24,7 +24,6 @@ export class ChallengeCreateDialogComponent {
   challengeId: string;
   filterSetControl = new FormControl('');
   filteredOptions$: Observable<KeyValue<string, string>[]>;
-  _filteredOptions$ = new BehaviorSubject<KeyValue<string, string>[]>([]);
 
   constructor(
     private challengeCreateService: ChallengeCreateDialogService,
@@ -48,7 +47,6 @@ export class ChallengeCreateDialogComponent {
       startWith(''),
       switchMap(filter => this.challengeCreateService.getFilteredSets(filter ?? '')),
     );
-    this.filteredOptions$.subscribe(options => this._filteredOptions$.next(options));
   }
 
   save() {
@@ -63,6 +61,8 @@ export class ChallengeCreateDialogComponent {
   }
 
   selectSet(event: MatAutocompleteSelectedEvent): void {
-    this.formGroup.controls.createSetId.patchValue(event.option.value);
+    const value = event.option.value;
+    this.filterSetControl.patchValue(value.key);
+    this.formGroup.controls.createSetId.patchValue(value.value);
   }
 }

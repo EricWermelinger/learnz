@@ -13,7 +13,7 @@
             <mat-label>{{ 'challenge.setName' | translate }}</mat-label>
             <input type="text" matInput [formControl]="filterSetControl" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectSet($event)">
-              <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option.value">
+              <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
                 {{ option.key }}
               </mat-option>
             </mat-autocomplete>
