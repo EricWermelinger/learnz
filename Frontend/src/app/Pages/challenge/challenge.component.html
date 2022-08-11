@@ -19,17 +19,20 @@
         </div>
         <div class="info">
             <div>{{ 'create.subjectMain' | translate }}:</div>
-            <div>{{ challenge.subjectMain }}</div>
+            <div>{{ translateSubject(challenge.subjectMain) | translate }}</div>
         </div>
         <div class="info">
             <div>{{ 'create.subjectSecond' | translate }}:</div>
-            <div>{{ challenge.subjectSecond }}</div>
+            <div *ngIf="challenge.subjectSecond != null; else noSubjectSecond">{{ translateSubject(challenge.subjectSecond) | translate }}</div>
+            <ng-template #noSubjectSecond>
+                <div>-</div>
+            </ng-template>
         </div>
         <div class="info">
             <div>{{ 'challenge.numberOfPlayers' | translate }}:</div>
             <div>{{ challenge.numberOfPlayers }}</div>
         </div>
-        <button mat-icon-button (click)="joinChallenge(challenge.challengeId)">
+        <button mat-icon-button (click)="joinChallenge(challenge.challengeId, challenge.isOwner)">
             <mat-icon>poll</mat-icon>
         </button>
         <button *ngIf="challenge.isOwner" mat-icon-button (click)="cancelChallenge(challenge.challengeId)">

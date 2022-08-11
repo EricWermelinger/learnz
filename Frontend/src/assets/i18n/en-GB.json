@@ -139,7 +139,8 @@
         "numberOfPlayers":"Players",
         "openChallenges":"Open Challenges",
         "createNew":"Create New",
-        "noOpenChallenge":"No open challenges"
+        "noOpenChallenge":"No open challenges",
+        "waitingForPlayers":"Waiting for other Players to start"
     },
     "test":{
         "test":"Test"

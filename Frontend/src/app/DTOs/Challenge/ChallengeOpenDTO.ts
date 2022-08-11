@@ -1,11 +1,9 @@
-﻿import { Subject } from "src/app/Enums/Subject";
-
-export interface ChallengeOpenDTO {
+﻿export interface ChallengeOpenDTO {
     challengeId: string;
     name: string;
     createSetName: string;
-    subjectMain: Subject;
-    subjectSecond: Subject | null;
+    subjectMain: number;
+    subjectSecond: number | null;
     numberOfPlayers: number;
     isOwner: boolean;
 }

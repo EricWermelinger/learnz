@@ -1,0 +1,6 @@
+<h2 *ngIf="challengeName$ | async as name">{{ name }}</h2>
+<div *ngIf="state$ | async as state" [ngSwitch]="state">
+    <div *ngSwitchCase="'BeforeGame'">
+        <div>{{ 'challenge.waitingForPlayers' | translate }}</div>
+    </div>
+</div>

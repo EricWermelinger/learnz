@@ -1,5 +1,4 @@
-﻿import { ChallengeState } from "src/app/Enums/ChallengeState";
-import { ChallengePlayerResultDTO } from "./ChallengePlayerResultDTO";
+﻿import { ChallengePlayerResultDTO } from "./ChallengePlayerResultDTO";
 import { ChallengeQuestionDTO } from "./ChallengeQuestionDTO";
 
 export interface ChallengeActiveDTO {
@@ -9,5 +8,5 @@ export interface ChallengeActiveDTO {
     isOwner: boolean;
     question: ChallengeQuestionDTO | null;
     lastQuestionPoint: number | null;
-    state: ChallengeState;
+    state: number;
 }

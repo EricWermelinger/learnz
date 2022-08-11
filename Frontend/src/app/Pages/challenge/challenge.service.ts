@@ -17,10 +17,10 @@ export class ChallengeService {
   }
 
   joinChallenge(challengeId: string) {
-    this.api.callApi(endpoints.ChallengeOpen, { challengeId }, 'PUT').subscribe();
+    return this.api.callApi(endpoints.ChallengeOpen, { challengeId }, 'PUT');
   }
 
   cancelChallenge(challengeId: string) {
-    this.api.callApi(endpoints.ChallengeOpen, { challengeId }, 'DELETE').subscribe();
+    return this.api.callApi(endpoints.ChallengeOpen, { challengeId }, 'DELETE');
   }
 }

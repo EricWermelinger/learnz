@@ -77,14 +77,18 @@ public class ChallengeOpen : Controller
         {
             return BadRequest(ErrorKeys.ChallengeNotAccessible);
         }
-        var challengeUser = new ChallengeUser
+        bool alreadyJoined = await _dataContext.ChallengeUsers.AnyAsync(chu => chu.ChallengeId == request.ChallengeId && chu.UserId == guid);
+        if (!alreadyJoined)
         {
-            ChallengeId = request.ChallengeId,
-            UserId = guid
-        };
-        _dataContext.ChallengeUsers.Add(challengeUser);
-        await _dataContext.SaveChangesAsync();
-        await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
+            var challengeUser = new ChallengeUser
+            {
+                ChallengeId = request.ChallengeId,
+                UserId = guid
+            };
+            _dataContext.ChallengeUsers.Add(challengeUser);
+            await _dataContext.SaveChangesAsync();
+            await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
+        }
         return Ok();
     }
 
