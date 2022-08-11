@@ -144,7 +144,14 @@
         "waitingForPlayersToAnswer":"Waiting for other Players to answer",
         "currently":"Currently",
         "players":"Players",
-        "proceed":"Proceed"
+        "proceed":"Proceed",
+        "cancelledExplanantion":"The Challenge was cancelled by the owner.",
+        "cancelled":"Challenge cancelled",
+        "wasRight":"Your answer was right!",
+        "wasWrong":"Your answer was wrong!",
+        "youScored":"You scored",
+        "ended":"Challenge ended",
+        "finalScores":"Final Scores"
     },
     "test":{
         "test":"Test"
@@ -178,7 +185,9 @@
         "question":"Question",
         "roundBy":"Round by",
         "digits":"Digits",
-        "translateTo":"Translate to"
+        "translateTo":"Translate to",
+        "true":"True",
+        "false":"False"
     },
     "fileUpload":{
         "uploadFile":"Upload File",

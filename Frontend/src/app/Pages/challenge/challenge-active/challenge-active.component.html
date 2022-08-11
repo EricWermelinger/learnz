@@ -18,13 +18,37 @@
     </div>
     <div *ngSwitchCase="'Question'">
         <div *ngIf="question$ | async as question">
-            <app-general-question [question]="question" (answered)="challengeAnswer($event)"></app-general-question>
+            <app-general-question [question]="question" [challengeId]="this.challengeId" (answered)="challengeAnswer($event)"></app-general-question>
         </div>
     </div>
     <div *ngSwitchCase="'Answer'">
         <h3>{{ 'challenge.waitingForPlayersToAnswer' | translate }}</h3>
     </div>
     <div *ngSwitchCase="'Result'">
-        <!-- todo -->
+        <div *ngIf="lastQuestionPoint$ | async as lastQuestionPoint">
+            <h3 *ngIf="wasRight(lastQuestionPoint); else wasWrong">{{ 'challenge.wasRight' | translate }}</h3>
+            <ng-template #wasWrong>
+                <h3>{{ 'challenge.wasWrong' | translate }}</h3>
+            </ng-template>
+            <div>{{ 'challenge.youScored' | translate }}: {{ lastQuestionPoint }}</div>
+        </div>
+        <div *ngIf="result$ | async as result">
+            <div *ngFor="let user of result">
+                <div>{{ getPlace(user, result) }}</div>
+                <div>{{ user.username }}</div>
+                <div>{{ user.points }}</div>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="'Ended'">
+        <h3>{{ 'challenge.ended' | translate }}</h3>
+        <div *ngIf="result$ | async as result">
+            <div>{{ 'challenge.finalScores' | translate }}</div>
+            <div *ngFor="let user of result">
+                <div>{{ getPlace(user, result) }}</div>
+                <div>{{ user.username }}</div>
+                <div>{{ user.points }}</div>
+            </div>
+        </div>
     </div>
 </div>

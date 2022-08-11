@@ -57,6 +57,7 @@ import { CreateQuestionMathematicCheckDialogComponent } from './Pages/create/cre
 import { ChallengeActiveComponent } from './Pages/challenge/challenge-active/challenge-active.component';
 import { ChallengeCreateDialogComponent } from './Pages/challenge/challenge-create-dialog/challenge-create-dialog.component';
 import { GeneralQuestionComponent } from './Framework/general-question/general-question.component';
+import { ChallengeCancelledDialogComponent } from './Pages/challenge/challenge-cancelled-dialog/challenge-cancelled-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -109,6 +110,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChallengeActiveComponent,
     ChallengeCreateDialogComponent,
     GeneralQuestionComponent,
+    ChallengeCancelledDialogComponent,
   ],
   imports: [
     BrowserModule,

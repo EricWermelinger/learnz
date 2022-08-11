@@ -114,6 +114,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId = questionDistribute.Id,
                 Question = questionDistribute.Question,
                 QuestionType = QuestionType.Distribute,
                 AnswerSetOne = questionDistribute.Answers.Select(ans => new ChallengeQuestionAnswerDTO { AnswerId = ans.LeftSideId, Answer = ans.LeftSide }).Select(q => new { Question = q, Shuffle = Guid.NewGuid() }).OrderBy(q => q.Shuffle).Select(q => q.Question).ToList(),
@@ -126,6 +127,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId = questionMathematic.Id,
                 Question = questionMathematic.Question,
                 Description = questionMathematic.Digits.ToString(),
                 QuestionType = QuestionType.Mathematic
@@ -137,6 +139,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId = questionMultipleChoice.Id,
                 Question = questionMultipleChoice.Question,
                 AnswerSetOne = questionMultipleChoice.Answers.Select(cqa => new ChallengeQuestionAnswerDTO { Answer = cqa.Answer, AnswerId = cqa.Id }).Select(q => new { Question = q, Shuffle = Guid.NewGuid() }).OrderBy(q => q.Shuffle).Select(q => q.Question).ToList(),
                 QuestionType = QuestionType.MultipleChoice
@@ -148,6 +151,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId = openQuestion.Id,
                 Question = openQuestion.Question,
                 QuestionType = QuestionType.OpenQuestion
             };
@@ -158,6 +162,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId = questionTrueFalse.Id,
                 Question = questionTrueFalse.Question,
                 QuestionType = QuestionType.TrueFalse
             };
@@ -168,6 +173,7 @@ public class ChallengeQueryService : IChallengeQueryService
         {
             return new GeneralQuestionQuestionDTO
             {
+                QuestionId =questionWord.Id,
                 Question = questionWord.LanguageSubjectMain,
                 Description = questionWord.LanguageSubjectSecond.ToString(),
                 QuestionType = QuestionType.Word

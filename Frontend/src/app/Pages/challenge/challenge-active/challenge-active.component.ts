@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, Subject, takeUntil } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { ChallengeIdDTO } from 'src/app/DTOs/Challenge/ChallengeIdDTO';
@@ -7,6 +8,7 @@ import { ChallengePlayerResultDTO } from 'src/app/DTOs/Challenge/ChallengePlayer
 import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
 import { GeneralQuestionQuestionDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionQuestionDTO';
 import { ChallengeState, getChallengeStates } from 'src/app/Enums/ChallengeState';
+import { ChallengeCancelledDialogComponent } from '../challenge-cancelled-dialog/challenge-cancelled-dialog.component';
 import { ChallengeActiveService } from './challenge-active.service';
 
 @Component({
@@ -28,6 +30,8 @@ export class ChallengeActiveComponent implements OnDestroy {
   constructor(
     private challengeActiveService: ChallengeActiveService,
     private activatedRoute: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router,
   ) {
     this.challengeId = this.activatedRoute.snapshot.paramMap.get(appRoutes.ChallengeId) ?? '';
     const challenge$ = this.challengeActiveService.getActiveChallenge(this.challengeId).pipe(takeUntil(this.destroyed$));
@@ -51,7 +55,16 @@ export class ChallengeActiveComponent implements OnDestroy {
   }
 
   showCancelDialog() {
-    // todo showCancelDialog
+    const dialog$ = this.dialog.open(ChallengeCancelledDialogComponent, { });
+    dialog$.afterClosed().subscribe(_ => this.router.navigate([appRoutes.App, appRoutes.Challenge]));
+  }
+
+  wasRight(points: number) {
+    return points > 0;
+  }
+
+  getPlace(user: ChallengePlayerResultDTO, results: ChallengePlayerResultDTO[]) {
+    return results.findIndex(r => r.username === user.username && r.points === user.points) + 1;
   }
 
   getState(state: number) {

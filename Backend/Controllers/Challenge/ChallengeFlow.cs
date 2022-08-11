@@ -66,6 +66,7 @@ public class ChallengeFlow : Controller
                 break;
            
         }
+        await _dataContext.SaveChangesAsync();
         return Ok();
     }
 
@@ -136,27 +137,45 @@ public class ChallengeFlow : Controller
         var questionsLeft = new List<Guid>();
         if (questionsLeftDistributesIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftDistributesIds);
+            foreach (var questionLeftDistribute in questionsLeftDistributesIds)
+            {
+                questionsLeft.Add(questionLeftDistribute.Id);
+            }
         }
         if (questionsLeftMathematicIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftMathematicIds);
+            foreach (var questionLeftMathematic in questionsLeftMathematicIds)
+            {
+                questionsLeft.Add(questionLeftMathematic.Id);
+            }
         }
         if (questionsLeftMultipleChoicesIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftMultipleChoicesIds);
+            foreach (var questionLeftMultipleChoices in questionsLeftMultipleChoicesIds)
+            {
+                questionsLeft.Add(questionLeftMultipleChoices.Id);
+            }
         }
         if (questionsLeftOpenQuestionsIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftOpenQuestionsIds);
+            foreach (var questionLeftOpenQuestions in questionsLeftOpenQuestionsIds)
+            {
+                questionsLeft.Add(questionLeftOpenQuestions.Id);
+            }
         }
         if (questionsLeftTrueFalseIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftTrueFalseIds);
+            foreach (var questionLeftTrueFalse in questionsLeftTrueFalseIds)
+            {
+                questionsLeft.Add(questionLeftTrueFalse.Id);
+            }
         }
         if (questionsLeftWordIds != null)
         {
-            questionsLeft.AddRange((IEnumerable<Guid>)questionsLeftWordIds);
+            foreach (var questionLeftWord in questionsLeftWordIds)
+            {
+                questionsLeft.Add(questionLeftWord.Id);
+            }
         }
 
         var nextQuestionId = questionsLeft.Select(q => new { Question = q, Random = Guid.NewGuid() }).OrderBy(q => q.Random).Select(q => q.Question).First();
