@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { appRoutes } from './Config/appRoutes';
 import { AppGuard } from './Framework/API/app.guard';
+import { ChallengeActiveComponent } from './Pages/challenge/challenge-active/challenge-active.component';
 import { ChallengeComponent } from './Pages/challenge/challenge.component';
 import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-set-edit.component';
 import { CreateComponent } from './Pages/create/create.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
       { path: `${appRoutes.Create}/:${appRoutes.CreateSetEditId}`, component: CreateSetEditComponent },
       { path: appRoutes.Learn, component: LearnComponent },
       { path: appRoutes.Challenge, component: ChallengeComponent },
+      { path: `${appRoutes.Challenge}/:${appRoutes.ChallengeId}`, component: ChallengeActiveComponent },
       { path: appRoutes.Test, component: TestComponent },
       { path: appRoutes.Draw, component: DrawComponent },
       { path: appRoutes.Settings, component: SettingsComponent },
