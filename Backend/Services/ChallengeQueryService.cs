@@ -31,23 +31,20 @@ public class ChallengeQueryService : IChallengeQueryService
     {
         var userIds = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).Select(chu => chu.UserId).ToListAsync();
         var ownerId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.OwnerId).FirstAsync();
-        var challengeActive = await GetActiveChallenge(challengeId);
+        var challenge = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challengeId);
         foreach (Guid userId in userIds)
         {
+            var challengeActive = await GetActiveChallenge(challenge, userId);
             await TriggerWebsocket(challengeActive, challengeId, userId);
         }
-        await TriggerWebsocket(challengeActive, challengeId, ownerId);
+        var challengeActiveOwner = await GetActiveChallenge(challenge, ownerId);
+        await TriggerWebsocket(challengeActiveOwner, challengeId, ownerId);
     }
 
-    public async Task<ChallengeActiveDTO> GetActiveChallenge(Guid challengeId)
+    public async Task<ChallengeActiveDTO> GetActiveChallenge(Challenge challenge, Guid guid)
     {
-        var challenge = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challengeId);
-        var active = await GetActiveChallenge(challenge, null);
-        return active;
-    }
+        // todo make more performant by excluding numberOfAnswer, numberOfPlayers etc to previous query
 
-    public async Task<ChallengeActiveDTO> GetActiveChallenge(Challenge challenge, Guid? guid)
-    {
         Guid challengeId = challenge.Id;
         var currentQuestion = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(cqp => cqp.Challenge.Id == challengeId
                                                                                                 && cqp.Challenge.State != ChallengeState.Ended
@@ -57,7 +54,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var numberOfAnswers = await _dataContext.ChallengeQuestionAnswers.Where(cqa => currentQuestion != null && cqa.ChallengeQuestionPosedId == currentQuestion.Id).CountAsync();
         var numberOfPlayers = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).CountAsync();
         var currentState = challenge.State == ChallengeState.BeforeGame || challenge.State == ChallengeState.Ended ? challenge.State : (
-                (numberOfAnswers == numberOfPlayers && currentQuestion != null) ? ChallengeState.Result : (
+                (challenge.State == ChallengeState.Result) ? ChallengeState.Result : (
                     currentQuestionAnswered ? ChallengeState.Answer : ChallengeState.Question
                 )
             );

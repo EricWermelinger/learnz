@@ -1,51 +1,46 @@
-<div *ngIf="challengeName$ | async as name" class="top">
-    <h2>{{ name }}</h2>
-    <div *ngIf="isOwner$ | async as isOwner">
-        <button *ngIf="isOwner" mat-button color="primary" (click)="challengeNextFlow()">{{ 'challenge.proceed' | translate }}</button>
+<!-- todo show possibility to cancel -->
+<div *ngIf="challenge$ | async as challenge">
+    <div class="top">
+        <h2>{{ challenge.name }}</h2>
+        <div *ngIf="challenge.isOwner">
+            <button mat-button color="primary" (click)="challengeNextFlow()">{{ 'challenge.proceed' | translate }}</button>
+        </div>
     </div>
-</div>
-<div *ngIf="state$ | async as state" [ngSwitch]="state">
-    <div *ngSwitchCase="'BeforeGame'">
-        <div *ngIf="result$ | async as result">
+    <div [ngSwitch]="challenge.state">
+        <div *ngSwitchCase="'BeforeGame'">
             <h3>{{ 'challenge.waitingForPlayersToJoin' | translate }}</h3>
-            <div>{{ 'challenge.currently' | translate }} {{ getLength(result) }} {{ 'challenge.players' | translate }}</div>
+            <div>{{ 'challenge.currently' | translate }} {{ getLength(challenge.result) }} {{ 'challenge.players' | translate }}</div>
             <div class="players">
-                <mat-card *ngFor="let player of result">
+                <mat-card *ngFor="let player of challenge.result">
                     <div>{{ player.username }}</div>
                 </mat-card>
             </div>
         </div>
-    </div>
-    <div *ngSwitchCase="'Question'">
-        <div *ngIf="question$ | async as question">
-            <app-general-question [question]="question" [challengeId]="this.challengeId" (answered)="challengeAnswer($event)"></app-general-question>
+        <div *ngSwitchCase="'Question'">
+            <app-general-question *ngIf="challenge.question != null" [question]="challenge.question" [challengeId]="this.challengeId" (answered)="challengeAnswer($event)"></app-general-question>
         </div>
-    </div>
-    <div *ngSwitchCase="'Answer'">
-        <h3>{{ 'challenge.waitingForPlayersToAnswer' | translate }}</h3>
-    </div>
-    <div *ngSwitchCase="'Result'">
-        <div *ngIf="lastQuestionPoint$ | async as lastQuestionPoint">
-            <h3 *ngIf="wasRight(lastQuestionPoint); else wasWrong">{{ 'challenge.wasRight' | translate }}</h3>
-            <ng-template #wasWrong>
-                <h3>{{ 'challenge.wasWrong' | translate }}</h3>
-            </ng-template>
-            <div>{{ 'challenge.youScored' | translate }}: {{ lastQuestionPoint }}</div>
+        <div *ngSwitchCase="'Answer'">
+            <h3>{{ 'challenge.waitingForPlayersToAnswer' | translate }}</h3>
         </div>
-        <div *ngIf="result$ | async as result">
-            <div *ngFor="let user of result">
-                <div>{{ getPlace(user, result) }}</div>
+        <div *ngSwitchCase="'Result'">
+            <div *ngIf="challenge.lastQuestionPoint != null">
+                <h3 *ngIf="wasRight(challenge.lastQuestionPoint); else wasWrong">{{ 'challenge.wasRight' | translate }}</h3>
+                <ng-template #wasWrong>
+                    <h3>{{ 'challenge.wasWrong' | translate }}</h3>
+                </ng-template>
+                <div>{{ 'challenge.youScored' | translate }}: {{ challenge.lastQuestionPoint }}</div>
+            </div>
+            <div *ngFor="let user of challenge.result">
+                <div>{{ getPlace(user, challenge.result) }}</div>
                 <div>{{ user.username }}</div>
                 <div>{{ user.points }}</div>
             </div>
         </div>
-    </div>
-    <div *ngSwitchCase="'Ended'">
-        <h3>{{ 'challenge.ended' | translate }}</h3>
-        <div *ngIf="result$ | async as result">
+        <div *ngSwitchCase="'Ended'">
+            <h3>{{ 'challenge.ended' | translate }}</h3>
             <div>{{ 'challenge.finalScores' | translate }}</div>
-            <div *ngFor="let user of result">
-                <div>{{ getPlace(user, result) }}</div>
+            <div *ngFor="let user of challenge.result">
+                <div>{{ getPlace(user, challenge.result) }}</div>
                 <div>{{ user.username }}</div>
                 <div>{{ user.points }}</div>
             </div>

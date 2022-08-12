@@ -3,11 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { distinctUntilChanged, filter, map, Observable, Subject, takeUntil } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { ChallengeActiveDTO } from 'src/app/DTOs/Challenge/ChallengeActiveDTO';
 import { ChallengeIdDTO } from 'src/app/DTOs/Challenge/ChallengeIdDTO';
 import { ChallengePlayerResultDTO } from 'src/app/DTOs/Challenge/ChallengePlayerResultDTO';
 import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
-import { GeneralQuestionQuestionDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionQuestionDTO';
-import { ChallengeState, getChallengeStates } from 'src/app/Enums/ChallengeState';
+import { getChallengeStates } from 'src/app/Enums/ChallengeState';
 import { ChallengeCancelledDialogComponent } from '../challenge-cancelled-dialog/challenge-cancelled-dialog.component';
 import { ChallengeActiveService } from './challenge-active.service';
 
@@ -19,12 +19,7 @@ import { ChallengeActiveService } from './challenge-active.service';
 export class ChallengeActiveComponent implements OnDestroy {
 
   challengeId: string;
-  challengeName$: Observable<string>;
-  result$: Observable<ChallengePlayerResultDTO[]>;
-  isOwner$: Observable<boolean>;
-  question$: Observable<GeneralQuestionQuestionDTO>;
-  lastQuestionPoint$: Observable<number>;
-  state$: Observable<ChallengeState>;
+  challenge$: Observable<ChallengeActiveDTO>;
   private destroyed$ = new Subject<void>();
 
   constructor(
@@ -34,15 +29,8 @@ export class ChallengeActiveComponent implements OnDestroy {
     private router: Router,
   ) {
     this.challengeId = this.activatedRoute.snapshot.paramMap.get(appRoutes.ChallengeId) ?? '';
-    const challenge$ = this.challengeActiveService.getActiveChallenge(this.challengeId).pipe(takeUntil(this.destroyed$));
-    this.challengeName$ = challenge$.pipe(map(chl => chl.name), distinctUntilChanged());
-    this.result$ = challenge$.pipe(map(chl => chl.result), distinctUntilChanged());
-    this.isOwner$ = challenge$.pipe(map(chl => chl.isOwner), distinctUntilChanged());
-    this.question$ = challenge$.pipe(map(chl => chl.question), filter(qst => !!qst), map(qst => qst as GeneralQuestionQuestionDTO), distinctUntilChanged());
-    this.lastQuestionPoint$ = challenge$.pipe(map(chl => chl.lastQuestionPoint), filter(pts => !!pts), map(pts => pts as number), distinctUntilChanged());
-    this.state$ = challenge$.pipe(map(chl => this.getState(chl.state)), distinctUntilChanged());
-    
-    const cancelled$ = challenge$.pipe(map(chl => chl.cancelled), distinctUntilChanged(), filter(cnc => cnc === true));
+    this.challenge$ = this.challengeActiveService.getActiveChallenge(this.challengeId).pipe(takeUntil(this.destroyed$));  
+    const cancelled$ = this.challenge$.pipe(map(chl => chl.cancelled), distinctUntilChanged(), filter(cnc => cnc === true));
     cancelled$.subscribe(_ => this.showCancelDialog());
   }
 

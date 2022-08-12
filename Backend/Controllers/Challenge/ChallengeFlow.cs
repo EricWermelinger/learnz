@@ -30,43 +30,32 @@ public class ChallengeFlow : Controller
         {
             return BadRequest(ErrorKeys.ChallengeNotAccessible);
         }
-
-        var set = await _dataContext.CreateSets
-                                    .Where(crs => crs.Id == challenge.CreateSetId)
-                                    .Include(crs => crs.QuestionDistributes)
-                                    .ThenInclude(qd => qd.Answers)
-                                    .Include(crs => crs.QuestionMathematics)
-                                    .ThenInclude(qm => qm.Variables)
-                                    .Include(crs => crs.QuestionMultipleChoices)
-                                    .ThenInclude(qmc => qmc.Answers)
-                                    .Include(crs => crs.QuestionOpenQuestions)
-                                    .Include(crs => crs.QuestionTrueFalses)
-                                    .Include(crs => crs.QuestionWords)
-                                    .FirstOrDefaultAsync();
                                     
         switch (challenge.State)
         {
             case ChallengeState.BeforeGame:
                 await PoseQuestion(challenge.Id);
-                await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
                 challenge.State = ChallengeState.Question;
+                await _dataContext.SaveChangesAsync();
+                await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
                 break;
             case ChallengeState.Question:
                 await InactivateQuestions(challenge.Id);
                 bool questionLeft = await QuestionLeft(challenge.Id);
                 challenge.State = questionLeft ? ChallengeState.Result : ChallengeState.Ended;
+                await _dataContext.SaveChangesAsync();
                 await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
                 break;
             case ChallengeState.Result:
                 await PoseQuestion(challenge.Id);
-                await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
                 challenge.State = ChallengeState.Question;
+                await _dataContext.SaveChangesAsync();
+                await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
                 break;
             default:
                 break;
            
         }
-        await _dataContext.SaveChangesAsync();
         return Ok();
     }
 
