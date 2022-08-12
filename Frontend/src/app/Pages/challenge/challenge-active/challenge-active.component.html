@@ -1,4 +1,3 @@
-<!-- todo show possibility to cancel -->
 <div *ngIf="challenge$ | async as challenge">
     <div class="top">
         <h2>{{ challenge.name }}</h2>
@@ -6,7 +5,7 @@
             <button mat-button color="primary" (click)="challengeNextFlow()">{{ 'challenge.proceed' | translate }}</button>
         </div>
     </div>
-    <div [ngSwitch]="challenge.state">
+    <div [ngSwitch]="getState(challenge.state)">
         <div *ngSwitchCase="'BeforeGame'">
             <h3>{{ 'challenge.waitingForPlayersToJoin' | translate }}</h3>
             <div>{{ 'challenge.currently' | translate }} {{ getLength(challenge.result) }} {{ 'challenge.players' | translate }}</div>
@@ -17,7 +16,10 @@
             </div>
         </div>
         <div *ngSwitchCase="'Question'">
-            <app-general-question *ngIf="challenge.question != null" [question]="challenge.question" [challengeId]="this.challengeId" (answered)="challengeAnswer($event)"></app-general-question>
+            <app-general-question *ngIf="challenge.question != null" [question]="challenge.question" [challengeId]="this.challengeId" [disabled]="challenge.isOwner" (answered)="challengeAnswer($event)"></app-general-question>
+            <div *ngIf="heartBeat$ | async">
+                {{ secondsLeft(challenge.questionCloses) }}
+            </div>
         </div>
         <div *ngSwitchCase="'Answer'">
             <h3>{{ 'challenge.waitingForPlayersToAnswer' | translate }}</h3>

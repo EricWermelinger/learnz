@@ -62,6 +62,7 @@ public class ChallengeFlow : Controller
     private async Task<bool> QuestionLeft(Guid challengeId)
     {
         var questionPosedIds = await _dataContext.ChallengeQuestiosnPosed.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionId).ToListAsync();
+        var questionMathematicPosedIds = await _dataContext.ChallengeQuestionsMathematicResolved.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionMathematicId).ToListAsync();
         var setId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.CreateSetId).FirstAsync();
         var set = await _dataContext.CreateSets
             .Include(crs => crs.QuestionDistributes)
@@ -76,7 +77,7 @@ public class ChallengeFlow : Controller
             .FirstAsync(crs => crs.Id == setId);
 
         var questionsLeftDistributesIds = set.QuestionDistributes.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
-        var questionsLeftMathematicIds = set.QuestionMathematics.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftMathematicIds = set.QuestionMathematics.Where(qst => !questionMathematicPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftMultipleChoicesIds = set.QuestionMultipleChoices.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftOpenQuestionsIds = set.QuestionOpenQuestions.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftTrueFalseIds = set.QuestionTrueFalses.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
@@ -168,19 +169,28 @@ public class ChallengeFlow : Controller
         }
 
         var nextQuestionId = questionsLeft.Select(q => new { Question = q, Random = Guid.NewGuid() }).OrderBy(q => q.Random).Select(q => q.Question).First();
+        DateTime timestamp = DateTime.UtcNow;
+        var nextQuestion = new ChallengeQuestionPosed
+        {
+            QuestionId = nextQuestionId,
+            IsActive = true,
+            Created = timestamp,
+            Expires = timestamp.AddSeconds(20),
+            ChallengeId = challengeId
+        };
+        if (questionsLeftMathematicIds != null && questionsLeftMathematicIds.Select(qst => qst.Id).Contains(nextQuestionId))
+        {
+            var nextQuestionMathematicId = await ResolveMathematicQuestion(challengeId, nextQuestionId);
+            var questionMathematicResolved = await _dataContext.ChallengeQuestionsMathematicResolved.FirstAsync(qst => nextQuestionMathematicId != null && qst.Id == nextQuestionMathematicId);
+            nextQuestion.QuestionId = questionMathematicResolved.Id;
+            nextQuestion.Answer = questionMathematicResolved.Answer.ToString();
+            _dataContext.ChallengeQuestiosnPosed.Add(nextQuestion);
+            await _dataContext.SaveChangesAsync();
+            return;
+        }
         var nextQuestionDto = await _challengeQueryService.GetQuestionById(nextQuestionId);
         if (nextQuestionDto != null)
         {
-            DateTime timestamp = DateTime.UtcNow;
-            var nextQuestion = new ChallengeQuestionPosed
-            {
-                QuestionId = nextQuestionId,
-                IsActive = true,
-                Created = timestamp,
-                Expires = timestamp.AddSeconds(20),
-                ChallengeId = challengeId
-            };
-
             switch (nextQuestionDto.QuestionType)
             {
                 case QuestionType.Distribute:
@@ -189,33 +199,6 @@ public class ChallengeFlow : Controller
                     nextQuestion.Answer = string.Join("||", newQuestionDistributeAnswers);
                     break;
                 case QuestionType.Mathematic:
-                    var newQuestionMathematic = await _dataContext.CreateQuestionMathematics.FirstAsync(qst => qst.Id == nextQuestionId);
-                    var newQuestionVariables = await _dataContext.CreateQuestionMathematicVariables.Where(vrb => vrb.QuestionMathematicId == newQuestionMathematic.Id).ToListAsync();
-                    string mathematicQuestion = newQuestionMathematic.Question;
-                    foreach (var variable in newQuestionVariables)
-                    {
-                        if (variable != null)
-                        {
-                            Random random = new();
-                            int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval);
-                            int randomStep = random.Next(0, steps);
-                            double variableValue = Math.Round(variable.Min + randomStep * variable.Interval, variable.Digits);
-                            mathematicQuestion = mathematicQuestion.Replace(variable.Display, variableValue.ToString());
-                        }
-                    }
-                    string mathematicAnswer = ComputeMathematic(mathematicQuestion);
-                    var questionMathematicResolved = new ChallengeQuestionMathematicResolved
-                    {
-                        Id = Guid.NewGuid(),
-                        ChallengeId = challengeId,
-                        Digits = newQuestionMathematic.Digits,
-                        Question = mathematicQuestion,
-                        Answer = Convert.ToDouble(mathematicAnswer),
-                    };
-                    _dataContext.ChallengeQuestionsMathematicResolved.Add(questionMathematicResolved);
-                    await _dataContext.SaveChangesAsync();
-                    nextQuestion.QuestionId = questionMathematicResolved.Id;
-                    nextQuestion.Answer = questionMathematicResolved.Answer.ToString();
                     break;
                 case QuestionType.MultipleChoice:
                     var newQuestionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.FirstAsync(qst => qst.Id == nextQuestionId);
@@ -235,15 +218,51 @@ public class ChallengeFlow : Controller
                     nextQuestion.Answer = newQuestionWord.LanguageSubjectSecond;
                     break;
             }
+            _dataContext.ChallengeQuestiosnPosed.Add(nextQuestion);
+            await _dataContext.SaveChangesAsync();
         }
     }
 
-    private string ComputeMathematic(string mathematicQuestion)
+    private async Task<Guid> ResolveMathematicQuestion(Guid challengeId, Guid nextQuestionId)
+    {
+        var nextId = Guid.NewGuid();
+        var newQuestionMathematic = await _dataContext.CreateQuestionMathematics.FirstAsync(qst => qst.Id == nextQuestionId);
+        var newQuestionVariables = await _dataContext.CreateQuestionMathematicVariables.Where(vrb => vrb.QuestionMathematicId == newQuestionMathematic.Id).ToListAsync();
+        string mathematicQuestion = newQuestionMathematic.Question;
+        string mathematicAnswer = newQuestionMathematic.Answer;
+        foreach (var variable in newQuestionVariables)
+        {
+            if (variable != null)
+            {
+                Random random = new();
+                int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval);
+                int randomStep = random.Next(0, steps);
+                double variableValue = Math.Round(variable.Min + randomStep * variable.Interval, variable.Digits);
+                mathematicQuestion = mathematicQuestion.Replace(variable.Display, variableValue.ToString());
+                mathematicAnswer = mathematicAnswer.Replace(variable.Display, variableValue.ToString());
+            }
+        }
+        string mathematicAnswerComputed = ComputeMathematic(mathematicAnswer);
+        var questionMathematicResolved = new ChallengeQuestionMathematicResolved
+        {
+            Id = nextId,
+            ChallengeId = challengeId,
+            Digits = newQuestionMathematic.Digits,
+            Question = mathematicQuestion,
+            Answer = Convert.ToDouble(mathematicAnswerComputed),
+            QuestionMathematicId = nextQuestionId,
+        };
+        _dataContext.ChallengeQuestionsMathematicResolved.Add(questionMathematicResolved);
+        await _dataContext.SaveChangesAsync();
+        return nextId;
+    }
+
+    private string ComputeMathematic(string answer)
     {
         DataTable dt = new DataTable();
         try
         {
-            var mathematicAnswerObj = dt.Compute(mathematicQuestion, "");
+            var mathematicAnswerObj = dt.Compute(answer, "");
             if (mathematicAnswerObj != null)
             {
                 return mathematicAnswerObj.ToString();

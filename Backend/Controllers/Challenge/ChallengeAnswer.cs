@@ -34,6 +34,14 @@ public class ChallengeAnswer : Controller
         var question = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.Id == request.QuestionId && qst.IsActive == true);
         if (question == null)
         {
+            var questionPosed = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(qst => qst.Id == request.QuestionId);
+            if (questionPosed != null)
+            {
+                challenge.State = ChallengeState.Result;
+                questionPosed.IsActive = false;
+                await _dataContext.SaveChangesAsync();
+                await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
+            }
             return BadRequest(ErrorKeys.ChallengeAnswerNotPossible);
         }
         

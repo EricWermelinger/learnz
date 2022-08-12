@@ -1,32 +1,34 @@
 <h3>{{ 'generalQuestion.question' | translate }}</h3>
+<div *ngIf="disabled">{{ 'challenge.peopleAreAnswering' | translate }}</div>
 <div>{{ question.question }}</div>
 <div *ngIf="getQuestionType(question.questionType) === 'Mathematic'">{{ 'generalQuestion.roundBy' | translate }} {{ question.description }} {{ 'generalQuestion.digits' | translate }}</div>
 <div *ngIf="getQuestionType(question.questionType) == 'Word'">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubject(question.description ?? '') }}</div>
 <div *ngIf="showDistribute(question.questionType)">
     <div *ngFor="let leftSide of question.answerSetOne">
         <div>{{ leftSide.answer }}</div>
-        <mat-select (selectionChange)="distributeConnect($event.value, leftSide.answerId, question.answerSetTwo ?? [])">
+        <mat-select (selectionChange)="distributeConnect($event.value, leftSide.answerId, question.answerSetTwo ?? [])" [disabled]="disabled">
             <mat-option *ngFor="let rightSide of question.answerSetTwo" [value]="rightSide.answer">
                 {{ rightSide.answer }}
             </mat-option>
         </mat-select>
     </div>
+    <button mat-flat-button color="primary" (click)="saveDistribute()" [disabled]="disabled">{{ 'framework.save' | translate }}</button>
 </div>
 <div *ngIf="showMultipleChoice(question.questionType)">
-    <mat-checkbox *ngFor="let answer of question.answerSetOne" (change)="toggleMultipleChoice(answer.answerId)">{{ answer.answer }}</mat-checkbox>
-    <button mat-flat-button color="primary" (click)="saveMultipleChoice()">{{ 'framework.save' | translate }}</button>
+    <mat-checkbox *ngFor="let answer of question.answerSetOne" (change)="toggleMultipleChoice(answer.answerId)" [disabled]="disabled">{{ answer.answer }}</mat-checkbox>
+    <button mat-flat-button color="primary" (click)="saveMultipleChoice()" [disabled]="disabled">{{ 'framework.save' | translate }}</button>
 </div>
 <div *ngIf="showTrueFalse(question.questionType)">
-    <button mat-flat-button color="primary" (click)="saveTrueFalse(true)">{{ 'generalQuestion.true' | translate }}</button>
-    <button mat-flat-button color="primary" (click)="saveTrueFalse(false)">{{ 'generalQuestion.false' | translate }}</button>
+    <button mat-flat-button color="primary" (click)="saveTrueFalse(true)" [disabled]="disabled">{{ 'generalQuestion.true' | translate }}</button>
+    <button mat-flat-button color="primary" (click)="saveTrueFalse(false)" [disabled]="disabled">{{ 'generalQuestion.false' | translate }}</button>
 </div>
-<form *ngIf="showForm(question.questionType)" [formGroup]="formGroup">
+<form *ngIf="showForm(question.questionType) && !disabled" [formGroup]="formGroup">
     <mat-form-field *ngIf="showText(question.questionType); else showNumeric">
-        <input matInput type="text" formControlName="answer" [placeholder]="'challenge.answer' | translate">
+        <input matInput type="text" formControlName="answer" [placeholder]="'generalQuestion.answer' | translate">
     </mat-form-field>
     <ng-template #showNumeric>
         <mat-form-field>
-            <input matInput type="number" formControlName="answer" [placeholder]="'challenge.answer' | translate">
+            <input matInput type="number" formControlName="answer" [placeholder]="'generalQuestion.answer' | translate">
         </mat-form-field>
     </ng-template>
     <button mat-flat-button color="primary" type="submit" [disabled]="!formGroup.valid" (click)="saveForm()">{{ 'framework.save' | translate }}</button>

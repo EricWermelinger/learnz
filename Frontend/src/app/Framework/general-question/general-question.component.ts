@@ -19,6 +19,7 @@ export class GeneralQuestionComponent {
   distributeAnswers: KeyValue<string, string>[] = [];
   @Input() question: GeneralQuestionQuestionDTO = { } as GeneralQuestionQuestionDTO;
   @Input() challengeId: string = '';
+  @Input() disabled: boolean = false;
   @Output() answered: EventEmitter<GeneralQuestionAnswerDTO> = new EventEmitter();
 
   constructor(
@@ -38,6 +39,14 @@ export class GeneralQuestionComponent {
     } as GeneralQuestionAnswerDTO);
   }
 
+  saveDistribute() {
+    this.answered.emit({
+      challengeId: this.challengeId,
+      answer: this.distributeAnswers.map(a => a.key + '|' + a.value).join('||'),
+      questionId: this.question.questionId,
+    })
+  }
+
   saveTrueFalse(value: boolean) {
     this.answered.emit({
       challengeId: this.challengeId,
@@ -55,7 +64,11 @@ export class GeneralQuestionComponent {
   }
 
   translateSubject(subject: string) {
-    return 'Subject.' + getSubjects().filter(s => s.value === subject as any as number)[0].key;
+    const filtered = getSubjects().filter(s => s.value === subject as any as number);
+    if (filtered.length === 0) {
+      return '';
+    }
+    return 'Subject.' + filtered[0].key;
   }
 
   getQuestionType(type: number) {

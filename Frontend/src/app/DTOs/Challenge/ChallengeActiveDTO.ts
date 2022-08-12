@@ -9,4 +9,5 @@ export interface ChallengeActiveDTO {
     question: GeneralQuestionQuestionDTO | null;
     lastQuestionPoint: number | null;
     state: number;
+    questionCloses: Date | null;
 }

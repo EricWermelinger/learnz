@@ -27,42 +27,70 @@ public class ChallengeQueryService : IChallengeQueryService
         await _hubService.SendMessageToUser(nameof(ChallengeActive), challenge, guid, challengeId);
     }
 
-    public async Task TriggerWebsocketAllUsers(Guid challengeId)
+    public async Task TriggerWebsocketAllUsers(Guid challengeId, bool? cancelledEvluated = null)
     {
         var userIds = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).Select(chu => chu.UserId).ToListAsync();
         var ownerId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.OwnerId).FirstAsync();
         var challenge = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challengeId);
+        var currentQuestionEvaluated = await GetCurrentQuestion(challengeId);
+        int numberOfAnswersEvaluated = await GetNumberOfAnswers(currentQuestionEvaluated);
+        int numberOfPlayersEvaluated = await GetNumberOfPlayers(challengeId);
+        var currentQuestionDtoEvaluated = currentQuestionEvaluated == null ? null : await GetQuestionById(currentQuestionEvaluated.QuestionId);
+        var resultEvaluated = await GetResult(challengeId);
         foreach (Guid userId in userIds)
         {
-            var challengeActive = await GetActiveChallenge(challenge, userId);
+            var challengeActive = await GetActiveChallenge(challenge, userId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated);
             await TriggerWebsocket(challengeActive, challengeId, userId);
         }
-        var challengeActiveOwner = await GetActiveChallenge(challenge, ownerId);
+        var challengeActiveOwner = await GetActiveChallenge(challenge, ownerId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated);
         await TriggerWebsocket(challengeActiveOwner, challengeId, ownerId);
     }
 
-    public async Task<ChallengeActiveDTO> GetActiveChallenge(Challenge challenge, Guid guid)
+    private async Task<ChallengeQuestionPosed?> GetCurrentQuestion(Guid challengeId)
     {
-        // todo make more performant by excluding numberOfAnswer, numberOfPlayers etc to previous query
-
-        Guid challengeId = challenge.Id;
         var currentQuestion = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(cqp => cqp.Challenge.Id == challengeId
                                                                                                 && cqp.Challenge.State != ChallengeState.Ended
                                                                                                 && cqp.IsActive);
+        return currentQuestion;
+    }
 
-        var currentQuestionAnswered = await _dataContext.ChallengeQuestionAnswers.AnyAsync(cqa => currentQuestion != null && cqa.ChallengeQuestionPosedId == currentQuestion.Id && cqa.UserId == guid);
+    private async Task<int> GetNumberOfAnswers(ChallengeQuestionPosed? currentQuestion)
+    {
+        if (currentQuestion == null)
+        {
+            return 0;
+        }
         var numberOfAnswers = await _dataContext.ChallengeQuestionAnswers.Where(cqa => currentQuestion != null && cqa.ChallengeQuestionPosedId == currentQuestion.Id).CountAsync();
+        return numberOfAnswers;
+    }
+
+    private async Task<int> GetNumberOfPlayers(Guid challengeId)
+    {
         var numberOfPlayers = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challengeId).CountAsync();
+        return numberOfPlayers;
+    }
+
+    public async Task<ChallengeActiveDTO> GetActiveChallenge(Challenge challenge, Guid guid,
+        ChallengeQuestionPosed? currentQuestionEvaluated = null, int? numberOfAnswersEvaluated = null,
+        int? numberOfPlayersEvaluated = null, GeneralQuestionQuestionDTO? currentQuestionDtoEvaluated = null,
+        List<ChallengePlayerResultDTO>? resultEvaluated = null, bool? cancelledEvluated = null)
+    {
+        Guid challengeId = challenge.Id;
+        var currentQuestion = currentQuestionEvaluated ?? await GetCurrentQuestion(challengeId);
+        var currentQuestionAnswered = await _dataContext.ChallengeQuestionAnswers.AnyAsync(cqa => currentQuestion != null && cqa.ChallengeQuestionPosedId == currentQuestion.Id && cqa.UserId == guid);
+        var numberOfAnswers = numberOfAnswersEvaluated ?? await GetNumberOfAnswers(currentQuestion);
+        var numberOfPlayers = numberOfPlayersEvaluated ?? await GetNumberOfPlayers(challengeId);
         var currentState = challenge.State == ChallengeState.BeforeGame || challenge.State == ChallengeState.Ended ? challenge.State : (
                 (challenge.State == ChallengeState.Result) ? ChallengeState.Result : (
                     currentQuestionAnswered ? ChallengeState.Answer : ChallengeState.Question
                 )
             );
 
-        bool isOwner = guid == null ? false : challenge.OwnerId == guid;
-        var currentQuestionDto = currentState == ChallengeState.Question && currentQuestion != null ? await GetQuestionById(currentQuestion.QuestionId) : null;
-        var result = await GetResult(challengeId);
-        var lastQuestionPoints = guid != null && !isOwner && currentState == ChallengeState.Result && currentQuestion != null ? await GetLastQuestionPoints(challengeId, currentQuestion.Id, (Guid)guid) : null;
+        bool isOwner = challenge.OwnerId == guid;
+        var currentQuestionDto = currentState == ChallengeState.Question && currentQuestion != null ? (currentQuestionDtoEvaluated ?? await GetQuestionById(currentQuestion.QuestionId)) : null;
+        var result = resultEvaluated ?? await GetResult(challengeId);
+        var lastQuestionPoints = !isOwner && currentState == ChallengeState.Result && currentQuestion != null ? await GetLastQuestionPoints(challengeId, currentQuestion.Id, (Guid)guid) : null;
+        var questionCloses = currentQuestion?.Expires;
 
         var data = new ChallengeActiveDTO
         {
@@ -71,8 +99,9 @@ public class ChallengeQueryService : IChallengeQueryService
             IsOwner = isOwner,
             Result = result ?? new List<ChallengePlayerResultDTO>(),
             State = currentState,
-            Cancelled = false,
+            Cancelled = cancelledEvluated ?? false,
             LastQuestionPoint = lastQuestionPoints,
+            QuestionCloses = questionCloses
         };
         return data;
     }

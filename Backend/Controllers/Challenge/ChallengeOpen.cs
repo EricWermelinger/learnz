@@ -24,7 +24,7 @@ public class ChallengeOpen : Controller
     public async Task<ActionResult<List<ChallengeOpenDTO>>> OpenChallenges()
     {
         var guid = _userService.GetUserGuid();
-        var challenges = await _dataContext.Challenges.Where(chl => chl.State == ChallengeState.BeforeGame)
+        var challenges = await _dataContext.Challenges.Where(chl => chl.State == ChallengeState.BeforeGame || (chl.OwnerId == guid && chl.State != ChallengeState.Ended))
                                                 .Select(chl => new ChallengeOpenDTO
                                                 {
                                                     ChallengeId = chl.Id,
@@ -103,7 +103,7 @@ public class ChallengeOpen : Controller
         }
         challenge.State = ChallengeState.Ended;
         await _dataContext.SaveChangesAsync();
-        await _challengeQueryService.TriggerWebsocketAllUsers(challengeId);
+        await _challengeQueryService.TriggerWebsocketAllUsers(challengeId, true);
         return Ok();
     }
 }

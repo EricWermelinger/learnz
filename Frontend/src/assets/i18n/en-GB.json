@@ -151,7 +151,8 @@
         "wasWrong":"Your answer was wrong!",
         "youScored":"You scored",
         "ended":"Challenge ended",
-        "finalScores":"Final Scores"
+        "finalScores":"Final Scores",
+        "peopleAreAnswering":"Players are answering the question"
     },
     "test":{
         "test":"Test"
@@ -183,6 +184,7 @@
     },
     "generalQuestion":{
         "question":"Question",
+        "answer":"Answer",
         "roundBy":"Round by",
         "digits":"Digits",
         "translateTo":"Translate to",
