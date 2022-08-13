@@ -1,8 +1,11 @@
 <div *ngIf="challenge$ | async as challenge">
     <div class="top">
         <h2>{{ challenge.name }}</h2>
-        <div *ngIf="challenge.isOwner">
+        <div *ngIf="challenge.isOwner && getState(challenge.state) !== 'Ended'">
             <button mat-button color="primary" (click)="challengeNextFlow()">{{ 'challenge.proceed' | translate }}</button>
+        </div>
+        <div *ngIf="getState(challenge.state) === 'Ended'">
+            <button mat-button color="primary" (click)="goBack()">{{ 'framework.back' | translate }}</button>
         </div>
     </div>
     <div [ngSwitch]="getState(challenge.state)">

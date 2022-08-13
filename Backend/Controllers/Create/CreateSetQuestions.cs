@@ -292,7 +292,8 @@ public class CreateSetQuestions : Controller
         {
             Id = a.Answer.Id,
             Answer = a.Answer.Answer,
-            QuestionMultipleChoiceId = a.QuestionId
+            QuestionMultipleChoiceId = a.QuestionId,
+            IsRight = a.Answer.IsRight
         }).ToList();
         foreach (var answer in mcUpdatedAnswers)
         {
@@ -300,6 +301,7 @@ public class CreateSetQuestions : Controller
             if (existingAnswer != null)
             {
                 existingAnswer.Answer = answer.Answer;
+                existingAnswer.IsRight = answer.IsRight;
             }
             else
             {

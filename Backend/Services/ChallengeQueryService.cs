@@ -111,7 +111,7 @@ public class ChallengeQueryService : IChallengeQueryService
 
     private async Task<string?> GetLastQuestionCorrectAnswer(Guid challengeId)
     {
-        var lastQuestion = await _dataContext.ChallengeQuestiosnPosed.Where(qsp => qsp.ChallengeId == challengeId && qsp.IsActive == false)
+        var lastQuestion = await _dataContext.ChallengeQuestiosnPosed.Where(qsp => qsp.ChallengeId == challengeId)
             .OrderByDescending(qsp => qsp.Created)
             .FirstOrDefaultAsync();
         if (lastQuestion == null)
@@ -222,11 +222,12 @@ public class ChallengeQueryService : IChallengeQueryService
         var questionWord = await _dataContext.CreateQuestionWords.FirstOrDefaultAsync(qst => qst.Id == questionId);
         if (questionWord != null)
         {
+            var secondSubject = await _dataContext.CreateSets.Where(crs => crs.Id == questionWord.SetId).Select(crs => crs.SubjectSecond).FirstOrDefaultAsync();
             return new GeneralQuestionQuestionDTO
             {
-                QuestionId =questionWord.Id,
+                QuestionId = questionWord.Id,
                 Question = questionWord.LanguageSubjectMain,
-                Description = questionWord.LanguageSubjectSecond,
+                Description = secondSubject == null ? null : ((int)secondSubject).ToString(),
                 QuestionType = QuestionType.Word
             };
         }

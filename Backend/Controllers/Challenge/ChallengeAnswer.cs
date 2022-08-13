@@ -42,7 +42,8 @@ public class ChallengeAnswer : Controller
             var questionPosed = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(qst => qst.QuestionId == request.QuestionId);
             if (questionPosed != null)
             {
-                challenge.State = ChallengeState.Result;
+                var challengeToChange = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challenge.Id);
+                challengeToChange.State = ChallengeState.Result;
                 questionPosed.IsActive = false;
                 await _dataContext.SaveChangesAsync();
                 await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
@@ -73,11 +74,12 @@ public class ChallengeAnswer : Controller
         {
             var challengeDb = await _dataContext.Challenges.FirstAsync(chl => chl.Id == challenge.Id);
             challengeDb.State = ChallengeState.Result;
-            var questionPosed = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.Id == request.QuestionId && qst.IsActive == true);
+            var questionPosed = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.QuestionId == request.QuestionId && qst.IsActive == true);
             if (questionPosed != null)
             {
                 questionPosed.IsActive = false;
             }
+            await _dataContext.SaveChangesAsync();
             await _challengeQueryService.TriggerWebsocketAllUsers(challenge.Id);
         }
 

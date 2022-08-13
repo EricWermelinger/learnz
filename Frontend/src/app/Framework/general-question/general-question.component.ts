@@ -65,7 +65,7 @@ export class GeneralQuestionComponent {
   }
 
   translateSubject(subject: string) {
-    const filtered = getSubjects().filter(s => s.value === subject as any as number);
+    const filtered = getSubjects().filter(s => s.value === parseInt(subject));
     if (filtered.length === 0) {
       return '';
     }

@@ -104,6 +104,7 @@ public class ChallengeFlow : Controller
     private async Task PoseQuestion(Guid challengeId)
     {
         var questionPosedIds = await _dataContext.ChallengeQuestiosnPosed.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionId).ToListAsync();
+        var questionMathematicPosedIds = await _dataContext.ChallengeQuestionsMathematicResolved.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionMathematicId).ToListAsync();
         var setId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.CreateSetId).FirstAsync();
         var set = await _dataContext.CreateSets
             .Include(crs => crs.QuestionDistributes)
@@ -118,7 +119,7 @@ public class ChallengeFlow : Controller
             .FirstAsync(crs => crs.Id == setId);
         
         var questionsLeftDistributesIds = set.QuestionDistributes.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
-        var questionsLeftMathematicIds = set.QuestionMathematics.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftMathematicIds = set.QuestionMathematics.Where(qst => !questionMathematicPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftMultipleChoicesIds = set.QuestionMultipleChoices.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftOpenQuestionsIds = set.QuestionOpenQuestions.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
         var questionsLeftTrueFalseIds = set.QuestionTrueFalses.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
@@ -181,12 +182,15 @@ public class ChallengeFlow : Controller
         if (questionsLeftMathematicIds != null && questionsLeftMathematicIds.Select(qst => qst.Id).Contains(nextQuestionId))
         {
             var nextQuestionMathematicId = await ResolveMathematicQuestion(challengeId, nextQuestionId);
-            var questionMathematicResolved = await _dataContext.ChallengeQuestionsMathematicResolved.FirstAsync(qst => nextQuestionMathematicId != null && qst.Id == nextQuestionMathematicId);
-            nextQuestion.QuestionId = questionMathematicResolved.Id;
-            nextQuestion.Answer = questionMathematicResolved.Answer.ToString();
-            _dataContext.ChallengeQuestiosnPosed.Add(nextQuestion);
-            await _dataContext.SaveChangesAsync();
-            return;
+            if (nextQuestionMathematicId != null)
+            {
+                var questionMathematicResolved = await _dataContext.ChallengeQuestionsMathematicResolved.FirstAsync(qst => nextQuestionMathematicId != null && qst.Id == nextQuestionMathematicId);
+                nextQuestion.QuestionId = questionMathematicResolved.Id;
+                nextQuestion.Answer = questionMathematicResolved.Answer.ToString();
+                _dataContext.ChallengeQuestiosnPosed.Add(nextQuestion);
+                await _dataContext.SaveChangesAsync();
+                return;
+            }
         }
         var nextQuestionDto = await _challengeQueryService.GetQuestionById(nextQuestionId);
         if (nextQuestionDto != null)
@@ -203,7 +207,7 @@ public class ChallengeFlow : Controller
                 case QuestionType.MultipleChoice:
                     var newQuestionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.FirstAsync(qst => qst.Id == nextQuestionId);
                     var newQuestionMutlipleChoiceAnswers = await _dataContext.CreateQuestionMultipleChoiceAnswers.Where(ans => ans.IsRight && ans.QuestionMultipleChoiceId == newQuestionMultipleChoice.Id).Select(ans => ans.Id.ToString()).ToListAsync();
-                    nextQuestion.Answer = string.Join('|', newQuestionMutlipleChoiceAnswers);
+                    nextQuestion.Answer = string.Join("|", newQuestionMutlipleChoiceAnswers);
                     break;
                 case QuestionType.OpenQuestion:
                     var newQuestionOpen = await _dataContext.CreateQuestionOpenQuestions.FirstAsync(qst => qst.Id == nextQuestionId);
@@ -223,8 +227,13 @@ public class ChallengeFlow : Controller
         }
     }
 
-    private async Task<Guid> ResolveMathematicQuestion(Guid challengeId, Guid nextQuestionId)
+    private async Task<Guid?> ResolveMathematicQuestion(Guid challengeId, Guid nextQuestionId)
     {
+        if (nextQuestionId == Guid.Empty)
+        {
+            return null;
+        }
+
         var nextId = Guid.NewGuid();
         var newQuestionMathematic = await _dataContext.CreateQuestionMathematics.FirstAsync(qst => qst.Id == nextQuestionId);
         var newQuestionVariables = await _dataContext.CreateQuestionMathematicVariables.Where(vrb => vrb.QuestionMathematicId == newQuestionMathematic.Id).ToListAsync();

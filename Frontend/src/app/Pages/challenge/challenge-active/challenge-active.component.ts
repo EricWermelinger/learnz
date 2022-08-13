@@ -73,6 +73,10 @@ export class ChallengeActiveComponent implements OnDestroy {
     return arr.length;
   }
 
+  goBack() {
+    this.router.navigate([appRoutes.App, appRoutes.Challenge]);
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
