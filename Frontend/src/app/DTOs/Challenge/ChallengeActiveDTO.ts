@@ -8,6 +8,7 @@ export interface ChallengeActiveDTO {
     isOwner: boolean;
     question: GeneralQuestionQuestionDTO | null;
     lastQuestionPoint: number | null;
+    lastQuestionCorrectAnswer: string | null;
     state: number;
     questionCloses: Date | null;
 }

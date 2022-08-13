@@ -31,6 +31,7 @@
                     <h3>{{ 'challenge.wasWrong' | translate }}</h3>
                 </ng-template>
                 <div>{{ 'challenge.youScored' | translate }}: {{ challenge.lastQuestionPoint }}</div>
+                <div>{{ 'challenge.correctAnswerWas' | translate }}: {{ challenge.lastQuestionCorrectAnswer ?? '' }}</div>
             </div>
             <div *ngFor="let user of challenge.result">
                 <div>{{ getPlace(user, challenge.result) }}</div>

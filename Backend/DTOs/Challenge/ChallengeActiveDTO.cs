@@ -8,5 +8,6 @@ public class ChallengeActiveDTO
     public GeneralQuestionQuestionDTO? Question { get; set; }
     public DateTime? QuestionCloses { get; set; }
     public int? LastQuestionPoint { get; set; }
+    public string? LastQuestionCorrectAnswer { get; set; }
     public ChallengeState State { get; set; }
 }

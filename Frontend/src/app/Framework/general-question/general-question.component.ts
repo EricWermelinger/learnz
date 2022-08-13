@@ -32,9 +32,10 @@ export class GeneralQuestionComponent {
 
   saveForm() {
     const answer = this.formGroup.value.answer;
+    const answerSanitized = typeof(answer) === 'string' ? answer : (answer as number).toString();
     this.answered.emit({
       challengeId: this.challengeId,
-      answer,
+      answer: answerSanitized,
       questionId: this.question.questionId,
     } as GeneralQuestionAnswerDTO);
   }

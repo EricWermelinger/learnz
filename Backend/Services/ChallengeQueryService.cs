@@ -37,12 +37,13 @@ public class ChallengeQueryService : IChallengeQueryService
         int numberOfPlayersEvaluated = await GetNumberOfPlayers(challengeId);
         var currentQuestionDtoEvaluated = currentQuestionEvaluated == null ? null : await GetQuestionById(currentQuestionEvaluated.QuestionId);
         var resultEvaluated = await GetResult(challengeId);
+        var lastQuestionCorrectAnswerEvaluated = challenge.State == ChallengeState.Result ? await GetLastQuestionCorrectAnswer(challengeId) : null;
         foreach (Guid userId in userIds)
         {
-            var challengeActive = await GetActiveChallenge(challenge, userId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated);
+            var challengeActive = await GetActiveChallenge(challenge, userId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated, lastQuestionCorrectAnswerEvaluated);
             await TriggerWebsocket(challengeActive, challengeId, userId);
         }
-        var challengeActiveOwner = await GetActiveChallenge(challenge, ownerId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated);
+        var challengeActiveOwner = await GetActiveChallenge(challenge, ownerId, currentQuestionEvaluated, numberOfAnswersEvaluated, numberOfPlayersEvaluated, currentQuestionDtoEvaluated, resultEvaluated, cancelledEvluated, lastQuestionCorrectAnswerEvaluated);
         await TriggerWebsocket(challengeActiveOwner, challengeId, ownerId);
     }
 
@@ -73,7 +74,7 @@ public class ChallengeQueryService : IChallengeQueryService
     public async Task<ChallengeActiveDTO> GetActiveChallenge(Challenge challenge, Guid guid,
         ChallengeQuestionPosed? currentQuestionEvaluated = null, int? numberOfAnswersEvaluated = null,
         int? numberOfPlayersEvaluated = null, GeneralQuestionQuestionDTO? currentQuestionDtoEvaluated = null,
-        List<ChallengePlayerResultDTO>? resultEvaluated = null, bool? cancelledEvluated = null)
+        List<ChallengePlayerResultDTO>? resultEvaluated = null, bool? cancelledEvluated = null, string? lastQuestionCorrectAnswerEvaluated = null)
     {
         Guid challengeId = challenge.Id;
         var currentQuestion = currentQuestionEvaluated ?? await GetCurrentQuestion(challengeId);
@@ -90,6 +91,7 @@ public class ChallengeQueryService : IChallengeQueryService
         var currentQuestionDto = currentState == ChallengeState.Question && currentQuestion != null ? (currentQuestionDtoEvaluated ?? await GetQuestionById(currentQuestion.QuestionId)) : null;
         var result = resultEvaluated ?? await GetResult(challengeId);
         var lastQuestionPoints = !isOwner && currentState == ChallengeState.Result && currentQuestion != null ? await GetLastQuestionPoints(challengeId, currentQuestion.Id, (Guid)guid) : null;
+        var lastQuestionCorrectAnswer = currentState == ChallengeState.Result ? lastQuestionCorrectAnswerEvaluated ?? await GetLastQuestionCorrectAnswer(challengeId) : null;
         var questionCloses = currentQuestion?.Expires;
 
         var data = new ChallengeActiveDTO
@@ -101,9 +103,32 @@ public class ChallengeQueryService : IChallengeQueryService
             State = currentState,
             Cancelled = cancelledEvluated ?? false,
             LastQuestionPoint = lastQuestionPoints,
+            LastQuestionCorrectAnswer = lastQuestionCorrectAnswer,
             QuestionCloses = questionCloses
         };
         return data;
+    }
+
+    private async Task<string?> GetLastQuestionCorrectAnswer(Guid challengeId)
+    {
+        var lastQuestion = await _dataContext.ChallengeQuestiosnPosed.Where(qsp => qsp.ChallengeId == challengeId && qsp.IsActive == false)
+            .OrderByDescending(qsp => qsp.Created)
+            .FirstOrDefaultAsync();
+        if (lastQuestion == null)
+        {
+            return null;
+        }
+        var lastQuestionDistribute = await _dataContext.CreateQuestionDistributes.Include(qst => qst.Answers).FirstOrDefaultAsync(qst => qst.Id == lastQuestion.QuestionId);
+        if (lastQuestionDistribute != null)
+        {
+            return string.Join(" & ", lastQuestionDistribute.Answers.Select(ans => ans.LeftSide + " - " + ans.RightSide));
+        }
+        var lastQuestionMultipleChoice = await _dataContext.CreateQuestionMultipleChoices.Include(qst => qst.Answers).FirstOrDefaultAsync(qst => qst.Id == lastQuestion.QuestionId);
+        if (lastQuestionMultipleChoice != null)
+        {
+            return string.Join(" & ", lastQuestionMultipleChoice.Answers.Where(ans => ans.IsRight).Select(ans => ans.Answer));
+        }
+        return lastQuestion.Answer;
     }
 
     public async Task<List<ChallengePlayerResultDTO>> GetResult(Guid challengeId)
@@ -201,7 +226,7 @@ public class ChallengeQueryService : IChallengeQueryService
             {
                 QuestionId =questionWord.Id,
                 Question = questionWord.LanguageSubjectMain,
-                Description = questionWord.LanguageSubjectSecond.ToString(),
+                Description = questionWord.LanguageSubjectSecond,
                 QuestionType = QuestionType.Word
             };
         }

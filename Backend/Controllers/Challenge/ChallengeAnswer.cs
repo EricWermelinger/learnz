@@ -22,7 +22,7 @@ public class ChallengeAnswer : Controller
     public async Task<ActionResult> Answer(GeneralQuestionAnswerDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var challenge = await _dataContext.Challenges.Include(chl => chl.ChallengeQuestionAnswers).Include(chl => chl.ChallengeQuestionsPosed).FirstOrDefaultAsync(chl => chl.ChallengeUsers.Select(chu => chu.UserId).Contains(guid));
+        var challenge = await _dataContext.Challenges.Include(chl => chl.ChallengeQuestionAnswers).Include(chl => chl.ChallengeQuestionsPosed).FirstOrDefaultAsync(chl => chl.ChallengeUsers.Select(chu => chu.UserId).Contains(guid) && chl.Id == request.ChallengeId);
         if (challenge == null)
         {
             return BadRequest(ErrorKeys.ChallengeNotAccessible);
@@ -31,10 +31,15 @@ public class ChallengeAnswer : Controller
         {
             return BadRequest(ErrorKeys.ChallengeAlreadyAnswered);
         }
-        var question = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.Id == request.QuestionId && qst.IsActive == true);
+        var question = challenge.ChallengeQuestionsPosed.FirstOrDefault(qst => qst.QuestionId == request.QuestionId && qst.IsActive == true);
         if (question == null)
         {
-            var questionPosed = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(qst => qst.Id == request.QuestionId);
+            return BadRequest(ErrorKeys.ChallengeAnswerNotPossible);
+        }
+
+        if (question.Expires < DateTime.UtcNow)
+        {
+            var questionPosed = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(qst => qst.QuestionId == request.QuestionId);
             if (questionPosed != null)
             {
                 challenge.State = ChallengeState.Result;
@@ -62,7 +67,7 @@ public class ChallengeAnswer : Controller
 
         await _challengeQueryService.TriggerWebsocket(challenge.Id, guid);
 
-        int peopleAnswered = await _dataContext.ChallengeQuestionAnswers.Where(cqa => cqa.ChallengeQuestionPosedId == question.Id).DistinctBy(cqa => cqa.UserId).CountAsync();
+        int peopleAnswered = await _dataContext.ChallengeQuestionAnswers.Where(cqa => cqa.ChallengeQuestionPosedId == question.Id).CountAsync();
         int playerInGame = await _dataContext.ChallengeUsers.Where(chu => chu.ChallengeId == challenge.Id).CountAsync();
         if (peopleAnswered == playerInGame && challenge.State == ChallengeState.Question)
         {

@@ -1,9 +1,8 @@
 todo
 
-create:
-problems at mathematic
-in overview not set preselected
-
 challenge:
-show time left
+fix last correct answer
+fix translate to not working
+fix at the proceed returns to challenge -> new button
+fix answer distribute and multiple choice wrong evaluated
 design

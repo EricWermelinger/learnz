@@ -2,7 +2,7 @@
 <div *ngIf="disabled">{{ 'challenge.peopleAreAnswering' | translate }}</div>
 <div>{{ question.question }}</div>
 <div *ngIf="getQuestionType(question.questionType) === 'Mathematic'">{{ 'generalQuestion.roundBy' | translate }} {{ question.description }} {{ 'generalQuestion.digits' | translate }}</div>
-<div *ngIf="getQuestionType(question.questionType) == 'Word'">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubject(question.description ?? '') }}</div>
+<div *ngIf="getQuestionType(question.questionType) == 'Word'">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubject(question.description ?? '') | translate }}</div>
 <div *ngIf="showDistribute(question.questionType)">
     <div *ngFor="let leftSide of question.answerSetOne">
         <div>{{ leftSide.answer }}</div>

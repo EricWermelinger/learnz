@@ -152,7 +152,8 @@
         "youScored":"You scored",
         "ended":"Challenge ended",
         "finalScores":"Final Scores",
-        "peopleAreAnswering":"Players are answering the question"
+        "peopleAreAnswering":"Players are answering the question",
+        "correctAnswerWas":"The correct answer was"
     },
     "test":{
         "test":"Test"

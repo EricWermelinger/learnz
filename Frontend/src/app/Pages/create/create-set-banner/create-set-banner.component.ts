@@ -38,7 +38,7 @@ export class CreateSetBannerComponent {
   challengeSet(setId: string, setName: string) {
     this.dialog.open(ChallengeCreateDialogComponent, {
       data: {
-        setEditable: true,
+        setEditable: false,
         setName: setName,
         setId: setId,
       }
