@@ -7,6 +7,11 @@
         <div *ngIf="getState(challenge.state) === 'Ended'">
             <button mat-button color="primary" (click)="goBack()">{{ 'framework.back' | translate }}</button>
         </div>
+        <div *ngIf="getState(challenge.state) === 'Question'">
+            <button *ngIf="heartBeat$ | async" mat-fab color="primary" class="time">
+                {{ secondsLeft(challenge.questionCloses, challenge.isOwner) }}
+            </button>
+        </div>
     </div>
     <div [ngSwitch]="getState(challenge.state)">
         <div *ngSwitchCase="'BeforeGame'">
@@ -20,9 +25,6 @@
         </div>
         <div *ngSwitchCase="'Question'">
             <app-general-question *ngIf="challenge.question != null" [question]="challenge.question" [challengeId]="this.challengeId" [disabled]="challenge.isOwner" (answered)="challengeAnswer($event)"></app-general-question>
-            <div *ngIf="heartBeat$ | async">
-                {{ secondsLeft(challenge.questionCloses) }}
-            </div>
         </div>
         <div *ngSwitchCase="'Answer'">
             <div class="text">{{ 'challenge.waitingForPlayersToAnswer' | translate }}</div>

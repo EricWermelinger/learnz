@@ -91,9 +91,10 @@ public class ChallengeQueryService : IChallengeQueryService
 
     private async Task<ChallengeQuestionPosed?> GetCurrentQuestion(Guid challengeId)
     {
-        var currentQuestion = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(cqp => cqp.Challenge.Id == challengeId
-                                                                                                && cqp.Challenge.State != ChallengeState.Ended
-                                                                                                && cqp.IsActive);
+        var currentQuestion = await _dataContext.ChallengeQuestiosnPosed
+            .Where(cqp => cqp.Challenge.Id == challengeId && cqp.Challenge.State != ChallengeState.Ended)
+            .OrderByDescending(cqp => cqp.Created)
+            .FirstOrDefaultAsync();
         return currentQuestion;
     }
 
@@ -123,11 +124,8 @@ public class ChallengeQueryService : IChallengeQueryService
         var currentQuestionAnswered = await _dataContext.ChallengeQuestionAnswers.AnyAsync(cqa => currentQuestion != null && cqa.ChallengeQuestionPosedId == currentQuestion.Id && cqa.UserId == guid);
         var numberOfAnswers = numberOfAnswersEvaluated ?? await GetNumberOfAnswers(currentQuestion);
         var numberOfPlayers = numberOfPlayersEvaluated ?? await GetNumberOfPlayers(challengeId);
-        var currentState = challenge.State == ChallengeState.BeforeGame || challenge.State == ChallengeState.Ended ? challenge.State : (
-                (challenge.State == ChallengeState.Result) ? ChallengeState.Result : (
-                    currentQuestionAnswered ? ChallengeState.Answer : ChallengeState.Question
-                )
-            );
+        var currentState = challenge.State == ChallengeState.BeforeGame || challenge.State == ChallengeState.Ended || challenge.State == ChallengeState.Result ? challenge.State : (
+            currentQuestionAnswered ? ChallengeState.Answer : ChallengeState.Question);
 
         bool isOwner = challenge.OwnerId == guid;
         var currentQuestionDto = currentState == ChallengeState.Question && currentQuestion != null ? (currentQuestionDtoEvaluated ?? await GetQuestionById(currentQuestion.QuestionId)) : null;
@@ -279,7 +277,7 @@ public class ChallengeQueryService : IChallengeQueryService
 
     public async Task<int?> GetLastQuestionPoints(Guid challengeId, Guid questionId, Guid userId)
     {
-        var lastQuestionPoins = await _dataContext.ChallengeQuestionAnswers.Where(cqa => cqa.UserId == userId && cqa.ChallengeId == challengeId && cqa.ChallengeQuestionPosedId == questionId).Select(cqa => cqa.Points).FirstOrDefaultAsync();
-        return lastQuestionPoins;
+        var lastQuestionPoints = await _dataContext.ChallengeQuestionAnswers.Where(cqa => cqa.UserId == userId && cqa.ChallengeId == challengeId && cqa.ChallengeQuestionPosedId == questionId).Select(cqa => cqa.Points).FirstOrDefaultAsync();
+        return lastQuestionPoints;
     }
 }

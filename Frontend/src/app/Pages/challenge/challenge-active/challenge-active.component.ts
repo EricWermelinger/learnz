@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { distinctUntilChanged, filter, interval, map, Observable, Subject, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, interval, map, merge, Observable, Subject, takeUntil } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { ChallengeActiveDTO } from 'src/app/DTOs/Challenge/ChallengeActiveDTO';
 import { ChallengeIdDTO } from 'src/app/DTOs/Challenge/ChallengeIdDTO';
@@ -20,7 +20,7 @@ export class ChallengeActiveComponent implements OnDestroy {
 
   challengeId: string;
   challenge$: Observable<ChallengeActiveDTO>;
-  heartBeat$: Observable<number>;
+  heartBeat$: Observable<boolean>;
   private destroyed$ = new Subject<void>();
 
   constructor(
@@ -33,7 +33,10 @@ export class ChallengeActiveComponent implements OnDestroy {
     this.challenge$ = this.challengeActiveService.getActiveChallenge(this.challengeId).pipe(takeUntil(this.destroyed$));
     const cancelled$ = this.challenge$.pipe(map(chl => chl.cancelled), filter(cnc => cnc === true));
     cancelled$.subscribe(_ => this.showCancelDialog());
-    this.heartBeat$ = interval(1000).pipe(takeUntil(this.destroyed$));
+    this.heartBeat$ = merge(
+      interval(1000).pipe(takeUntil(this.destroyed$)),
+      this.challenge$,
+    ).pipe(map(x => true));
   }
 
   challengeNextFlow() {
@@ -57,12 +60,16 @@ export class ChallengeActiveComponent implements OnDestroy {
     return results.findIndex(r => r.username === user.username && r.points === user.points) + 1;
   }
 
-  secondsLeft(date: Date | null) {
+  secondsLeft(date: Date | null, isOwner: boolean) {
     if (date === null) {
       return 0;
     }
     const timeLeft = Math.floor((new Date(date).getTime() - new Date().getTime()) / 1000);
-    return timeLeft > 0 ? timeLeft : 0;
+    const result = timeLeft > 0 ? timeLeft : 0;
+    if (isOwner && result === 0) {
+      this.challengeNextFlow();
+    }
+    return result;
   }
 
   getState(state: number) {
