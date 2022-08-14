@@ -47,6 +47,48 @@ public class ChallengeQueryService : IChallengeQueryService
         await TriggerWebsocket(challengeActiveOwner, challengeId, ownerId);
     }
 
+    public async Task InactivateQuestions(Guid challengeId)
+    {
+        var questions = await _dataContext.ChallengeQuestiosnPosed.Where(cqp => cqp.ChallengeId == challengeId && cqp.IsActive).ToListAsync();
+        foreach (ChallengeQuestionPosed posed in questions)
+        {
+            posed.IsActive = false;
+        }
+        await _dataContext.SaveChangesAsync();
+    }
+
+    public async Task<bool> QuestionLeft(Guid challengeId)
+    {
+        var questionPosedIds = await _dataContext.ChallengeQuestiosnPosed.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionId).ToListAsync();
+        var questionMathematicPosedIds = await _dataContext.ChallengeQuestionsMathematicResolved.Where(cqp => cqp.ChallengeId == challengeId).Select(cqp => cqp.QuestionMathematicId).ToListAsync();
+        var setId = await _dataContext.Challenges.Where(chl => chl.Id == challengeId).Select(chl => chl.CreateSetId).FirstAsync();
+        var set = await _dataContext.CreateSets
+            .Include(crs => crs.QuestionDistributes)
+            .ThenInclude(qd => qd.Answers)
+            .Include(crs => crs.QuestionMathematics)
+            .ThenInclude(qm => qm.Variables)
+            .Include(crs => crs.QuestionMultipleChoices)
+            .ThenInclude(qmc => qmc.Answers)
+            .Include(crs => crs.QuestionOpenQuestions)
+            .Include(crs => crs.QuestionTrueFalses)
+            .Include(crs => crs.QuestionWords)
+            .FirstAsync(crs => crs.Id == setId);
+
+        var questionsLeftDistributesIds = set.QuestionDistributes.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftMathematicIds = set.QuestionMathematics.Where(qst => !questionMathematicPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftMultipleChoicesIds = set.QuestionMultipleChoices.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftOpenQuestionsIds = set.QuestionOpenQuestions.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftTrueFalseIds = set.QuestionTrueFalses.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+        var questionsLeftWordIds = set.QuestionWords.Where(qst => !questionPosedIds.Contains(qst.Id)).ToList();
+
+        return questionsLeftDistributesIds.Count > 0
+            || questionsLeftMathematicIds.Count > 0
+            || questionsLeftMultipleChoicesIds.Count > 0
+            || questionsLeftOpenQuestionsIds.Count > 0
+            || questionsLeftTrueFalseIds.Count > 0
+            || questionsLeftWordIds.Count > 0;
+    }
+
     private async Task<ChallengeQuestionPosed?> GetCurrentQuestion(Guid challengeId)
     {
         var currentQuestion = await _dataContext.ChallengeQuestiosnPosed.FirstOrDefaultAsync(cqp => cqp.Challenge.Id == challengeId

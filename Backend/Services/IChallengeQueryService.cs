@@ -11,4 +11,6 @@ public interface IChallengeQueryService
     Task<List<ChallengePlayerResultDTO>> GetResult(Guid challengeId);
     Task<GeneralQuestionQuestionDTO?> GetQuestionById(Guid questionId);
     Task<int?> GetLastQuestionPoints(Guid challengeId, Guid questionId, Guid userId);
+    Task InactivateQuestions(Guid challengeId);
+    Task<bool> QuestionLeft(Guid challengeId);
 }

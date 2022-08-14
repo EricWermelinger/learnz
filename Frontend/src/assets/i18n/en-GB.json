@@ -154,7 +154,9 @@
         "ended":"Challenge ended",
         "finalScores":"Final Scores",
         "peopleAreAnswering":"Players are answering the question",
-        "correctAnswerWas":"The correct answer was"
+        "correctAnswerWas":"The correct answer was",
+        "username":"Username",
+        "points":"Points"
     },
     "test":{
         "test":"Test"

@@ -1,4 +1,5 @@
 todo
 
 challenge:
-design
+time left show earlier and design
+multiple choice last answer not shown correctly
