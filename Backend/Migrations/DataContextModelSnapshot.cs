@@ -105,6 +105,9 @@ namespace Learnz.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("QuestionMathematicId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChallengeId");
@@ -195,12 +198,18 @@ namespace Learnz.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("LeftSideId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("QuestionDistributeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RightSide")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RightSideId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

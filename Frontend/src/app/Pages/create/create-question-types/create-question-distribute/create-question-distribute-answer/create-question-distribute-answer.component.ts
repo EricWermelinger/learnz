@@ -24,7 +24,9 @@ export class CreateQuestionDistributeAnswerComponent {
     this.formGroup = this.formBuilder.group({
       id: '',
       leftSide: '',
+      leftSideId: '',
       rightSide: '',
+      rightSideId: '',
     }) as FormGroupTyped<CreateQuestionDistributeAnswerDTO>;
   }
 

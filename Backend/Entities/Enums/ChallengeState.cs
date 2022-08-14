@@ -1,7 +1,9 @@
 ﻿namespace Learnz.Entities;
 public enum ChallengeState
 {
-    Open = 1,
-    Running = 2,
-    Closed = 3
+    BeforeGame = 1,
+    Question = 2,
+    Answer = 3,
+    Result = 4,
+    Ended = 5
 }

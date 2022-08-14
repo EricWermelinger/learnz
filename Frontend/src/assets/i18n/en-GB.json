@@ -1,7 +1,8 @@
 {
     "framework":{
         "save":"Save",
-        "cancel":"Cancel"
+        "cancel":"Cancel",
+        "back":"Back"
     },
     "login":{
         "login":"Login",
@@ -132,7 +133,30 @@
         "learn":"Learn"
     },
     "challenge":{
-        "challenge":"Challenge"
+        "challenge":"Challenge",
+        "name":"Challenge Name",
+        "setName":"Set",
+        "createChallenge":"Create Challenge",
+        "numberOfPlayers":"Players",
+        "openChallenges":"Open Challenges",
+        "createNew":"Create New",
+        "noOpenChallenge":"No open challenges",
+        "waitingForPlayersToJoin":"Waiting for other Players to start",
+        "waitingForPlayersToAnswer":"Waiting for other Players to answer",
+        "currently":"Currently",
+        "players":"Players",
+        "proceed":"Proceed",
+        "cancelledExplanantion":"The Challenge was cancelled by the owner.",
+        "cancelled":"Challenge cancelled",
+        "wasRight":"Your answer was right!",
+        "wasWrong":"Your answer was wrong!",
+        "youScored":"You scored",
+        "ended":"Challenge ended",
+        "finalScores":"Final Scores",
+        "peopleAreAnswering":"Players are answering the question",
+        "correctAnswerWas":"The correct answer was",
+        "username":"Username",
+        "points":"Points"
     },
     "test":{
         "test":"Test"
@@ -162,6 +186,15 @@
         "newPassword":"New Password",
         "confirmPassword":"Confirm Password"
     },
+    "generalQuestion":{
+        "question":"Question",
+        "answer":"Answer",
+        "roundBy":"Round by",
+        "digits":"Digits",
+        "translateTo":"Translate to",
+        "true":"True",
+        "false":"False"
+    },
     "fileUpload":{
         "uploadFile":"Upload File",
         "file":"File",
@@ -172,6 +205,9 @@
         "changePolicy":"Change Policy"
     },
     "errorBackend":{
+        "challengeAlreadyAnswered":"You have already answered this question.",
+        "challengeAnswerNotPossible":"You can't answer this question anymore.",
+        "challengeNotAccessible":"Challenge not accessible",
         "fileUploadUnsuccessful":"File upload unsuccessful",
         "fileUploadUnsuccessful_title":"Upload unsuccessful",
         "fileNotAccessible":"File not accessible",

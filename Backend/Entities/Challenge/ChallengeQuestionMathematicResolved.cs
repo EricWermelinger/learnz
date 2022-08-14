@@ -7,4 +7,5 @@ public class ChallengeQuestionMathematicResolved
     public int Digits { get; set; }
     public Guid ChallengeId { get; set; }
     public Challenge Challenge { get; set; }
+    public Guid QuestionMathematicId { get; set; }
 }
