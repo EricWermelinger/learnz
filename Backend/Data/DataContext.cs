@@ -250,6 +250,24 @@ public class DataContext : DbContext
             .WithMany(c => c.ChallengeQuestionsPosed)
             .HasForeignKey(cqp => cqp.ChallengeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LearnSession>()
+            .HasOne(lss => lss.Set)
+            .WithMany(crs => crs.LearnSessions)
+            .HasForeignKey(lss => lss.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LearnSession>()
+            .HasOne(lss => lss.User)
+            .WithMany(usr => usr.LearnSessions)
+            .HasForeignKey(lss => lss.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LearnQuestion>()
+            .HasOne(lqs => lqs.LearnSession)
+            .WithMany(lss => lss.Questions)
+            .HasForeignKey(lqs => lqs.LearnSessionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
