@@ -6,24 +6,18 @@ namespace Learnz.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class LearnQuestionAnswer : Controller
+public class LearnQuestionAnswerCard : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public LearnQuestionAnswer(DataContext dataContext, IUserService userService)
+    public LearnQuestionAnswerCard(DataContext dataContext, IUserService userService)
     {
         _dataContext = dataContext;
         _userService = userService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<LearnSolutionDTO>> GetSolution(Guid learnSessionId,Guid questionId)
-    {
-        return Ok();
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> AnswerQuestion(LearnAnswerDTO request)
+    public async Task<ActionResult<LearnSolutionDTO>> GetNextSolution(Guid learnSessionId, Guid questionId)
     {
         return Ok();
     }

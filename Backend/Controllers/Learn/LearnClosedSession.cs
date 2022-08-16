@@ -20,6 +20,18 @@ public class LearnClosedSession : Controller
     public async Task<ActionResult<List<LearnSessionDTO>>> GetClosedSessions()
     {
         var guid = _userService.GetUserGuid();
-        return Ok();
+        var closedSessions = await _dataContext.LearnSessions.Where(lss => lss.UserId == guid && lss.Ended != null)
+                                                             .Select(lss => new LearnSessionDTO
+                                                             {
+                                                                 LearnSessionId = lss.Id,
+                                                                 Created = lss.Created,
+                                                                 Ended = lss.Ended,
+                                                                 SetId = lss.SetId,
+                                                                 SetName = lss.Set.Name,
+                                                                 SubjectMain = lss.Set.SubjectMain,
+                                                                 SubjectSecond = lss.Set.SubjectSecond
+                                                             })
+                                                             .ToListAsync();
+        return Ok(closedSessions);
     }
 }

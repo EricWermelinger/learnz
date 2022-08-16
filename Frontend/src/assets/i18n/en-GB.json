@@ -230,8 +230,10 @@
         "passwordNotMatch_title":"Password not match",
         "togetherNoUserFound":"No User found",
         "togetherNoUserFound_title":"No User found",
-        "setNotAccessible":"Set is currently not Accessible",
-        "setNotAccessible_title":"Set not Accessible",
+        "learnSessionAlreadyExists":"You are already learning this set.",
+        "learnSessionNotAccessible":"Learn Session is currently not accessible.",
+        "setNotAccessible":"Set is currently not accessible",
+        "setNotAccessible_title":"Set not accessible",
         "unknownError":"Unknown error",
         "unknownError_title":"Unknown error"
     },

@@ -19,12 +19,31 @@ public class LearnOpenSession : Controller
     [HttpGet]
     public async Task<ActionResult<List<LearnSessionDTO>>> GetOpenSessions()
     {
-        return Ok();
+        var guid = _userService.GetUserGuid();
+        var openSessions = await _dataContext.LearnSessions.Where(lss => lss.UserId == guid && lss.Ended == null)
+                                                             .Select(lss => new LearnSessionDTO
+                                                             {
+                                                                 LearnSessionId = lss.Id,
+                                                                 Created = lss.Created,
+                                                                 Ended = lss.Ended,
+                                                                 SetId = lss.SetId,
+                                                                 SetName = lss.Set.Name,
+                                                                 SubjectMain = lss.Set.SubjectMain,
+                                                                 SubjectSecond = lss.Set.SubjectSecond
+                                                             })
+                                                             .ToListAsync();
+        return Ok(openSessions);
     }
 
     [HttpPost]
     public async Task<ActionResult> OpenSession(LearnOpenNewSessionDTO request)
     {
+        var guid = _userService.GetUserGuid();
+        var alreadyOpened = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.UserId == guid && lss.Ended == null && lss.SetId == request.SetId);
+        if (alreadyOpened != null)
+        {
+            return BadRequest(ErrorKeys.LearnSessionAlreadyExists)
+        }
         return Ok();
     }
 }

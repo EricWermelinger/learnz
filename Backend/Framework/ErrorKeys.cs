@@ -15,6 +15,8 @@ public static class ErrorKeys
     public static string UsernameTaken = "usernameTaken";
     public static string PasswordNotMatch = "passwordNotMatch";
     public static string TogetherNoUserFound = "togetherNoUserFound";
+    public static string LearnSessionAlreadyExists = "learnSessionAlreadyExists";
+    public static string LearnSessionNotAccessible = "learnSessionNotAccessible";
     public static string SetNotAccessible = "setNotAccessible";
     public static string UnknownError = "unknownError";
 }
