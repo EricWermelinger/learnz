@@ -303,4 +303,7 @@ public class DataContext : DbContext
     public virtual DbSet<ChallengeUser> ChallengeUsers { get; set; }
     public virtual DbSet<ChallengeQuestionMathematicResolved> ChallengeQuestionsMathematicResolved { get; set; }
     public virtual DbSet<ChallengeQuestionPosed> ChallengeQuestiosnPosed { get; set; }
+
+    public virtual DbSet<LearnSession> LearnSessions { get; set; }
+    public virtual DbSet<LearnQuestion> LearnQuestions { get; set; }
 }

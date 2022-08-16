@@ -13,7 +13,7 @@ Answer Question - POST
 
 Open Sessions -> GET / POST
 Closed Sessions -> GET
-Questions Detail -> GET
+Session Quesions -> GET
 Question Answer -> POST
 
 learn:
