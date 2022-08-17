@@ -5,6 +5,7 @@ public class LearnQuestion
     public Guid LearnSessionId { get; set; }
     public LearnSession LearnSession { get; set; }
     public Guid QuestionId { get; set; }
+    public string Question { get; set; }
     public string? Description { get; set; }
     public QuestionType QuestionType { get; set; }
     public string? PossibleAnswers { get; set; }

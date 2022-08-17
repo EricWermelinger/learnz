@@ -197,12 +197,12 @@ public class ChallengeFlow : Controller
         var newQuestionVariables = await _dataContext.CreateQuestionMathematicVariables.Where(vrb => vrb.QuestionMathematicId == newQuestionMathematic.Id).ToListAsync();
         string mathematicQuestion = newQuestionMathematic.Question;
         string mathematicAnswer = newQuestionMathematic.Answer;
+        Random random = new();
         foreach (var variable in newQuestionVariables)
         {
             if (variable != null)
             {
-                Random random = new();
-                int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval);
+                int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval == 0 ? 1 : variable.Interval);
                 int randomStep = random.Next(0, steps);
                 double variableValue = Math.Round(variable.Min + randomStep * variable.Interval, variable.Digits);
                 mathematicQuestion = mathematicQuestion.Replace(variable.Display, variableValue.ToString());
