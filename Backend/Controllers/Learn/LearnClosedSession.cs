@@ -29,7 +29,10 @@ public class LearnClosedSession : Controller
                                                                  SetId = lss.SetId,
                                                                  SetName = lss.Set.Name,
                                                                  SubjectMain = lss.Set.SubjectMain,
-                                                                 SubjectSecond = lss.Set.SubjectSecond
+                                                                 SubjectSecond = lss.Set.SubjectSecond,
+                                                                 NumberOfRightAnswers = lss.Questions.Where(lqs => lqs.AnsweredCorrect == true).Count(),
+                                                                 NumberOfWrongAnswers = lss.Questions.Where(lqs => lqs.AnsweredCorrect == false).Count(),
+                                                                 NumberOfNotAnswerd = lss.Questions.Where(lqs => lqs.AnsweredCorrect == null).Count()
                                                              })
                                                              .ToListAsync();
         return Ok(closedSessions);

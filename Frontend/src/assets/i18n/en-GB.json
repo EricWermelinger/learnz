@@ -232,6 +232,7 @@
         "togetherNoUserFound_title":"No User found",
         "learnSessionAlreadyExists":"You are already learning this set.",
         "learnSessionNotAccessible":"Learn Session is currently not accessible.",
+        "learnSetContainsNoHardQuesitons":"Set contains no hard questions.",
         "setNotAccessible":"Set is currently not accessible",
         "setNotAccessible_title":"Set not accessible",
         "unknownError":"Unknown error",

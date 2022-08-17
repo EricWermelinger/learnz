@@ -8,4 +8,7 @@ public class LearnSessionDTO
     public string SetName { get; set; }
     public Subject SubjectMain { get; set; }
     public Subject? SubjectSecond { get; set; }
+    public int NumberOfRightAnswers { get; set; }
+    public int NumberOfWrongAnswers { get; set; }
+    public int NumberOfNotAnswerd { get; set; }
 }

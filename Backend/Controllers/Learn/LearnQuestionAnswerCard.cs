@@ -10,10 +10,12 @@ public class LearnQuestionAnswerCard : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public LearnQuestionAnswerCard(DataContext dataContext, IUserService userService)
+    private readonly ILearnQueryService _learnQueryService;
+    public LearnQuestionAnswerCard(DataContext dataContext, IUserService userService, ILearnQueryService learnQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _learnQueryService = learnQueryService;
     }
 
     [HttpGet]
@@ -26,25 +28,10 @@ public class LearnQuestionAnswerCard : Controller
         {
             return BadRequest(ErrorKeys.LearnSessionNotAccessible);
         }
-        string answer = "";
-        switch (question.QuestionType)
-        {
-            case QuestionType.Distribute:
-                answer = string.Join(" & ", question.RightAnswer.Split("|||").Select(ans => ans.Split("||")[0].Split("|")[1] + " - " + ans.Split("||")[1].Split("|")[1]));
-                break;
-            case QuestionType.MultipleChoice:
-                answer = string.Join(" & ", question.RightAnswer.Split("||").Select(ans => ans.Split("|")[1]));
-                break;
-            case QuestionType.Mathematic:
-            case QuestionType.OpenQuestion:
-            case QuestionType.TrueFalse:
-            case QuestionType.Word:
-                answer = question.RightAnswer;
-                break;
-        }
+        
         var solutionDto = new LearnSolutionDTO
         {
-            Answer = answer
+            Answer = _learnQueryService.GetAnswer(question)
         };
         return Ok(solutionDto);
     }

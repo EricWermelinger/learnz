@@ -32,7 +32,10 @@ public class LearnOpenSession : Controller
                                                                  SetId = lss.SetId,
                                                                  SetName = lss.Set.Name,
                                                                  SubjectMain = lss.Set.SubjectMain,
-                                                                 SubjectSecond = lss.Set.SubjectSecond
+                                                                 SubjectSecond = lss.Set.SubjectSecond,
+                                                                 NumberOfRightAnswers = lss.Questions.Where(lqs => lqs.AnsweredCorrect == true).Count(),
+                                                                 NumberOfWrongAnswers = lss.Questions.Where(lqs => lqs.AnsweredCorrect == false).Count(),
+                                                                 NumberOfNotAnswerd = lss.Questions.Where(lqs => lqs.AnsweredCorrect == null).Count()
                                                              })
                                                              .ToListAsync();
         return Ok(openSessions);
@@ -64,7 +67,32 @@ public class LearnOpenSession : Controller
         {
             return BadRequest(ErrorKeys.SetNotAccessible);
         }
-        
+
+        List<Guid> hardQuestionIds = new List<Guid>();
+        if (request.OnlyHardQuestions)
+        {
+            var lastSession = await _dataContext.LearnSessions.Where(lss => lss.UserId == guid && lss.SetId == request.SetId)
+                                                               .OrderByDescending(lss => lss.Ended)
+                                                               .Include(lss => lss.Questions)
+                                                               .FirstOrDefaultAsync();
+            if (lastSession != null)
+            {
+                hardQuestionIds.AddRange(lastSession.Questions.Where(lqs => lqs.MarkedAsHard == true).Select(lqs => lqs.QuestionId));
+            }
+            var difficultQuestions = await _dataContext.LearnQuestions.Where(lqs => lqs.LearnSession.UserId == guid && lqs.LearnSession.SetId == request.SetId && lqs.AnsweredCorrect != null)
+                                                                      .Select(lqs => new { QuestionId = lqs.QuestionId, Correct = lqs.AnsweredCorrect == true ? 1 : 0 })
+                                                                      .GroupBy(lqs => lqs.QuestionId)
+                                                                      .Select(qst => new { QuestionId = qst.Key, Correct = qst.Sum(lqs => lqs.Correct), Answered = qst.Count() })
+                                                                      .Where(qst => ((double)qst.Correct / (double)qst.Answered) < 0.5)
+                                                                      .Select(qst => qst.QuestionId)
+                                                                      .ToListAsync();
+            hardQuestionIds.AddRange(difficultQuestions);
+        }
+        if (request.OnlyHardQuestions && hardQuestionIds.Count == 0)
+        {
+            return BadRequest(ErrorKeys.LearnSetContainsNoHardQuesitons); 
+        }
+
         var newSessionId = Guid.NewGuid();
         var session = new LearnSession
         {
@@ -78,6 +106,10 @@ public class LearnOpenSession : Controller
 
         foreach (var question in set.QuestionDistributes)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             var newQuestion = new LearnQuestion
             {
                 LearnSessionId = newSessionId,
@@ -91,6 +123,10 @@ public class LearnOpenSession : Controller
         }
         foreach (var question in set.QuestionMathematics)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             string mathematicQuestion = question.Question;
             string mathematicAnswer = question.Answer;
             string answerComputed = "";
@@ -131,6 +167,10 @@ public class LearnOpenSession : Controller
         }
         foreach (var question in set.QuestionMultipleChoices)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             var newQuestion = new LearnQuestion
             {
                 LearnSessionId = newSessionId,
@@ -144,6 +184,10 @@ public class LearnOpenSession : Controller
         }
         foreach (var question in set.QuestionOpenQuestions)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             var newQuestion = new LearnQuestion
             {
                 LearnSessionId = newSessionId,
@@ -156,6 +200,10 @@ public class LearnOpenSession : Controller
         }
         foreach (var question in set.QuestionTrueFalses)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             var newQuestion = new LearnQuestion
             {
                 LearnSessionId = newSessionId,
@@ -168,6 +216,10 @@ public class LearnOpenSession : Controller
         }
         foreach (var question in set.QuestionWords)
         {
+            if (request.OnlyHardQuestions && !hardQuestionIds.Contains(question.Id))
+            {
+                continue;
+            }
             var newQuestion = new LearnQuestion
             {
                 LearnSessionId = newSessionId,

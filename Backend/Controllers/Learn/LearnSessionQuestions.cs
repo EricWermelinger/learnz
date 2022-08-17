@@ -36,16 +36,39 @@ public class LearnSessionQuestions : Controller
                 Question = lqs.Question,
                 Description = lqs.Description,
                 QuestionType = lqs.QuestionType,
-                AnswerSetOne = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, 1),
-                AnswerSetTwo = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, 2)
+                AnswerSetOne = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, true),
+                AnswerSetTwo = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, false)
             }
         });
         return Ok(questions);
     }
 
-    private List<ChallengeQuestionAnswerDTO> GetAnswerSet(LearnQuestion lqs, int v)
+    private List<ChallengeQuestionAnswerDTO>? GetAnswerSet(LearnQuestion lqs, bool firstSet)
     {
-        // todo continue here
-        throw new NotImplementedException();
+        switch (lqs.QuestionType)
+        {
+            case QuestionType.Distribute:
+                string answerSet = lqs.RightAnswer.Split("|||")[firstSet ? 0 : 1];
+                var answersDistribute = answerSet.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                {
+                    AnswerId = new Guid(ans.Split("|")[0]),
+                    Answer = ans.Split("|")[1]
+                })
+                .ToList();
+                return answersDistribute;
+            case QuestionType.MultipleChoice:
+                if (firstSet)
+                {
+                    var answerMultipleChoice = lqs.RightAnswer.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                    {
+                        AnswerId = new Guid(ans.Split("|")[0]),
+                        Answer = ans.Split("|")[1]
+                    })
+                    .ToList();
+                    return answerMultipleChoice;
+                }
+                return null;
+        }
+        return null;
     }
 }
