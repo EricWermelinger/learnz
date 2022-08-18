@@ -28,10 +28,22 @@ public class LearnQuestionAnswerCard : Controller
         {
             return BadRequest(ErrorKeys.LearnSessionNotAccessible);
         }
-        
+
+        question.AnswerByUser = "";
+        question.AnsweredCorrect = true;
+        await _dataContext.SaveChangesAsync();
+
+        var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == learnSessionId && lss.UserId == guid && lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));
+        if (sessionWithQuestionLeft != null)
+        {
+            sessionWithQuestionLeft.Ended = DateTime.UtcNow;
+            await _dataContext.SaveChangesAsync();
+        }
+
         var solutionDto = new LearnSolutionDTO
         {
-            Answer = _learnQueryService.GetAnswer(question)
+            Answer = _learnQueryService.GetAnswer(question),
+            WasCorrect = true
         };
         return Ok(solutionDto);
     }

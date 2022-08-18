@@ -19,7 +19,7 @@ public class LearnQuestionAnswerWrite : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<LearnSolutionDTO>> GetSolution(Guid learnSessionId,Guid questionId)
+    public async Task<ActionResult<LearnSolutionDTO>> GetSolution(Guid learnSessionId, Guid questionId)
     {
         var guid = _userService.GetUserGuid();
         var question = await _dataContext.LearnQuestions.Where(lqs => lqs.LearnSessionId == learnSessionId && lqs.QuestionId == questionId && lqs.LearnSession.UserId == guid)
@@ -30,7 +30,8 @@ public class LearnQuestionAnswerWrite : Controller
         }
         var solutionDto = new LearnSolutionDTO
         {
-            Answer = _learnQueryService.GetAnswer(question)
+            Answer = _learnQueryService.GetAnswer(question),
+            WasCorrect = question.AnsweredCorrect == true ? true : false
         };
         return Ok();
     }
@@ -47,7 +48,7 @@ public class LearnQuestionAnswerWrite : Controller
         }
 
         question.AnswerByUser = request.Answer;
-        question.AnsweredCorrect = _learnQueryService.EvaluateAnswer(request.Answer, question.RightAnswer);
+        question.AnsweredCorrect = _learnQueryService.EvaluateAnswer(request.Answer, question.RightAnswer, question.QuestionType);
         bool questionLeft = await _dataContext.LearnQuestions.AnyAsync(lqs => lqs.LearnSessionId == request.LearnSessionId && lqs.AnsweredCorrect == null);
         if (!questionLeft)
         {

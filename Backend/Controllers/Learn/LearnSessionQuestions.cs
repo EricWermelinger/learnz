@@ -10,10 +10,12 @@ public class LearnSessionQuestions : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public LearnSessionQuestions(DataContext dataContext, IUserService userService)
+    private readonly ILearnQueryService _learnQueryService;
+    public LearnSessionQuestions(DataContext dataContext, IUserService userService, ILearnQueryService learnQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _learnQueryService = learnQueryService;
     }
 
     [HttpGet]
@@ -38,7 +40,8 @@ public class LearnSessionQuestions : Controller
                 QuestionType = lqs.QuestionType,
                 AnswerSetOne = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, true),
                 AnswerSetTwo = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, false)
-            }
+            },
+            Solution = session.Ended != null ? _learnQueryService.GetAnswer(lqs) : null
         });
         return Ok(questions);
     }
