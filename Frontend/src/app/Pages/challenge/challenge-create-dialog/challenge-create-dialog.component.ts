@@ -7,7 +7,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { appRoutes } from 'src/app/Config/appRoutes';
-import { BehaviorSubject, Observable, startWith, switchMap } from 'rxjs';
+import { Observable, startWith, switchMap } from 'rxjs';
 import { KeyValue } from '@angular/common';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
@@ -45,12 +45,12 @@ export class ChallengeCreateDialogComponent {
     }
     this.filteredOptions$ = this.filterSetControl.valueChanges.pipe(
       startWith(''),
-      switchMap(filter => this.challengeCreateService.getFilteredSets(filter ?? '')),
+      switchMap(filter => this.challengeCreateService.getFilteredSets$(filter ?? '')),
     );
   }
 
   save() {
-    this.challengeCreateService.createChallenge(this.formGroup.value).subscribe(_ => {
+    this.challengeCreateService.createChallenge$(this.formGroup.value).subscribe(_ => {
       this.dialogRef.close();
       this.router.navigate([appRoutes.App, appRoutes.Challenge, this.challengeId]);
     });

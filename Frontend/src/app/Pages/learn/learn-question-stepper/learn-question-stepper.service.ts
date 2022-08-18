@@ -17,7 +17,7 @@ export class LearnQuestionStepperService {
   ) { }
 
   markQuestion$(value: LearnMarkQuestionDTO) {
-    return this.api.callApi(endpoints.LearnMarkQuestion, value, 'POST');
+    this.api.callApi(endpoints.LearnMarkQuestion, value, 'POST').subscribe();
   }
 
   cardAnswe$(learnSessionId: string, questionId: string) {
@@ -41,10 +41,10 @@ export class LearnQuestionStepperService {
   }
 
   changeCorrectIncorrect$(value: LearnQuestionSetCorrectDTO) {
-    return this.api.callApi(endpoints.LearnQuestionSetCorrect, value, 'POST');
+    this.api.callApi(endpoints.LearnQuestionSetCorrect, value, 'POST').subscribe();
   }
 
   getQuestions$(learnSessionId: string) {
-    return this.api.callApi<LearnQuestionDTO>(endpoints.LearnSessionQuestions, { learnSessionId }, 'GET');
+    return this.api.callApi<LearnQuestionDTO[]>(endpoints.LearnSessionQuestions, { learnSessionId }, 'GET');
   }
 }

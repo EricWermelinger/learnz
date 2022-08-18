@@ -20,6 +20,7 @@ export const appRoutes = {
     Create: 'create',
     CreateSetEditId: 'setId',
     Learn: 'learn',
+    LearnId: 'learnId',
     Challenge: 'challenge',
     ChallengeId: 'challengeId',
     Test: 'test',

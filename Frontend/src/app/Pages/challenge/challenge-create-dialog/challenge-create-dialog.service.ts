@@ -15,11 +15,11 @@ export class ChallengeCreateDialogService {
     private api: ApiService,
   ) { }
 
-  createChallenge(challenge: ChallengeCreateDTO) {
+  createChallenge$(challenge: ChallengeCreateDTO) {
     return this.api.callApi(endpoints.ChallengeOpen, challenge, 'POST');
   }
 
-  getFilteredSets(setNameFilter: string): Observable<KeyValue<string, string>[]> {
+  getFilteredSets$(setNameFilter: string): Observable<KeyValue<string, string>[]> {
     const filter = {
       subjectMain: -1,
       subjectSecond: -1,

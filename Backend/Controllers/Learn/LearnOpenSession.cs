@@ -46,7 +46,8 @@ public class LearnOpenSession : Controller
     {
         var guid = _userService.GetUserGuid();
         var alreadyOpened = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.UserId == guid && lss.Ended == null && lss.SetId == request.SetId);
-        if (alreadyOpened != null)
+        var alreadyExistend = await _dataContext.LearnSessions.AnyAsync(lss => lss.Id == request.LearnSessionId);
+        if (alreadyOpened != null || alreadyExistend)
         {
             return BadRequest(ErrorKeys.LearnSessionAlreadyExists);
         }
@@ -93,10 +94,9 @@ public class LearnOpenSession : Controller
             return BadRequest(ErrorKeys.LearnSetContainsNoHardQuesitons); 
         }
 
-        var newSessionId = Guid.NewGuid();
         var session = new LearnSession
         {
-            Id = newSessionId,
+            Id = request.LearnSessionId,
             Created = DateTime.UtcNow,
             SetId = request.SetId,
             UserId = guid
@@ -112,7 +112,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.Distribute,
@@ -157,7 +157,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = mathematicQuestion,
                 QuestionType = QuestionType.Mathematic,
@@ -175,7 +175,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.MultipleChoice,
@@ -193,7 +193,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.OpenQuestion,
@@ -210,7 +210,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.TrueFalse,
@@ -227,7 +227,7 @@ public class LearnOpenSession : Controller
             }
             var newQuestion = new LearnQuestion
             {
-                LearnSessionId = newSessionId,
+                LearnSessionId = request.LearnSessionId,
                 QuestionId = question.Id,
                 Question = question.LanguageSubjectMain,
                 QuestionType = QuestionType.Word,

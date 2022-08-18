@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { LearnResultService } from './learn-result.service';
+import { Component, Input } from '@angular/core';
+import { LearnQuestionDTO } from 'src/app/DTOs/Learn/LearnQuestionDTO';
 
 @Component({
   selector: 'app-learn-result',
@@ -8,8 +8,7 @@ import { LearnResultService } from './learn-result.service';
 })
 export class LearnResultComponent {
 
-  constructor(
-    private resultService: LearnResultService,
-  ) { }
+  @Input() questions: LearnQuestionDTO[] = [];
 
+  constructor() { }
 }
