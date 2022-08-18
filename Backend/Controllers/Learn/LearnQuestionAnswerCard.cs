@@ -30,7 +30,10 @@ public class LearnQuestionAnswerCard : Controller
         }
 
         question.AnswerByUser = "";
-        question.AnsweredCorrect = true;
+        if (question.AnsweredCorrect != false)
+        {
+            question.AnsweredCorrect = true;
+        }
         await _dataContext.SaveChangesAsync();
 
         var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == learnSessionId && lss.UserId == guid && lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));

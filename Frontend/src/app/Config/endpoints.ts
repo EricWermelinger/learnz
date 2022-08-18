@@ -1,10 +1,10 @@
 export const endpoints = {
-    ChallengeActive: 'challengeActive', // use get
-    ChallengeAnswer: 'challengeAnswer', // use post
-    ChallengeFlow: 'challengeFlow', // use post
-    ChallengeOpen: 'challengeOpen', // use get post put delete
+    ChallengeActive: 'challengeActive',
+    ChallengeAnswer: 'challengeAnswer',
+    ChallengeFlow: 'challengeFlow',
+    ChallengeOpen: 'challengeOpen',
     CreateFilterSets: 'createFilterSets',
-    CreateLastSets: 'createLastSets', // use get
+    CreateLastSets: 'createLastSets',
     CreateOwnSets: 'createOwnSets',
     CreateSetHeader: 'createSetHeader',
     CreateSetQuestions: 'createSetQuestions',
@@ -19,6 +19,13 @@ export const endpoints = {
     GroupMessages: 'groupMessages',
     GroupOverview: 'groupOverview',
     GroupPossibleUsers: 'groupPossibleUsers',
+    LearnClosedSession: 'learnClosedSession', // use get
+    LearnMarkQuestion: 'learnMarkQuestion', // use post
+    LearnOpenSession: 'learnOpenSession', // use get / post
+    LearnQuestionAnswerCard: 'learnQuestionAnswerCard', // use get
+    LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite', // use get / post
+    LearnQuestionSetCorrect: 'learnQuestionSetCorrect', // use post
+    LearnSessionQuestions: 'learnSessionQuestions', // use get
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',

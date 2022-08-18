@@ -117,7 +117,8 @@ public class LearnOpenSession : Controller
                 Question = question.Question,
                 QuestionType = QuestionType.Distribute,
                 PossibleAnswers = string.Join("|||", question.Answers.Select(ans => ans.LeftSideId.ToString() + "|" + ans.LeftSide + "||" + ans.RightSideId.ToString() + "|" + ans.RightSide)),
-                RightAnswer = string.Join("|||", question.Answers.Select(ans => ans.LeftSideId.ToString() + "|" + ans.LeftSide + "||" + ans.RightSideId.ToString() + "|" + ans.RightSide))
+                RightAnswer = string.Join("|||", question.Answers.Select(ans => ans.LeftSideId.ToString() + "|" + ans.LeftSide + "||" + ans.RightSideId.ToString() + "|" + ans.RightSide)),
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
@@ -161,7 +162,8 @@ public class LearnOpenSession : Controller
                 Question = mathematicQuestion,
                 QuestionType = QuestionType.Mathematic,
                 Description = question.Digits.ToString(),
-                RightAnswer = answerComputed ?? ""
+                RightAnswer = answerComputed ?? "",
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
@@ -178,7 +180,8 @@ public class LearnOpenSession : Controller
                 Question = question.Question,
                 QuestionType = QuestionType.MultipleChoice,
                 PossibleAnswers = string.Join("||", question.Answers.Select(ans => ans.Id.ToString() + "|" + ans.Answer)),
-                RightAnswer = string.Join("||", question.Answers.Where(ans => ans.IsRight).Select(ans => ans.Id.ToString() + "|" + ans.Answer))
+                RightAnswer = string.Join("||", question.Answers.Where(ans => ans.IsRight).Select(ans => ans.Id.ToString() + "|" + ans.Answer)),
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
@@ -194,7 +197,8 @@ public class LearnOpenSession : Controller
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.OpenQuestion,
-                RightAnswer = question.Answer
+                RightAnswer = question.Answer,
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)                
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
@@ -210,7 +214,8 @@ public class LearnOpenSession : Controller
                 QuestionId = question.Id,
                 Question = question.Question,
                 QuestionType = QuestionType.TrueFalse,
-                RightAnswer = question.Answer ? "true" : "false"
+                RightAnswer = question.Answer ? "true" : "false",
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
@@ -227,7 +232,8 @@ public class LearnOpenSession : Controller
                 Question = question.LanguageSubjectMain,
                 QuestionType = QuestionType.Word,
                 Description = set.SubjectSecond == null ? null : ((int)set.SubjectSecond).ToString(),
-                RightAnswer = question.LanguageSubjectSecond
+                RightAnswer = question.LanguageSubjectSecond,
+                MarkedAsHard = hardQuestionIds.Contains(question.Id)
             };
             _dataContext.LearnQuestions.Add(newQuestion);
         }
