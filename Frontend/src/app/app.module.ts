@@ -58,6 +58,9 @@ import { ChallengeActiveComponent } from './Pages/challenge/challenge-active/cha
 import { ChallengeCreateDialogComponent } from './Pages/challenge/challenge-create-dialog/challenge-create-dialog.component';
 import { GeneralQuestionComponent } from './Framework/general-question/general-question.component';
 import { ChallengeCancelledDialogComponent } from './Pages/challenge/challenge-cancelled-dialog/challenge-cancelled-dialog.component';
+import { LearnCreateDialogComponent } from './Pages/learn/learn-create-dialog/learn-create-dialog.component';
+import { LearnQuestionStepperComponent } from './Pages/learn/learn-question-stepper/learn-question-stepper.component';
+import { LearnResultComponent } from './Pages/learn/learn-result/learn-result.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -111,6 +114,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChallengeCreateDialogComponent,
     GeneralQuestionComponent,
     ChallengeCancelledDialogComponent,
+    LearnCreateDialogComponent,
+    LearnQuestionStepperComponent,
+    LearnResultComponent,
   ],
   imports: [
     BrowserModule,
