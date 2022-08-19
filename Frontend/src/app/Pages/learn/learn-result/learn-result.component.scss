@@ -1,6 +1,12 @@
 .answered {
-    background-color: var(--learnz-warn);
+    background-color: var(--learnz-incorrect);
 }
 .answered.answered-correct {
     background-color: var(--learnz-correct);
+}
+.question-card {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr 1fr;
+    gap: 16px;
 }

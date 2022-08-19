@@ -17,10 +17,10 @@ export class LearnQuestionStepperService {
   ) { }
 
   markQuestion$(value: LearnMarkQuestionDTO) {
-    this.api.callApi(endpoints.LearnMarkQuestion, value, 'POST').subscribe();
+    return this.api.callApi(endpoints.LearnMarkQuestion, value, 'POST');
   }
 
-  cardAnswe$(learnSessionId: string, questionId: string) {
+  cardAnswer$(learnSessionId: string, questionId: string) {
     const value = {
       learnSessionId,
       questionId

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, filter } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { LearnAnswerDTO } from 'src/app/DTOs/Learn/LearnAnswerDTO';
 import { LearnMarkQuestionDTO } from 'src/app/DTOs/Learn/LearnMarkQuestionDTO';
@@ -18,14 +18,35 @@ export class LearnQuestionStepperComponent {
 
   learnSessionId: string;
   questions$ = new BehaviorSubject<LearnQuestionDTO[]>([]);
+  activeQuestion$: Observable<LearnQuestionDTO>;
   activeSolution$: Observable<LearnSolutionDTO> | undefined;
-  
+  progress$: Observable<string>;
+  showSolution$ = new BehaviorSubject<boolean>(false);
+  showResult$: Observable<boolean>;
+
   constructor(
     private questionStepperService: LearnQuestionStepperService,
     private activatedRoute: ActivatedRoute,
   ) {
     this.learnSessionId = this.activatedRoute.snapshot.paramMap.get(appRoutes.LearnId) ?? '';
     this.questionStepperService.getQuestions$(this.learnSessionId).subscribe(questions => this.questions$.next(questions));
+    this.showResult$ = this.questions$.asObservable().pipe(
+      map(questions => questions.some(q => !q.answered))
+    );
+    this.activeQuestion$ = this.questions$.asObservable().pipe(
+      map(questions => questions.filter(q => !q.answered)),
+      filter(questions => questions.length > 0),
+      map(questions => questions[0]),
+    );
+    this.progress$ = this.questions$.asObservable().pipe(
+      map(questions => {
+        return {
+          answered: questions.filter(q => q.answered).length + 1,
+          total: questions.length,
+        }
+      }),
+      map(progress => `${progress.answered}/${progress.total}`),
+    );
   }
 
   markQuestion(questionId: string) {
@@ -36,15 +57,29 @@ export class LearnQuestionStepperComponent {
       questionId,
       hard,
     } as LearnMarkQuestionDTO;
-    this.questionStepperService.markQuestion$(value);
+    this.questionStepperService.markQuestion$(value).subscribe(_ => {
+      const current = this.questions$.value;
+      const next = current.map(q => {
+        if (q.question.questionId !== questionId) {
+          return q;
+        }
+        return {
+          ...q,
+          markedAsHard: hard,
+        };
+      });
+      this.questions$.next(next);
+    });
   }
 
   cardAnswer(questionId: string) {
-    this.activeSolution$ = this.questionStepperService.cardAnswe$(this.learnSessionId, questionId);
+    this.activeSolution$ = this.questionStepperService.cardAnswer$(this.learnSessionId, questionId);
+    this.activeSolution$.subscribe(_ => this.showSolution$.next(true));
   }
 
   writeSolution(questionId: string) {
     this.activeSolution$ = this.questionStepperService.writeSolution$(this.learnSessionId, questionId);
+    this.activeSolution$.subscribe(_ => this.showSolution$.next(true));
   }
 
   writeAnswer(questionId: string, answer: string) {
@@ -63,5 +98,20 @@ export class LearnQuestionStepperComponent {
       correct,
     } as LearnQuestionSetCorrectDTO;
     this.questionStepperService.changeCorrectIncorrect$(value);
+  }
+
+  nextQuestion(currentQuestionId: string) {
+    const current = this.questions$.value;
+    const next = current.map(q => {
+      if (q.question.questionId !== currentQuestionId) {
+        return q;
+      }
+      return {
+        ...q,
+        answered: true,
+      };
+    });
+    this.questions$.next(next);
+    this.showSolution$.next(false);
   }
 }

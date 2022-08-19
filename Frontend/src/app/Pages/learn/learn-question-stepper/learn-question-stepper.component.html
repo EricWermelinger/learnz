@@ -1,1 +1,6 @@
-<p>learn-question-stepper works!</p>
+<div *ngIf="questions$ | async as questions">
+    <div *ngIf="showResult$ | async as showResult">
+        <app-learn-result *ngIf="showResult; else stepper" [questions]="questions"></app-learn-result>
+        <ng-template #stepper></ng-template>
+    </div>
+</div>

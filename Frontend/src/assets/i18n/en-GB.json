@@ -143,7 +143,10 @@
         "incorrectAnswers":"Errors",
         "progress":"Progress",
         "created":"Created",
-        "ended":"Completed"
+        "ended":"Completed",
+        "question":"Question",
+        "answer":"Answer",
+        "solution":"Solution"
     },
     "challenge":{
         "challenge":"Challenge",

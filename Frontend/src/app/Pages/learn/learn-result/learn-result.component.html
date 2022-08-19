@@ -1,10 +1,16 @@
 <div *ngFor="let result of questions">
-    <mat-card [ngClass]="{ 'answered': result.answered, 'answered-correct': result.answeredCorrect }">
+    <mat-card class="question-card">
+        <div>{{ 'learn.hard' | translate }}</div>
+        <div>{{ 'learn.question' | translate }}</div>
+        <div>{{ 'learn.answer' | translate }}</div>
+        <div>{{ 'learn.solution' | translate }}</div>
+    </mat-card>
+    <mat-card [ngClass]="{ 'answered': result.answered, 'answered-correct': result.answeredCorrect }" class="question-card">
         <div>
             <mat-icon *ngIf="result.markedAsHard">star</mat-icon>
         </div>
         <div>{{ result.question.question }}</div>
-        <div>{{ cleanupAnswer(result.answerByUser, result.question.questionType) }}</div>
-        <div>{{ cleanupAnswer(result.solution, result.question.questionType) }}</div>
+        <div>{{ result.answerByUser ?? '' }}</div>
+        <div>{{ result.solution ?? '' }}</div>
     </mat-card>
 </div>

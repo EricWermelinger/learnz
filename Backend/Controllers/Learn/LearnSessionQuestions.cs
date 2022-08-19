@@ -43,7 +43,9 @@ public class LearnSessionQuestions : Controller
                 AnswerSetTwo = lqs.PossibleAnswers == null ? null : GetAnswerSet(lqs, false)
             },
             Solution = session.Ended != null ? _learnQueryService.GetAnswer(lqs) : null
-        });
+        })
+        .OrderBy(qst => qst.Question.QuestionId)
+        .ToList();
         return Ok(questions);
     }
 
