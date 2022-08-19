@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { appRoutes } from 'src/app/Config/appRoutes';
 import { LearnSessionDTO } from 'src/app/DTOs/Learn/LearnSessionDTO';
+import { getSubjects } from 'src/app/Enums/Subject';
 import { LearnCreateDialogComponent } from './learn-create-dialog/learn-create-dialog.component';
 import { LearnService } from './learn.service';
 
@@ -18,6 +21,7 @@ export class LearnComponent {
   constructor(
     private learnService: LearnService,
     private dialog: MatDialog,
+    private router: Router,
   ) {
     this.openSessions$ = this.learnService.getOpenSessions$();
     this.closedSessions$ = this.learnService.getClosedSessions$();
@@ -29,5 +33,26 @@ export class LearnComponent {
         setEditable: true,
       }
     });
+  }
+
+  openSessionStepper(sessionId: string) {
+    this.router.navigate([appRoutes.App, appRoutes.Learn, sessionId]);
+  }
+
+  isEmpty(value: any[]) {
+    return value.length === 0;
+  }
+
+  translateSubject(subject: number) {
+    return 'Subject.' + getSubjects().filter(s => s.value === subject)[0].key;
+  }
+
+  calculateProgress(value: LearnSessionDTO) {
+    const answered = value.numberOfRightAnswers + value.numberOfWrongAnswers;
+    const total = answered + value.numberOfNotAnswerd;
+    if (total == 0) {
+      return 0;
+    }
+    return Math.round(answered / total * 100 * 100) / 100;
   }
 }

@@ -31,6 +31,7 @@ public class LearnSessionQuestions : Controller
         {
             Answered = lqs.AnswerByUser != null,
             AnsweredCorrect = lqs.AnsweredCorrect,
+            AnswerByUser = lqs.AnswerByUser,
             MarkedAsHard = lqs.MarkedAsHard ?? false,
             Question = new GeneralQuestionQuestionDTO
             {

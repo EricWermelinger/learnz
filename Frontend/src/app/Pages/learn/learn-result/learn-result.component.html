@@ -1,1 +1,10 @@
-<p>learn-result works!</p>
+<div *ngFor="let result of questions">
+    <mat-card [ngClass]="{ 'answered': result.answered, 'answered-correct': result.answeredCorrect }">
+        <div>
+            <mat-icon *ngIf="result.markedAsHard">star</mat-icon>
+        </div>
+        <div>{{ result.question.question }}</div>
+        <div>{{ cleanupAnswer(result.answerByUser, result.question.questionType) }}</div>
+        <div>{{ cleanupAnswer(result.solution, result.question.questionType) }}</div>
+    </mat-card>
+</div>

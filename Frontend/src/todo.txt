@@ -1,6 +1,4 @@
 todo
 
-Fix title missing for backend keys or remove them.
-
 Learn:
 Implement Frontend

@@ -130,7 +130,20 @@
         "errorOccured":"Error Occured while evaluating"
     },
     "learn":{
-        "learn":"Learn"
+        "learn":"Learn",
+        "createSession":"Create Session",
+        "newSession":"New Session",
+        "setName":"Set Name",
+        "onlyHardQuestions":"Only Hard Questions",
+        "openSessions":"Open Sessions",
+        "closedSessions":"Closed Sessions",
+        "noOpenSession":"No open sessions",
+        "noClosedSession":"No closed sessions",
+        "correctAnswers":"Correct",
+        "incorrectAnswers":"Errors",
+        "progress":"Progress",
+        "created":"Created",
+        "ended":"Completed"
     },
     "challenge":{
         "challenge":"Challenge",

@@ -1,0 +1,6 @@
+.answered {
+    background-color: var(--learnz-warn);
+}
+.answered.answered-correct {
+    background-color: var(--learnz-correct);
+}

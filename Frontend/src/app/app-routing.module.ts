@@ -11,6 +11,7 @@ import { DrawComponent } from './Pages/draw/draw.component';
 import { GroupChatComponent } from './Pages/group/group-chat/group-chat.component';
 import { GroupFilesComponent } from './Pages/group/group-files/group-files.component';
 import { GroupComponent } from './Pages/group/group.component';
+import { LearnQuestionStepperComponent } from './Pages/learn/learn-question-stepper/learn-question-stepper.component';
 import { LearnComponent } from './Pages/learn/learn.component';
 import { LoginComponent } from './Pages/login/login.component';
 import { SettingsComponent } from './Pages/settings/settings.component';
@@ -40,6 +41,7 @@ const routes: Routes = [
       { path: appRoutes.Create, component: CreateComponent },
       { path: `${appRoutes.Create}/:${appRoutes.CreateSetEditId}`, component: CreateSetEditComponent },
       { path: appRoutes.Learn, component: LearnComponent },
+      { path: `${appRoutes.Learn}/:${appRoutes.LearnId}`, component: LearnQuestionStepperComponent },
       { path: appRoutes.Challenge, component: ChallengeComponent },
       { path: `${appRoutes.Challenge}/:${appRoutes.ChallengeId}`, component: ChallengeActiveComponent },
       { path: appRoutes.Test, component: TestComponent },
