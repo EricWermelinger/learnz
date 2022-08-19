@@ -33,7 +33,7 @@ public class LearnQuestionAnswerWrite : Controller
             Answer = _learnQueryService.GetAnswer(question),
             WasCorrect = question.AnsweredCorrect == true ? true : false
         };
-        return Ok();
+        return Ok(solutionDto);
     }
 
     [HttpPost]

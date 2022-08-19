@@ -146,7 +146,8 @@
         "ended":"Completed",
         "question":"Question",
         "answer":"Answer",
-        "solution":"Solution"
+        "solution":"Solution",
+        "hard":"Hard"
     },
     "challenge":{
         "challenge":"Challenge",

@@ -1,6 +1,19 @@
 <div *ngIf="questions$ | async as questions">
-    <div *ngIf="showResult$ | async as showResult">
-        <app-learn-result *ngIf="showResult; else stepper" [questions]="questions"></app-learn-result>
-        <ng-template #stepper></ng-template>
+    <div *ngIf="showResult$ | async; else stepper">
+        <app-learn-result [questions]="questions"></app-learn-result>
     </div>
+    <ng-template #stepper>
+        <div *ngIf="progress$ | async as progress">{{ progress }}</div>
+        <div *ngIf="showSolution$ | async; else question">
+            <div *ngIf="activeSolution$ | async as activeSolution">
+                <div>{{ activeSolution.answer }}</div>
+                <div>{{ activeSolution.wasCorrect }}</div>
+            </div>
+        </div>
+        <ng-template #question>
+            <div *ngIf="activeQuestion$ | async as activeQuestion">
+                <app-general-question [question]="activeQuestion.question" (answered)="writeAnswer($event)"></app-general-question>
+            </div>
+        </ng-template>
+    </ng-template>
 </div>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, map, Observable, filter } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
 import { LearnAnswerDTO } from 'src/app/DTOs/Learn/LearnAnswerDTO';
 import { LearnMarkQuestionDTO } from 'src/app/DTOs/Learn/LearnMarkQuestionDTO';
 import { LearnQuestionDTO } from 'src/app/DTOs/Learn/LearnQuestionDTO';
@@ -31,7 +32,7 @@ export class LearnQuestionStepperComponent {
     this.learnSessionId = this.activatedRoute.snapshot.paramMap.get(appRoutes.LearnId) ?? '';
     this.questionStepperService.getQuestions$(this.learnSessionId).subscribe(questions => this.questions$.next(questions));
     this.showResult$ = this.questions$.asObservable().pipe(
-      map(questions => questions.some(q => !q.answered))
+      map(questions => !questions.some(q => !q.answered))
     );
     this.activeQuestion$ = this.questions$.asObservable().pipe(
       map(questions => questions.filter(q => !q.answered)),
@@ -82,7 +83,9 @@ export class LearnQuestionStepperComponent {
     this.activeSolution$.subscribe(_ => this.showSolution$.next(true));
   }
 
-  writeAnswer(questionId: string, answer: string) {
+  writeAnswer(question: GeneralQuestionAnswerDTO) {
+    const answer = question.answer;
+    const questionId = question.questionId;
     const value = {
       learnSessionId: this.learnSessionId,
       questionId,
