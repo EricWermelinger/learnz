@@ -147,7 +147,14 @@
         "question":"Question",
         "answer":"Answer",
         "solution":"Solution",
-        "hard":"Hard"
+        "hard":"Hard",
+        "youWereRight":"You were right!",
+        "youWereWrong":"You were wrong!",
+        "nextQuestion":"Next Question",
+        "markAsCorrect":"Mark as correct",
+        "markAsIncorrect":"Mark as incorrect",
+        "markAsHard":"Mark as hard",
+        "markAsEasy":"Mark as easy"
     },
     "challenge":{
         "challenge":"Challenge",

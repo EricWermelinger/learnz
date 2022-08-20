@@ -1,8 +1,11 @@
+.header {
+    border: 1px solid var(--learnz-black);
+}
 .answered {
-    background-color: var(--learnz-incorrect);
+    border: 1px solid var(--learnz-incorrect);
 }
 .answered.answered-correct {
-    background-color: var(--learnz-correct);
+    border: 1px solid var(--learnz-correct);
 }
 .question-card {
     margin-top: 16px;

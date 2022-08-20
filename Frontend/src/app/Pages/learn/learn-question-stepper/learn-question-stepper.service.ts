@@ -41,7 +41,7 @@ export class LearnQuestionStepperService {
   }
 
   changeCorrectIncorrect$(value: LearnQuestionSetCorrectDTO) {
-    this.api.callApi(endpoints.LearnQuestionSetCorrect, value, 'POST').subscribe();
+    return this.api.callApi(endpoints.LearnQuestionSetCorrect, value, 'POST');
   }
 
   getQuestions$(learnSessionId: string) {

@@ -1,4 +1,8 @@
 todo
 
 Learn:
-Implement Frontend
+- fix answer nice text in result
+- mark as easy / hard and correct / incorrect as slide-toggle instead of buttons
+- implement card mode with toggle in stepper
+- change implementation of DataTable Compute, because power is not supported
+- test

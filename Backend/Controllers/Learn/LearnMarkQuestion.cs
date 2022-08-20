@@ -20,7 +20,7 @@ public class LearnMarkQuestion : Controller
     public async Task<ActionResult> MarkQuestion(LearnMarkQuestionDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var question = await _dataContext.LearnQuestions.Where(lqs => lqs.LearnSessionId == request.LearnSessionId && lqs.LearnSession.Ended == null && lqs.QuestionId == request.QuestionId && lqs.LearnSession.UserId == guid)
+        var question = await _dataContext.LearnQuestions.Where(lqs => lqs.LearnSessionId == request.LearnSessionId && lqs.QuestionId == request.QuestionId && lqs.LearnSession.UserId == guid)
                                                         .FirstOrDefaultAsync();
         if (question == null)
         {

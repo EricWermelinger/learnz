@@ -19,6 +19,7 @@ export class GeneralQuestionComponent {
   distributeAnswers: KeyValue<string, string>[] = [];
   @Input() question: GeneralQuestionQuestionDTO = { } as GeneralQuestionQuestionDTO;
   @Input() challengeId: string = '';
+  @Input() progress: string = '';
   @Input() disabled: boolean = false;
   @Output() answered: EventEmitter<GeneralQuestionAnswerDTO> = new EventEmitter();
 

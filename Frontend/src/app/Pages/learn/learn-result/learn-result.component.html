@@ -1,4 +1,4 @@
-<mat-card class="question-card">
+<mat-card class="question-card header">
     <div>{{ 'learn.hard' | translate }}</div>
     <div>{{ 'learn.question' | translate }}</div>
     <div>{{ 'learn.answer' | translate }}</div>
@@ -6,7 +6,10 @@
 </mat-card>
 <mat-card *ngFor="let result of questions" [ngClass]="{ 'answered': result.answered, 'answered-correct': result.answeredCorrect }" class="question-card">
     <div>
-        <mat-icon *ngIf="result.markedAsHard">star</mat-icon>
+        <mat-icon *ngIf="result.markedAsHard; else notHard">star</mat-icon>
+        <ng-template #notHard>
+            <div>-</div>
+        </ng-template>
     </div>
     <div>{{ result.question.question }}</div>
     <div>{{ result.answerByUser ?? '' }}</div>

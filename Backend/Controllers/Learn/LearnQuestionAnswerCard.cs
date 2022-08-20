@@ -36,7 +36,7 @@ public class LearnQuestionAnswerCard : Controller
         }
         await _dataContext.SaveChangesAsync();
 
-        var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == learnSessionId && lss.UserId == guid && lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));
+        var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == learnSessionId && lss.UserId == guid && !lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));
         if (sessionWithQuestionLeft != null)
         {
             sessionWithQuestionLeft.Ended = DateTime.UtcNow;
@@ -45,6 +45,7 @@ public class LearnQuestionAnswerCard : Controller
 
         var solutionDto = new LearnSolutionDTO
         {
+            QuestionId = questionId,
             Answer = _learnQueryService.GetAnswer(question),
             WasCorrect = true
         };

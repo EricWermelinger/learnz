@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, map, Observable, filter } from 'rxjs';
+import { BehaviorSubject, map, Observable, filter, switchMap, of } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
 import { LearnAnswerDTO } from 'src/app/DTOs/Learn/LearnAnswerDTO';
@@ -34,6 +34,10 @@ export class LearnQuestionStepperComponent {
     this.showResult$ = this.questions$.asObservable().pipe(
       map(questions => !questions.some(q => !q.answered))
     );
+    this.showResult$.pipe(
+      filter(x => !!x),
+      switchMap(_ => this.questionStepperService.getQuestions$(this.learnSessionId))
+    ).subscribe(questions => this.questions$.next(questions));
     this.activeQuestion$ = this.questions$.asObservable().pipe(
       map(questions => questions.filter(q => !q.answered)),
       filter(questions => questions.length > 0),
@@ -94,13 +98,19 @@ export class LearnQuestionStepperComponent {
     this.questionStepperService.writeAnswer$(value).subscribe(_ => this.writeSolution(questionId));
   }
 
-  changeCorrectIncorrect(questionId: string, correct: boolean) {
+  changeCorrectIncorrect(solution: LearnSolutionDTO, correct: boolean) {
     const value = {
       learnSessionId: this.learnSessionId,
-      questionId,
+      questionId: solution.questionId,
       correct,
     } as LearnQuestionSetCorrectDTO;
-    this.questionStepperService.changeCorrectIncorrect$(value);
+    this.questionStepperService.changeCorrectIncorrect$(value).subscribe(_ => {
+      const newSolution = {
+        ...solution,
+        wasCorrect: correct,
+      };
+      this.activeSolution$ = of(newSolution);
+    });
   }
 
   nextQuestion(currentQuestionId: string) {
@@ -116,5 +126,10 @@ export class LearnQuestionStepperComponent {
     });
     this.questions$.next(next);
     this.showSolution$.next(false);
+  }
+
+  isHardQuestion(questionId: string) {
+    const filtered = this.questions$.value.filter(q => q.question.questionId === questionId);
+    return filtered.length > 0 && filtered[0].markedAsHard;
   }
 }

@@ -30,6 +30,7 @@ public class LearnQuestionAnswerWrite : Controller
         }
         var solutionDto = new LearnSolutionDTO
         {
+            QuestionId = questionId,
             Answer = _learnQueryService.GetAnswer(question),
             WasCorrect = question.AnsweredCorrect == true ? true : false
         };
@@ -49,13 +50,15 @@ public class LearnQuestionAnswerWrite : Controller
 
         question.AnswerByUser = request.Answer;
         question.AnsweredCorrect = _learnQueryService.EvaluateAnswer(request.Answer, question.RightAnswer, question.QuestionType);
-        bool questionLeft = await _dataContext.LearnQuestions.AnyAsync(lqs => lqs.LearnSessionId == request.LearnSessionId && lqs.AnsweredCorrect == null);
-        if (!questionLeft)
-        {
-            var session = await _dataContext.LearnSessions.FirstAsync(lss => lss.Id == request.LearnSessionId);
-            session.Ended = DateTime.UtcNow;
-        }
         await _dataContext.SaveChangesAsync();
+
+        var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == request.LearnSessionId && lss.UserId == guid && !lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));
+        if (sessionWithQuestionLeft != null)
+        {
+            sessionWithQuestionLeft.Ended = DateTime.UtcNow;
+            await _dataContext.SaveChangesAsync();
+        }
+
         return Ok();
     }
 }

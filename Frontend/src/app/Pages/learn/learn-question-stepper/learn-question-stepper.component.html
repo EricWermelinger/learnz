@@ -3,17 +3,23 @@
         <app-learn-result [questions]="questions"></app-learn-result>
     </div>
     <ng-template #stepper>
-        <div *ngIf="progress$ | async as progress">{{ progress }}</div>
-        <div *ngIf="showSolution$ | async; else question">
-            <div *ngIf="activeSolution$ | async as activeSolution">
-                <div>{{ activeSolution.answer }}</div>
-                <div>{{ activeSolution.wasCorrect }}</div>
+        <div *ngIf="progress$ | async as progress">
+            <div *ngIf="showSolution$ | async; else question">
+                <div *ngIf="activeSolution$ | async as activeSolution">
+                    <div>{{ (activeSolution.wasCorrect ? 'learn.youWereRight' : 'learn.youWereWrong') | translate }}</div>
+                    <div>{{ 'learn.solution' | translate }}: {{ activeSolution.answer }}</div>
+                    <button mat-flat-button color="primary" type="button" (click)="nextQuestion(activeSolution.questionId)">{{ 'learn.nextQuestion' | translate }}</button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="activeSolution.wasCorrect" (click)="changeCorrectIncorrect(activeSolution, true)">{{ 'learn.markAsCorrect' | translate }}</button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="!activeSolution.wasCorrect" (click)="changeCorrectIncorrect(activeSolution, false)">{{ 'learn.markAsIncorrect' | translate }}</button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="isHardQuestion(activeSolution.questionId)" (click)="markQuestion(activeSolution.questionId)">{{ 'learn.markAsHard' | translate }}</button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="!isHardQuestion(activeSolution.questionId)" (click)="markQuestion(activeSolution.questionId)">{{ 'learn.markAsEasy' | translate }}</button>
+                </div>
             </div>
+            <ng-template #question>
+                <div *ngIf="activeQuestion$ | async as activeQuestion">
+                    <app-general-question [question]="activeQuestion.question" [progress]="progress" (answered)="writeAnswer($event)"></app-general-question>
+                </div>
+            </ng-template>
         </div>
-        <ng-template #question>
-            <div *ngIf="activeQuestion$ | async as activeQuestion">
-                <app-general-question [question]="activeQuestion.question" (answered)="writeAnswer($event)"></app-general-question>
-            </div>
-        </ng-template>
     </ng-template>
 </div>

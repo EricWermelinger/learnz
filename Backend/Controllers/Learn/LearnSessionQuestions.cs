@@ -31,7 +31,7 @@ public class LearnSessionQuestions : Controller
         {
             Answered = lqs.AnswerByUser != null,
             AnsweredCorrect = lqs.AnsweredCorrect,
-            AnswerByUser = lqs.AnswerByUser,
+            AnswerByUser = string.IsNullOrEmpty(lqs.AnswerByUser) ? "-" : lqs.AnswerByUser,
             MarkedAsHard = lqs.MarkedAsHard ?? false,
             Question = new GeneralQuestionQuestionDTO
             {
@@ -54,8 +54,8 @@ public class LearnSessionQuestions : Controller
         switch (lqs.QuestionType)
         {
             case QuestionType.Distribute:
-                string answerSet = lqs.RightAnswer.Split("|||")[firstSet ? 0 : 1];
-                var answersDistribute = answerSet.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                var answerSet = lqs.RightAnswer.Split("|||").Select(ans => ans.Split("||")[firstSet ? 0 : 1]).ToList();
+                var answersDistribute = answerSet.Select(ans => new ChallengeQuestionAnswerDTO
                 {
                     AnswerId = new Guid(ans.Split("|")[0]),
                     Answer = ans.Split("|")[1]
