@@ -152,9 +152,10 @@
         "youWereWrong":"You were wrong!",
         "nextQuestion":"Next Question",
         "markAsCorrect":"Mark as correct",
-        "markAsIncorrect":"Mark as incorrect",
         "markAsHard":"Mark as hard",
-        "markAsEasy":"Mark as easy"
+        "changeToCardMode":"Basic Mode",
+        "changeToWriteMode":"Write Mode",
+        "percentage":"Percentage"
     },
     "challenge":{
         "challenge":"Challenge",
@@ -217,7 +218,8 @@
         "digits":"Digits",
         "translateTo":"Translate to",
         "true":"True",
-        "false":"False"
+        "false":"False",
+        "trueOfFalse":"True of False"
     },
     "fileUpload":{
         "uploadFile":"Upload File",

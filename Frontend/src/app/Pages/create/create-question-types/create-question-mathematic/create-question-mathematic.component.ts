@@ -99,6 +99,14 @@ export class CreateQuestionMathematicComponent {
       maxEvaluated = 'create.errorOccured';
       maxError = true;
     }
+    if (answerMin.includes('^')) {
+      minEvaluated = 'create.errorOccured';
+      minError = true;
+    }
+    if (answerMax.includes('^')) {
+      maxEvaluated = 'create.errorOccured';
+      maxError = true;
+    }
     this.dialog.open(CreateQuestionMathematicCheckDialogComponent, {
       data: {
         question,

@@ -12,11 +12,17 @@
         margin-top: 16px;
     }
 }
-.session {
+.session,
+.session-closed {
     margin-top: 16px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 16px;
+}
+.session {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+.session-closed {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 .bold {
     font-weight: bold;

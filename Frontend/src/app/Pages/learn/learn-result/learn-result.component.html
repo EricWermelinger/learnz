@@ -12,6 +12,10 @@
         </ng-template>
     </div>
     <div>{{ result.question.question }}</div>
-    <div>{{ result.answerByUser ?? '' }}</div>
+    <div>{{ cleanupAnswer(result) }}</div>
     <div>{{ result.solution ?? '' }}</div>
 </mat-card>
+<div class="back">
+    <div></div>
+    <button mat-flat-button color="primary" type="button" (click)="back()" class="back">{{ 'framework.back' | translate }}</button>
+</div>

@@ -50,6 +50,7 @@ public class LearnQuestionAnswerWrite : Controller
 
         question.AnswerByUser = request.Answer;
         question.AnsweredCorrect = _learnQueryService.EvaluateAnswer(request.Answer, question.RightAnswer, question.QuestionType);
+        question.MarkedAsHard = question.MarkedAsHard == true || question.AnsweredCorrect == false;
         await _dataContext.SaveChangesAsync();
 
         var sessionWithQuestionLeft = await _dataContext.LearnSessions.FirstOrDefaultAsync(lss => lss.Id == request.LearnSessionId && lss.UserId == guid && !lss.Questions.Any(lqs => lqs.AnsweredCorrect == null));

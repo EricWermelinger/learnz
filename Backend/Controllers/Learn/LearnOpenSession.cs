@@ -37,6 +37,7 @@ public class LearnOpenSession : Controller
                                                                  NumberOfWrongAnswers = lss.Questions.Where(lqs => lqs.AnsweredCorrect == false).Count(),
                                                                  NumberOfNotAnswerd = lss.Questions.Where(lqs => lqs.AnsweredCorrect == null).Count()
                                                              })
+                                                             .OrderByDescending(lss => lss.Created)
                                                              .ToListAsync();
         return Ok(openSessions);
     }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, map, Observable, filter, switchMap, of } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
@@ -8,6 +9,8 @@ import { LearnMarkQuestionDTO } from 'src/app/DTOs/Learn/LearnMarkQuestionDTO';
 import { LearnQuestionDTO } from 'src/app/DTOs/Learn/LearnQuestionDTO';
 import { LearnQuestionSetCorrectDTO } from 'src/app/DTOs/Learn/LearnQuestionSetCorrectDTO';
 import { LearnSolutionDTO } from 'src/app/DTOs/Learn/LearnSolutionDTO';
+import { getQuestionTypes } from 'src/app/Enums/QuestionType';
+import { getSubjects } from 'src/app/Enums/Subject';
 import { LearnQuestionStepperService } from './learn-question-stepper.service';
 
 @Component({
@@ -18,20 +21,30 @@ import { LearnQuestionStepperService } from './learn-question-stepper.service';
 export class LearnQuestionStepperComponent {
 
   learnSessionId: string;
+  activeModeWrite: boolean;
+  formGroup: FormGroup;
   questions$ = new BehaviorSubject<LearnQuestionDTO[]>([]);
   activeQuestion$: Observable<LearnQuestionDTO>;
-  activeSolution$: Observable<LearnSolutionDTO> | undefined;
+  activeSolution$ = new BehaviorSubject<LearnSolutionDTO | undefined>(undefined);
   progress$: Observable<string>;
-  showSolution$ = new BehaviorSubject<boolean>(false);
+  showSolution$ = new Observable<boolean>;
   showResult$: Observable<boolean>;
 
   constructor(
     private questionStepperService: LearnQuestionStepperService,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private formBuilder: FormBuilder,
   ) {
     this.learnSessionId = this.activatedRoute.snapshot.paramMap.get(appRoutes.LearnId) ?? '';
+    this.activeModeWrite = window.location.href.split('/').includes(appRoutes.LearnWrite);
+    this.formGroup = this.formBuilder.group({
+      correct: false,
+      hard: false
+    });
     this.questionStepperService.getQuestions$(this.learnSessionId).subscribe(questions => this.questions$.next(questions));
     this.showResult$ = this.questions$.asObservable().pipe(
+      filter(questions => questions.length > 0),
       map(questions => !questions.some(q => !q.answered))
     );
     this.showResult$.pipe(
@@ -51,6 +64,9 @@ export class LearnQuestionStepperComponent {
         }
       }),
       map(progress => `${progress.answered}/${progress.total}`),
+    );
+    this.showSolution$ = this.activeSolution$.asObservable().pipe(
+      map(solution => !!solution),
     );
   }
 
@@ -78,13 +94,25 @@ export class LearnQuestionStepperComponent {
   }
 
   cardAnswer(questionId: string) {
-    this.activeSolution$ = this.questionStepperService.cardAnswer$(this.learnSessionId, questionId);
-    this.activeSolution$.subscribe(_ => this.showSolution$.next(true));
+    this.questionStepperService.cardAnswer$(this.learnSessionId, questionId).subscribe(solution => {
+      this.activeSolution$.next(solution);
+      const fg = {
+        correct: solution.wasCorrect,
+        hard: this.isHardQuestion(questionId),
+      };
+      this.formGroup.patchValue(fg);
+    });
   }
 
   writeSolution(questionId: string) {
-    this.activeSolution$ = this.questionStepperService.writeSolution$(this.learnSessionId, questionId);
-    this.activeSolution$.subscribe(_ => this.showSolution$.next(true));
+    this.questionStepperService.writeSolution$(this.learnSessionId, questionId).subscribe(solution => {
+      this.activeSolution$.next(solution);
+      const fg = {
+        correct: solution.wasCorrect,
+        hard: this.isHardQuestion(questionId) || !solution.wasCorrect,
+      };
+      this.formGroup.patchValue(fg);
+    });
   }
 
   writeAnswer(question: GeneralQuestionAnswerDTO) {
@@ -98,7 +126,8 @@ export class LearnQuestionStepperComponent {
     this.questionStepperService.writeAnswer$(value).subscribe(_ => this.writeSolution(questionId));
   }
 
-  changeCorrectIncorrect(solution: LearnSolutionDTO, correct: boolean) {
+  changeCorrectIncorrect(solution: LearnSolutionDTO) {
+    const correct = this.formGroup.value.correct;
     const value = {
       learnSessionId: this.learnSessionId,
       questionId: solution.questionId,
@@ -109,7 +138,7 @@ export class LearnQuestionStepperComponent {
         ...solution,
         wasCorrect: correct,
       };
-      this.activeSolution$ = of(newSolution);
+      this.activeSolution$.next(newSolution);
     });
   }
 
@@ -125,7 +154,27 @@ export class LearnQuestionStepperComponent {
       };
     });
     this.questions$.next(next);
-    this.showSolution$.next(false);
+    this.activeSolution$.next(undefined);
+  }
+
+  changeMode() {
+    if (this.activeModeWrite) {
+      this.router.navigate([appRoutes.App, appRoutes.Learn, appRoutes.LearnCard, this.learnSessionId]);
+    } else {
+      this.router.navigate([appRoutes.App, appRoutes.Learn, appRoutes.LearnWrite, this.learnSessionId]);
+    }
+  }
+
+  translateSubject(subject: string) {
+    const filtered = getSubjects().filter(s => s.value === parseInt(subject));
+    if (filtered.length === 0) {
+      return '';
+    }
+    return 'Subject.' + filtered[0].key;
+  }
+
+  getQuestionType(type: number) {
+    return getQuestionTypes().filter(t => t.value === type)[0].key;
   }
 
   isHardQuestion(questionId: string) {

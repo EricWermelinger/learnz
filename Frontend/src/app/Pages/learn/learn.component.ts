@@ -36,7 +36,7 @@ export class LearnComponent {
   }
 
   openSessionStepper(sessionId: string) {
-    this.router.navigate([appRoutes.App, appRoutes.Learn, sessionId]);
+    this.router.navigate([appRoutes.App, appRoutes.Learn, appRoutes.LearnWrite, sessionId]);
   }
 
   isEmpty(value: any[]) {
@@ -54,5 +54,14 @@ export class LearnComponent {
       return 0;
     }
     return Math.round(answered / total * 100 * 100) / 100;
+  }
+
+  calculatePercentage(value: LearnSessionDTO) {
+    const rightAnsweres = value.numberOfRightAnswers;
+    const total = value.numberOfRightAnswers + value.numberOfWrongAnswers + value.numberOfNotAnswerd;
+    if (total == 0) {
+      return 0;
+    }
+    return Math.round(rightAnsweres / total * 100 * 100) / 100;
   }
 }

@@ -52,7 +52,7 @@ export class LearnCreateDialogComponent {
   save() {
     this.createDialogService.createSession$(this.formGroup.value).subscribe(_ => {
       this.dialogRef.close();
-      this.router.navigate([appRoutes.App, appRoutes.Learn, this.learnSessionId]);
+      this.router.navigate([appRoutes.App, appRoutes.Learn, appRoutes.LearnWrite, this.learnSessionId]);
     });
   }
 

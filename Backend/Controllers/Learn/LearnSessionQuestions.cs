@@ -60,6 +60,7 @@ public class LearnSessionQuestions : Controller
                     AnswerId = new Guid(ans.Split("|")[0]),
                     Answer = ans.Split("|")[1]
                 })
+                .OrderBy(ans => ans.Answer)
                 .ToList();
                 return answersDistribute;
             case QuestionType.MultipleChoice:

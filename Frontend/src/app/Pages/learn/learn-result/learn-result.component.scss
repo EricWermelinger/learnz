@@ -13,3 +13,8 @@
     grid-template-columns: 40px 1fr 1fr 1fr;
     gap: 16px;
 }
+.back {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}

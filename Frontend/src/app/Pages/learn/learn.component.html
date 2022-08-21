@@ -34,7 +34,7 @@
         <div *ngIf="closedSessions$ | async as closedSessions">
             <h3 *ngIf="isEmpty(closedSessions); else sessionsClosed" class="no-session">{{ 'learn.noClosedSession' | translate }}</h3>
             <ng-template #sessionsClosed>
-                <mat-card class="session">
+                <mat-card class="session-closed">
                     <div class="bold">{{ 'learn.created' | translate }}</div>
                     <div class="bold">{{ 'learn.ended' | translate }}</div>
                     <div class="bold">{{ 'learn.setName' | translate }}</div>
@@ -42,8 +42,9 @@
                     <div class="bold">{{ 'create.subjectSecond' | translate }}</div>
                     <div class="bold">{{ 'learn.correctAnswers' | translate }}</div>
                     <div class="bold">{{ 'learn.incorrectAnswers' | translate }}</div>
+                    <div class="bold">{{ 'learn.percentage' | translate }}</div>
                 </mat-card>
-                <mat-card *ngFor="let closedSession of closedSessions" (click)="openSessionStepper(closedSession.learnSessionId)" class="session active">
+                <mat-card *ngFor="let closedSession of closedSessions" (click)="openSessionStepper(closedSession.learnSessionId)" class="session-closed active">
                     <div>
                         <div>{{ closedSession.created | date: 'dd.MM.yyyy' }}</div>
                         <div>{{ closedSession.created | date: 'HH:mm:ss' }}</div>
@@ -57,6 +58,7 @@
                     <div>{{ !!closedSession.subjectSecond ? (translateSubject(closedSession.subjectSecond) | translate) : '-' }}</div>
                     <div>{{ closedSession.numberOfRightAnswers }}</div>
                     <div>{{ closedSession.numberOfWrongAnswers }}</div>
+                    <div>{{ calculatePercentage(closedSession) }}%</div>
                 </mat-card>
             </ng-template>
         </div>
