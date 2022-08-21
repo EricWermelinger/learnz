@@ -3,45 +3,18 @@
 create:
 create implement last sets by: set modified, set learned, set tested, set challenged and check for policy
 
-challenge:
+Learn:
+Aktive Sessions - GET
+Abgeschlossene Sessions - GET
+Neue Session - POST
+Question of Session - GET (only hard true/false), als hart gilt, im letzten Durchgang falsch oder mehr als die hälfte falsch
+Answer Karteikarten - POST
+Answer Question - POST
 
-- Frontend DTOs
-- Frontend Endpoints
-
-ChallengeActive used for all interactions -> WebSocket (ws active)
-active:
-- Challenge Name, Set (on begin only)
-- Players (join, left)
-- Challenge cancelled (on cancel by creator only)
-- Question (next question, after answered)
-- Result (before to next question or all answered)
-- State BeforeGame, Question, Answered, Result, Ended
-
-get open challenges -> ChallengeOpen GET (no ws)
-open new challenge -> ChallengeOpen POST (no ws)
-join challenge -> ChallengeOpen PUT (trigger active Players)
-open challenge cancel for creator / left for others -> ChallengeOpen DELETE (trigger active Cancel)
-
-get question -> ChallengeQuestion GET (trigger active Question) -> In active state from Result to Question
-answer question -> ChallengeQuestion POST (trigger active Question state from Question to Answered)
-
-get result -> ChallengeResult GET (trigger active Result state from Answered or Question to Result) -> In active
-
-start challenge / go to next question / go to result / save result on last question / end challenge -> ChallengeFlow POST
-
-all in all:
-- ChallengeActive GET with WebSocket -> in challengeId
-- ChallengeOpen GET / POST / PUT / DELETE
-- ChallengeAnswer POST -> in answer as string
-- ChallengeFlow POST -> in challengeId
-
-States:
-- BeforeGame -> ChallengeQuestionPosed Count = 0
-- Question -> Last ChallengeQuestionPosed is without answer of player
-- Answer -> Last ChallengeQuestionPosed is with answer of player
-- Result -> Last ChallengeQuestionPosed IsActive = false
-- Ended -> Last ChallengeQuestionPosed IsActive and no further questions
-
+Open Sessions -> GET / POST
+Closed Sessions -> GET
+Session Quesions -> GET
+Question Answer -> POST
 
 learn:
 get sets: recently learned, own, public (by policy) filter by subject (main & second) & title

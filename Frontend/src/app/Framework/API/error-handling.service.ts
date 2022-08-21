@@ -26,7 +26,8 @@ export class ErrorHandlingService {
       return ref.afterClosed();
     } else {
       const error = 'errorBackend.' + (data.error?.error ?? 'unknownError');
-      this.displayToastError(error + '_title', error);
+      const errorTitle = 'errorBackend.title';
+      this.displayToastError(errorTitle, error);
       return NEVER;
     }    
   }

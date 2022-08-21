@@ -41,4 +41,5 @@ public class User
     public ICollection<Challenge> ChallengeOwners { get; set; }
     public ICollection<ChallengeQuestionAnswer> ChallengeQuestionAnswers { get; set; }
     public ICollection<ChallengeUser> ChallengeUsers { get; set; }
+    public ICollection<LearnSession> LearnSessions { get; set; }
 }

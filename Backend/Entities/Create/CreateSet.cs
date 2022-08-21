@@ -22,4 +22,5 @@ public class CreateSet
     public ICollection<CreateQuestionTrueFalse> QuestionTrueFalses { get; set; }
     public ICollection<CreateQuestionWord> QuestionWords { get; set; }
     public ICollection<Challenge> Challenges { get; set; }
+    public ICollection<LearnSession> LearnSessions { get; set; }
 }

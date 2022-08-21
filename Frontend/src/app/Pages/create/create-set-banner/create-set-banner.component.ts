@@ -5,6 +5,7 @@ import { appRoutes } from 'src/app/Config/appRoutes';
 import { CreateSetOverviewDTO } from 'src/app/DTOs/Create/CreateSetOverviewDTO';
 import { getSubjects } from 'src/app/Enums/Subject';
 import { ChallengeCreateDialogComponent } from '../../challenge/challenge-create-dialog/challenge-create-dialog.component';
+import { LearnCreateDialogComponent } from '../../learn/learn-create-dialog/learn-create-dialog.component';
 
 @Component({
   selector: 'app-create-set-banner',
@@ -37,6 +38,16 @@ export class CreateSetBannerComponent {
   
   challengeSet(setId: string, setName: string) {
     this.dialog.open(ChallengeCreateDialogComponent, {
+      data: {
+        setEditable: false,
+        setName: setName,
+        setId: setId,
+      }
+    });
+  }
+
+  learnSet(setId: string, setName: string) {
+    this.dialog.open(LearnCreateDialogComponent, {
       data: {
         setEditable: false,
         setName: setName,

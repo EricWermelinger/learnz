@@ -557,6 +557,74 @@ namespace Learnz.Migrations
                     b.ToTable("GroupMessages");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.LearnQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnswerByUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("AnsweredCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LearnSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("MarkedAsHard")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PossibleAnswers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RightAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LearnSessionId");
+
+                    b.ToTable("LearnQuestions");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.LearnSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Ended")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LearnSessions");
+                });
+
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1114,6 +1182,36 @@ namespace Learnz.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.LearnQuestion", b =>
+                {
+                    b.HasOne("Learnz.Entities.LearnSession", "LearnSession")
+                        .WithMany("Questions")
+                        .HasForeignKey("LearnSessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LearnSession");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.LearnSession", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("LearnSessions")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "User")
+                        .WithMany("LearnSessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
                 {
                     b.HasOne("Learnz.Entities.User", "Owner")
@@ -1266,6 +1364,8 @@ namespace Learnz.Migrations
                 {
                     b.Navigation("Challenges");
 
+                    b.Navigation("LearnSessions");
+
                     b.Navigation("QuestionDistributes");
 
                     b.Navigation("QuestionMathematics");
@@ -1288,6 +1388,11 @@ namespace Learnz.Migrations
                     b.Navigation("GroupMembers");
 
                     b.Navigation("GroupMessages");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.LearnSession", b =>
+                {
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("Learnz.Entities.LearnzFile", b =>
@@ -1321,6 +1426,8 @@ namespace Learnz.Migrations
                     b.Navigation("GroupMessages");
 
                     b.Navigation("GroupUsers");
+
+                    b.Navigation("LearnSessions");
 
                     b.Navigation("LearnzFileOwner");
 

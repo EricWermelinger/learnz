@@ -1,5 +1,8 @@
 <div *ngIf="disabled" class="text">{{ 'challenge.peopleAreAnswering' | translate }}</div>
-<div class="text">{{ question.question }}</div>
+<div class="question-bar">
+    <div class="text">{{ question.question }}</div>
+    <div *ngIf="progress" class="text">{{ progress }}</div>
+</div>    
 <div *ngIf="getQuestionType(question.questionType) === 'Mathematic'" class="text-smaller">{{ 'generalQuestion.roundBy' | translate }} {{ question.description }} {{ 'generalQuestion.digits' | translate }}</div>
 <div *ngIf="getQuestionType(question.questionType) === 'Word'" class="text">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubject(question.description ?? '') | translate }}</div>
 <div *ngIf="showDistribute(question.questionType)">
