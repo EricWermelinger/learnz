@@ -3,28 +3,32 @@
 create:
 create implement last sets by: set modified, set learned, set tested, set challenged and check for policy
 
-Learn:
-Aktive Sessions - GET
-Abgeschlossene Sessions - GET
-Neue Session - POST
-Question of Session - GET (only hard true/false), als hart gilt, im letzten Durchgang falsch oder mehr als die hälfte falsch
-Answer Karteikarten - POST
-Answer Question - POST
+Test:
 
-Open Sessions -> GET / POST
-Closed Sessions -> GET
-Session Quesions -> GET
-Question Answer -> POST
+Create by Dialog
+Overview for open / closed
+Stepper
+Result
 
-learn:
-get sets: recently learned, own, public (by policy) filter by subject (main & second) & title
-get previous results
-start session
-get questions (all / only hard ones)
-answer question
-get result
+TestOpen
+- GET
+TestClosed
+- GET
+TestGroupTestCreate
+- POST: in: GroupId, SetId, TestId, Name, MaxTime
+- PUT: List<QuestionId, Pose: bool, Points>
+TestGroupTestVisibility
+- POST: TestId, Visible
+TestCreate
+- POST: in: SetId, TestId, Name, MaxTime
+TestQuestion
+- GET: List of Questions
+- POST: QuestionId, TestId, Answer
+TestStart
+- POST: TestId
+TestEnd
+- POST: TestId
 
-test:
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title
 start test

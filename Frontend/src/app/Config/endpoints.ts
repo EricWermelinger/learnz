@@ -19,13 +19,13 @@ export const endpoints = {
     GroupMessages: 'groupMessages',
     GroupOverview: 'groupOverview',
     GroupPossibleUsers: 'groupPossibleUsers',
-    LearnClosedSession: 'learnClosedSession', // use get
-    LearnMarkQuestion: 'learnMarkQuestion', // use post
-    LearnOpenSession: 'learnOpenSession', // use get / post
-    LearnQuestionAnswerCard: 'learnQuestionAnswerCard', // use get
-    LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite', // use get / post
-    LearnQuestionSetCorrect: 'learnQuestionSetCorrect', // use post
-    LearnSessionQuestions: 'learnSessionQuestions', // use get
+    LearnClosedSession: 'learnClosedSession',
+    LearnMarkQuestion: 'learnMarkQuestion',
+    LearnOpenSession: 'learnOpenSession',
+    LearnQuestionAnswerCard: 'learnQuestionAnswerCard',
+    LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite',
+    LearnQuestionSetCorrect: 'learnQuestionSetCorrect',
+    LearnSessionQuestions: 'learnSessionQuestions',
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',

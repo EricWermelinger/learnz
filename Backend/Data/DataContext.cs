@@ -268,6 +268,48 @@ public class DataContext : DbContext
             .WithMany(lss => lss.Questions)
             .HasForeignKey(lqs => lqs.LearnSessionId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Test>()
+            .HasOne(tst => tst.Set)
+            .WithMany(crs => crs.Tests)
+            .HasForeignKey(tst => tst.SetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestGroup>()
+            .HasOne(tsg => tsg.Test)
+            .WithMany(tst => tst.TestGroups)
+            .HasForeignKey(tsg => tsg.TestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestGroup>()
+            .HasOne(tsg => tsg.Group)
+            .WithMany(grp => grp.TestGroups)
+            .HasForeignKey(tsg => tsg.GroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestQuestion>()
+            .HasOne(tsq => tsq.Test)
+            .WithMany(tst => tst.TestQuestions)
+            .HasForeignKey(tsq => tsq.TestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestOfUser>()
+            .HasOne(tou => tou.Test)
+            .WithMany(tst => tst.TestOfUsers)
+            .HasForeignKey(tou => tou.TestId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestOfUser>()
+            .HasOne(tou => tou.User)
+            .WithMany(usr => usr.TestOfUsers)
+            .HasForeignKey(tou => tou.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestQuestionOfUser>()
+            .HasOne(tqu => tqu.TestOfUser)
+            .WithMany(tou => tou.TestQuestionOfUsers)
+            .HasForeignKey(tqu => tqu.TestOfUserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -306,4 +348,10 @@ public class DataContext : DbContext
 
     public virtual DbSet<LearnSession> LearnSessions { get; set; }
     public virtual DbSet<LearnQuestion> LearnQuestions { get; set; }
+
+    public virtual DbSet<Test> Tests { get; set; }
+    public virtual DbSet<TestGroup> TestGroups { get; set; }
+    public virtual DbSet<TestQuestion> TestQuestions { get; set; }
+    public virtual DbSet<TestQuestionOfUser> TestQuestionUsers { get; set; }
+    public virtual DbSet<TestOfUser> TestUsers { get; set; }
 }

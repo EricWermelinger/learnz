@@ -12,4 +12,5 @@ public class Group
     public ICollection<GroupFile> GroupFiles { get; set; }
     public ICollection<GroupMember> GroupMembers { get; set; }
     public IEnumerable<GroupMessage> GroupMessages { get; set; }
+    public ICollection<TestGroup> TestGroups { get; set; }
 }
