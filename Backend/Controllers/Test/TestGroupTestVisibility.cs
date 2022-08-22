@@ -16,4 +16,17 @@ public class TestGroupTestVisibility : Controller
         _userService = userService;
     }
 
+    [HttpPost]
+    public async Task<ActionResult> SetVisiblity(TestVisibilityDTO request)
+    {
+        var guid = _userService.GetUserGuid();
+        var test = await _dataContext.Tests.FirstOrDefaultAsync(tst => tst.OwnerId == guid && tst.Id == request.TestId);
+        if (test == null)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
+        test.Visible = request.Visible;
+        await _dataContext.SaveChangesAsync();
+        return Ok();
+    }
 }

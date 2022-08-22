@@ -240,6 +240,7 @@
         "fileNotProvided":"File not provided",
         "fileNotFound":"File not found",
         "fileNotValid":"File not valid",
+        "groupNotAccessible":"Group is not accessible",
         "accessBlocked":"Access blocked",
         "fillFormCorrectly":"Fill form correctly",
         "invalidLogin":"Invalid login",
@@ -250,6 +251,7 @@
         "learnSessionNotAccessible":"Learn Session is currently not accessible.",
         "learnSetContainsNoHardQuesitons":"Set contains no hard questions.",
         "setNotAccessible":"Set is currently not accessible",
+        "testNotAccessible":"Test is currently not accessible",
         "unknownError":"Unknown error"
     },
     "Subject":{

@@ -16,7 +16,6 @@ TestClosed
 - GET
 TestGroupTestCreate
 - POST: in: GroupId, SetId, TestId, Name, MaxTime
-- PUT: List<QuestionId, Pose: bool, Points>
 TestGroupTestVisibility
 - POST: TestId, Visible
 TestCreate
@@ -29,7 +28,10 @@ TestStart
 TestEnd
 - POST: TestId
 TestGroupAdjustUserPoints
-- POST: UserId, QuestionId, TestId, true / false, Points
+- POST: UserId, QuestionId, TestId, true / false, Points - List<QuestionId, Pose: bool, Points>
+TestSettings
+- GET: Questions (all of set), Visible, Name, Active, MaxTime...
+- POST: Same as Get
 
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title
