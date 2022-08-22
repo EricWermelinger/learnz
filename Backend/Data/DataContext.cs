@@ -275,6 +275,12 @@ public class DataContext : DbContext
             .HasForeignKey(tst => tst.SetId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Test>()
+            .HasOne(tst => tst.Owner)
+            .WithMany(crs => crs.TestOwners)
+            .HasForeignKey(tst => tst.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<TestGroup>()
             .HasOne(tsg => tsg.Test)
             .WithMany(tst => tst.TestGroups)

@@ -28,6 +28,8 @@ TestStart
 - POST: TestId
 TestEnd
 - POST: TestId
+TestGroupAdjustUserPoints
+- POST: UserId, QuestionId, TestId, true / false, Points
 
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title

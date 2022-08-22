@@ -1,0 +1,42 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Learnz.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class TestOpen : Controller
+{
+    private readonly DataContext _dataContext;
+    private readonly IUserService _userService;
+    public TestOpen(DataContext dataContext, IUserService userService)
+    {
+        _dataContext = dataContext;
+        _userService = userService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<TestDTO>>> GetClosedTests()
+    {
+        var guid = _userService.GetUserGuid();
+        var tests = await _dataContext.Tests.Where(tst => (tst.OwnerId == guid || tst.TestGroups.Any(tgr => tgr.Group.GroupMembers.Any(grm => grm.UserId == guid)))
+                                                && !tst.Active
+                                                && (tst.OwnerId == guid || tst.Visible))
+                                            .OrderByDescending(tst => tst.TestGroups.Any() ? DateTime.MaxValue : tst.Created)
+                                            .Select(tst => new TestDTO
+                                            {
+                                                TestId = tst.Id,
+                                                Name = tst.Name,
+                                                SubjectMain = tst.Set.SubjectMain,
+                                                SubjectSecond = tst.Set.SubjectSecond,
+                                                MaxTime = tst.MaxTime,
+                                                IsOwner = tst.OwnerId == guid,
+                                                IsGroupTest = tst.TestGroups.Any(),
+                                                PointsScored = null,
+                                                PointsPossible = tst.TestQuestions.Sum(tqs => tqs.PointsPossible)
+                                            })
+                                            .ToListAsync();
+        return Ok(tests);
+    }
+}
