@@ -17,7 +17,7 @@ public class TestOpen : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TestDTO>>> GetClosedTests()
+    public async Task<ActionResult<List<TestDTO>>> GetOpenTests()
     {
         var guid = _userService.GetUserGuid();
         var tests = await _dataContext.Tests.Where(tst => (tst.OwnerId == guid || tst.TestGroups.Any(tgr => tgr.Group.GroupMembers.Any(grm => grm.UserId == guid)))

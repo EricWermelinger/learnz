@@ -11,11 +11,13 @@ public class TestGroupTestCreate : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly ISetPolicyChecker _setPolicyChecker;
-    public TestGroupTestCreate(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker)
+    private readonly ITestQueryService _testQueryService;
+    public TestGroupTestCreate(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker, ITestQueryService testQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
         _setPolicyChecker = setPolicyChecker;
+        _testQueryService = testQueryService;
     }
 
     [HttpPost]
@@ -50,7 +52,7 @@ public class TestGroupTestCreate : Controller
             OwnerId = guid,
             SetId = request.SetId,
             Visible = false,
-            Active = false
+            Active = true
         };
         _dataContext.Tests.Add(test);
         await _dataContext.SaveChangesAsync();
@@ -62,6 +64,12 @@ public class TestGroupTestCreate : Controller
         };
         _dataContext.TestGroups.Add(groupTest);
         await _dataContext.SaveChangesAsync();
+
+        var succes = await _testQueryService.CreateTestQuestions(request.TestId, request.SetId);
+        if (!succes)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
 
         return Ok();
     }

@@ -37,6 +37,7 @@ builder.Services.AddScoped<IGroupQueryService, GroupQueryService>();
 builder.Services.AddScoped<ICreateQueryService, CreateQueryService>();
 builder.Services.AddScoped<IChallengeQueryService, ChallengeQueryService>();
 builder.Services.AddScoped<ILearnQueryService, LearnQueryService>();
+builder.Services.AddScoped<ITestQueryService, TestQueryService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(options => {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

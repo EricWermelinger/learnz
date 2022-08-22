@@ -10,28 +10,31 @@ Overview for open / closed
 Stepper
 Result
 
-TestOpen
+TestOpen - ok
 - GET
-TestClosed
+TestClosed - ok
 - GET
-TestGroupTestCreate
+TestGroupTestCreate - ok
 - POST: in: GroupId, SetId, TestId, Name, MaxTime
-TestGroupTestVisibility
+TestGroupTestVisibility - ok
 - POST: TestId, Visible
-TestCreate
+TestCreate - ok
 - POST: in: SetId, TestId, Name, MaxTime
+TestStart - ok
+- POST: TestId
+TestEnd - ok
+- POST: TestId
+
 TestQuestion
 - GET: List of Questions
 - POST: QuestionId, TestId, Answer
-TestStart
-- POST: TestId
-TestEnd
-- POST: TestId
 TestGroupAdjustUserPoints
 - POST: UserId, QuestionId, TestId, true / false, Points - List<QuestionId, Pose: bool, Points>
 TestSettings
 - GET: Questions (all of set), Visible, Name, Active, MaxTime...
 - POST: Same as Get
+TestResult
+- GET
 
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title

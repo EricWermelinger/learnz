@@ -16,4 +16,17 @@ public class TestEnd : Controller
         _userService = userService;
     }
 
+    [HttpPost]
+    public async Task<ActionResult> EndTest(TestIdDTO request)
+    {
+        var guid = _userService.GetUserGuid();
+        var test = await _dataContext.TestOfUsers.FirstOrDefaultAsync(tou => tou.UserId == guid && tou.TestId == request.TestId && tou.Ended == null);
+        if (test == null)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
+        test.Ended = DateTime.UtcNow;
+        await _dataContext.SaveChangesAsync();
+        return Ok();
+    }
 }

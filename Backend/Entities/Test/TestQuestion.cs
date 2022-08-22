@@ -12,4 +12,6 @@ public class TestQuestion
     public string RightAnswer { get; set; }
     public int PointsPossible { get; set; }
     public bool Visible { get; set; }
+
+    public ICollection<TestQuestionOfUser> TestQuestionOfUsers { get; set; }
 }

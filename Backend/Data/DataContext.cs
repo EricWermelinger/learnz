@@ -316,6 +316,12 @@ public class DataContext : DbContext
             .WithMany(tou => tou.TestQuestionOfUsers)
             .HasForeignKey(tqu => tqu.TestOfUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestQuestionOfUser>()
+            .HasOne(tqu => tqu.TestQuestion)
+            .WithMany(tou => tou.TestQuestionOfUsers)
+            .HasForeignKey(tqu => tqu.TestQuestionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -358,6 +364,6 @@ public class DataContext : DbContext
     public virtual DbSet<Test> Tests { get; set; }
     public virtual DbSet<TestGroup> TestGroups { get; set; }
     public virtual DbSet<TestQuestion> TestQuestions { get; set; }
-    public virtual DbSet<TestQuestionOfUser> TestQuestionUsers { get; set; }
-    public virtual DbSet<TestOfUser> TestUsers { get; set; }
+    public virtual DbSet<TestQuestionOfUser> TestQuestionOfUsers { get; set; }
+    public virtual DbSet<TestOfUser> TestOfUsers { get; set; }
 }

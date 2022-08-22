@@ -11,11 +11,13 @@ public class TestCreate : Controller
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
     private readonly ISetPolicyChecker _setPolicyChecker;
-    public TestCreate(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker)
+    private readonly ITestQueryService _testQueryService;
+    public TestCreate(DataContext dataContext, IUserService userService, ISetPolicyChecker setPolicyChecker, ITestQueryService testQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
         _setPolicyChecker = setPolicyChecker;
+        _testQueryService = testQueryService;
     }
 
     [HttpPost]
@@ -45,6 +47,11 @@ public class TestCreate : Controller
         };
         _dataContext.Tests.Add(test);
         await _dataContext.SaveChangesAsync();
+        var succes = await _testQueryService.CreateTestQuestions(request.TestId, request.SetId);
+        if (!succes)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
         return Ok();
     }
 }
