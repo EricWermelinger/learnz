@@ -26,6 +26,17 @@ export const endpoints = {
     LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite',
     LearnQuestionSetCorrect: 'learnQuestionSetCorrect',
     LearnSessionQuestions: 'learnSessionQuestions',
+    TestClosed: 'testClosed', // get
+    TestCreate: 'testCreate', // post
+    TestEnd: 'testEnd', // post
+    TestGroupAdjustUserPoints: 'testGroupAdjustUserPoints', // post
+    TestGroupTestCreate: 'testGroupTestCreate', // post
+    TestGroupTestVisibility: 'testGroupTestVisibility', // post
+    TestOpen: 'testOpen', // get
+    TestQuestions: 'testQuestions', // get / post
+    TestResult: 'testResult', // get
+    TestSettings: 'testSettings', // get / post
+    TestStart: 'testStart', // post
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',
