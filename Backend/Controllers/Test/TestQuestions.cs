@@ -42,8 +42,8 @@ public class TestQuestions : Controller
                                                                       Question = tqu.TestQuestion.Question,
                                                                       Description = tqu.TestQuestion.Description,
                                                                       QuestionType = tqu.TestQuestion.QuestionType,
-                                                                      AnswerSetOne = tqu.TestQuestion.PossibleAnswers == null ? null : GetAnswerSet(tqu.TestQuestion, true),
-                                                                      AnswerSetTwo = tqu.TestQuestion.PossibleAnswers == null ? null : GetAnswerSet(tqu.TestQuestion, false)
+                                                                      AnswerSetOne = tqu.TestQuestion.PossibleAnswers == null ? null : _testQueryService.GetAnswerSet(tqu.TestQuestion, true),
+                                                                      AnswerSetTwo = tqu.TestQuestion.PossibleAnswers == null ? null : _testQueryService.GetAnswerSet(tqu.TestQuestion, false)
                                                                   },
                                                                   Answer = tqu.AnswerByUser
                                                               })
@@ -75,35 +75,5 @@ public class TestQuestions : Controller
 
         await _dataContext.SaveChangesAsync();
         return Ok();
-    }
-
-    private List<ChallengeQuestionAnswerDTO>? GetAnswerSet(TestQuestion tqs, bool firstSet)
-    {
-        switch (tqs.QuestionType)
-        {
-            case QuestionType.Distribute:
-                var answerSet = tqs.RightAnswer.Split("|||").Select(ans => ans.Split("||")[firstSet ? 0 : 1]).ToList();
-                var answersDistribute = answerSet.Select(ans => new ChallengeQuestionAnswerDTO
-                {
-                    AnswerId = new Guid(ans.Split("|")[0]),
-                    Answer = ans.Split("|")[1]
-                })
-                .OrderBy(ans => ans.Answer)
-                .ToList();
-                return answersDistribute;
-            case QuestionType.MultipleChoice:
-                if (firstSet)
-                {
-                    var answerMultipleChoice = tqs.RightAnswer.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
-                    {
-                        AnswerId = new Guid(ans.Split("|")[0]),
-                        Answer = ans.Split("|")[1]
-                    })
-                    .ToList();
-                    return answerMultipleChoice;
-                }
-                return null;
-        }
-        return null;
     }
 }

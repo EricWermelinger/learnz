@@ -16,4 +16,24 @@ public class TestGroupAdjustUserPoints : Controller
         _userService = userService;
     }
 
+    [HttpPost]
+    public async Task<ActionResult> AdjustUserPoints(TestAdjustUserPointDTO request)
+    {
+        var guid = _userService.GetUserGuid();
+        var testQuestion = await _dataContext.TestQuestionOfUsers.Where(tqu => tqu.TestOfUser.Test.OwnerId == guid
+                                                                                && tqu.TestOfUser.TestId == request.TestId
+                                                                                && tqu.TestOfUser.UserId == request.UserId
+                                                                                && tqu.TestQuestion.QuestionId == request.QuestionId)
+                                                                 .FirstOrDefaultAsync();
+        if (testQuestion == null)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
+        
+        testQuestion.PointsScored = request.PointsScored;
+        testQuestion.AnsweredCorrect = request.IsCorrect;
+        await _dataContext.SaveChangesAsync();
+
+        return Ok();
+    }
 }

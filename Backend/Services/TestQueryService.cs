@@ -186,4 +186,34 @@ public class TestQueryService : ITestQueryService
                 return answer.Trim().ToLower() == rightAnswer.Trim().ToLower();
         }
     }
+
+    public List<ChallengeQuestionAnswerDTO>? GetAnswerSet(TestQuestion testQuestion, bool firstSet)
+    {
+        switch (testQuestion.QuestionType)
+        {
+            case QuestionType.Distribute:
+                var answerSet = testQuestion.RightAnswer.Split("|||").Select(ans => ans.Split("||")[firstSet ? 0 : 1]).ToList();
+                var answersDistribute = answerSet.Select(ans => new ChallengeQuestionAnswerDTO
+                {
+                    AnswerId = new Guid(ans.Split("|")[0]),
+                    Answer = ans.Split("|")[1]
+                })
+                .OrderBy(ans => ans.Answer)
+                .ToList();
+                return answersDistribute;
+            case QuestionType.MultipleChoice:
+                if (firstSet)
+                {
+                    var answerMultipleChoice = testQuestion.RightAnswer.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                    {
+                        AnswerId = new Guid(ans.Split("|")[0]),
+                        Answer = ans.Split("|")[1]
+                    })
+                    .ToList();
+                    return answerMultipleChoice;
+                }
+                return null;
+        }
+        return null;
+    }
 }

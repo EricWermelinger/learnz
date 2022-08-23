@@ -27,6 +27,7 @@ public class TestOpen : Controller
                                             .Select(tst => new TestDTO
                                             {
                                                 TestId = tst.Id,
+                                                TestOfUserId = tst.TestOfUsers.Any(tou => tou.UserId == guid) ? tst.TestOfUsers.First(tou => tou.UserId == guid).Id : null,
                                                 Name = tst.Name,
                                                 SubjectMain = tst.Set.SubjectMain,
                                                 SubjectSecond = tst.Set.SubjectSecond,

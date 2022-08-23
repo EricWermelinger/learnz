@@ -27,14 +27,14 @@ TestEnd - ok
 TestQuestion - ok
 - GET: List of Questions
 - POST: QuestionId, TestId, Answer
+TestResult - ok
+- GET
 
 TestGroupAdjustUserPoints
 - POST: UserId, QuestionId, TestId, true / false, Points - List<QuestionId, Pose: bool, Points>
 TestSettings
 - GET: Questions (all of set), Visible, Name, Active, MaxTime...
 - POST: Same as Get
-TestResult
-- GET
 
 create group test: -> open private set for group
 get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title

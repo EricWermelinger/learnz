@@ -3,4 +3,5 @@ public interface ITestQueryService
 {
     Task<bool> CreateTestQuestions(Guid testId, Guid setId);
     bool EvaluateAnswer(string answer, string rightAnswer, QuestionType questionType);
+    List<ChallengeQuestionAnswerDTO>? GetAnswerSet(TestQuestion testQuestion, bool v);
 }

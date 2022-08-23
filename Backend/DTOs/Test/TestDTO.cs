@@ -2,6 +2,7 @@
 public class TestDTO
 {
     public Guid TestId { get; set; }
+    public Guid? TestOfUserId { get; set; }
     public string Name { get; set; }
     public int MaxTime { get; set; }
     public Subject SubjectMain { get; set; }
