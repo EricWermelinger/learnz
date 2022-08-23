@@ -24,10 +24,10 @@ TestStart - ok
 - POST: TestId
 TestEnd - ok
 - POST: TestId
-
-TestQuestion
+TestQuestion - ok
 - GET: List of Questions
 - POST: QuestionId, TestId, Answer
+
 TestGroupAdjustUserPoints
 - POST: UserId, QuestionId, TestId, true / false, Points - List<QuestionId, Pose: bool, Points>
 TestSettings

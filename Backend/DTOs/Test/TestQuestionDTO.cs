@@ -2,5 +2,5 @@
 public class TestQuestionDTO
 {
     public GeneralQuestionQuestionDTO Question { get; set; }
-    public string? CurrentAnswer { get; set; }
+    public string? Answer { get; set; }
 }

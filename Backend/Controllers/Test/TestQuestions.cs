@@ -10,10 +10,12 @@ public class TestQuestions : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IUserService _userService;
-    public TestQuestions(DataContext dataContext, IUserService userService)
+    private readonly ITestQueryService _testQueryService;
+    public TestQuestions(DataContext dataContext, IUserService userService, ITestQueryService testQueryService)
     {
         _dataContext = dataContext;
         _userService = userService;
+        _testQueryService = testQueryService;
     }
 
     [HttpGet]
@@ -43,11 +45,36 @@ public class TestQuestions : Controller
                                                                       AnswerSetOne = tqu.TestQuestion.PossibleAnswers == null ? null : GetAnswerSet(tqu.TestQuestion, true),
                                                                       AnswerSetTwo = tqu.TestQuestion.PossibleAnswers == null ? null : GetAnswerSet(tqu.TestQuestion, false)
                                                                   },
-                                                                  CurrentAnswer = tqu.AnswerByUser
+                                                                  Answer = tqu.AnswerByUser
                                                               })
                                                               .ToListAsync();
 
         return Ok(questions);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> SaveAnswer(TestAnswerDTO request)
+    {
+        var guid = _userService.GetUserGuid();
+        var question = await _dataContext.TestQuestionOfUsers.Include(tqu => tqu.TestQuestion)
+                                                             .FirstOrDefaultAsync(tqu => tqu.Id == request.QuestionOfUserId
+                                                                                   && tqu.TestOfUser.UserId == guid
+                                                                                   && tqu.TestOfUser.Ended == null
+                                                                                   && tqu.TestOfUser.Started.AddMinutes(tqu.TestOfUser.Test.MaxTime) > DateTime.UtcNow
+                                                                                   && tqu.TestOfUser.Test.Active
+                                                                                   && tqu.TestOfUser.Test.Visible);
+        if (question == null)
+        {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
+
+        question.AnswerByUser = request.Answer;
+        bool isCorrect = _testQueryService.EvaluateAnswer(request.Answer, question.TestQuestion.RightAnswer, question.TestQuestion.QuestionType);
+        question.AnsweredCorrect = isCorrect;
+        question.PointsScored = isCorrect ? question.TestQuestion.PointsPossible : 0;
+
+        await _dataContext.SaveChangesAsync();
+        return Ok();
     }
 
     private List<ChallengeQuestionAnswerDTO>? GetAnswerSet(TestQuestion tqs, bool firstSet)
