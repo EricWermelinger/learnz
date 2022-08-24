@@ -26,6 +26,11 @@ export const appRoutes = {
     Challenge: 'challenge',
     ChallengeId: 'challengeId',
     Test: 'test',
+    TestId: 'testId',
+    TestResult: 'test-result',
+    TestSetting: 'test-settings',
+    TestStepper: 'test-stepper',
+    TestUserId: 'testUserId',
     Draw: 'draw',
     Settings: 'settings'
 }
