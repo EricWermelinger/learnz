@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/internal/Observable';
+import { appRoutes } from 'src/app/Config/appRoutes';
+import { TestSettingDTO } from 'src/app/DTOs/Test/TestSettingDTO';
 import { TestSettingsService } from './test-settings.service';
 
 @Component({
@@ -8,8 +12,18 @@ import { TestSettingsService } from './test-settings.service';
 })
 export class TestSettingsComponent {
 
+  settings$: Observable<TestSettingDTO>;
+  testId: string;
+
   constructor(
     private settingsService: TestSettingsService,
-  ) { }
+    private activatedRoute: ActivatedRoute,
+  ) {
+    this.testId = this.activatedRoute.snapshot.paramMap.get(appRoutes.TestId) ?? '';
+    this.settings$ = this.settingsService.getSettings$(this.testId);
+  }
 
+  saveSettings(settings: TestSettingDTO) {
+    this.settingsService.setSettings$(settings);
+  }
 }

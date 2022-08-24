@@ -19,7 +19,7 @@ export class TestStepperService {
   }
 
   questionAnswer$(value: TestAnswerDTO) {
-    return this.api.callApi(endpoints.TestQuestions, value, 'POST');
+    this.api.callApi(endpoints.TestQuestions, value, 'POST').subscribe();
   }
 
   endTest$(testOfUserId: string) {
