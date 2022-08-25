@@ -1,1 +1,10 @@
-<p>test-stepper works!</p>
+<div *ngIf="questionsChoice$ | async as questionChoice">
+    <div *ngFor="let choice of questionChoice" (click)="setQuestionActive(choice.key)" [ngClass]="{ 'choice': true, 'answered': choice.value }">
+        <div>{{ getQuestionNumber(choice.key, questionChoice) }}</div>
+    </div>
+    <button mat-flat-button color="primary" type="button" (click)="endTest()">{{ 'test.endTest' | translate }}</button>
+    <div *ngIf="activeQuestion !== undefined">
+        <app-general-question [question]="activeQuestion.question" [currentAnswer]="activeQuestion.answer" (answered)="answerQuestion($event)"></app-general-question>
+    </div>
+    
+</div>

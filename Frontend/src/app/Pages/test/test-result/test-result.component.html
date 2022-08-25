@@ -30,5 +30,8 @@
             </ng-template>
         </div>
         <div>{{ question.pointsScored }} / {{ question.pointsPossible }}</div>
+        <button mat-flat-button type="button" (click)="editPoints(question.question.questionId, question.wasRight, question.pointsScored)">
+            <mat-icon>edit</mat-icon>
+        </button>
     </div>
 </div>

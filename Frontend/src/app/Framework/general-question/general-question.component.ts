@@ -20,6 +20,7 @@ export class GeneralQuestionComponent {
   @Input() question: GeneralQuestionQuestionDTO = { } as GeneralQuestionQuestionDTO;
   @Input() challengeId: string = '';
   @Input() progress: string = '';
+  @Input() currentAnswer: string | null = null;
   @Input() disabled: boolean = false;
   @Output() answered: EventEmitter<GeneralQuestionAnswerDTO> = new EventEmitter();
 

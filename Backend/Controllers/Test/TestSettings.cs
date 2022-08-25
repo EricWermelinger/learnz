@@ -58,7 +58,7 @@ public class TestSettings : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> UpdateSettings(TestSettingDTO request)
+    public async Task<ActionResult> UpdateSettings(TestSaveSettingsDTO request)
     {
         var guid = _userService.GetUserGuid();
         var test = await _dataContext.Tests.FirstOrDefaultAsync(tst => tst.OwnerId == guid && tst.Id == request.TestId);
@@ -88,13 +88,13 @@ public class TestSettings : Controller
         var testQuestions = await _dataContext.TestQuestions.Where(tqs => tqs.TestId == test.Id).ToListAsync();
         foreach (var testQuestion in testQuestions)
         {
-            var newValue = testQuestion == null ? null : request.Questions.FirstOrDefault(rqs => rqs.Question.QuestionId == testQuestion.QuestionId);
+            var newValue = testQuestion == null ? null : request.Questions.FirstOrDefault(rqs => rqs.QuestionId == testQuestion.QuestionId);
             if (testQuestion == null || newValue == null)
             {
                 continue;
             }
             testQuestion.Visible = newValue.Visible;
-            testQuestion.PointsPossible = newValue.PointsPossible;
+            testQuestion.PointsPossible = newValue.Points;
         }
 
         await _dataContext.SaveChangesAsync();

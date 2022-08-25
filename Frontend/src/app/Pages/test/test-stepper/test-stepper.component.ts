@@ -1,7 +1,9 @@
+import { KeyValue } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, first, map, Observable } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
 import { TestAnswerDTO } from 'src/app/DTOs/Test/TestAnswerDTO';
 import { TestQuestionDTO } from 'src/app/DTOs/Test/TestQuestionDTO';
 import { TestStepperService } from './test-stepper.service';
@@ -14,7 +16,9 @@ import { TestStepperService } from './test-stepper.service';
 export class TestStepperComponent {
 
   testOfUserId: string;
-  questions$: Observable<TestQuestionDTO[]>;
+  questions$ = new BehaviorSubject<TestQuestionDTO[]>([]);
+  questionsChoice$: Observable<KeyValue<string, boolean>[]>;
+  activeQuestion: TestQuestionDTO | undefined;
 
   constructor(
     private stepperService: TestStepperService,
@@ -22,7 +26,23 @@ export class TestStepperComponent {
     private router: Router,
   ) {
     this.testOfUserId = this.activatedRoute.snapshot.paramMap.get(appRoutes.TestId) ?? '';
-    this.questions$ = this.stepperService.getQuestions$(this.testOfUserId);
+    this.stepperService.getQuestions$(this.testOfUserId).subscribe(questions => this.questions$.next(questions));
+    this.questionsChoice$ = this.questions$.pipe(
+      map(questions => questions.map(question => {
+        return {
+          key: question.question.questionId,
+          value: !!question.answer
+        }
+      }))
+    );
+    this.questions$.pipe(
+      first(),
+      map(questions => questions[0]),
+    ).subscribe(question => this.activeQuestion = question);
+  }
+
+  answerQuestion(value: GeneralQuestionAnswerDTO) {
+    this.questionAnswer(value.answer, this.activeQuestion!.question.questionId);
   }
 
   questionAnswer(answer: string, questionOfUserId: string) {
@@ -30,12 +50,23 @@ export class TestStepperComponent {
       answer,
       questionOfUserId,
     } as TestAnswerDTO;
-    this.stepperService.questionAnswer$(value);
+    this.stepperService.questionAnswer$(value).subscribe(_ => {
+      this.stepperService.getQuestions$(this.testOfUserId).subscribe(questions => this.questions$.next(questions));
+    });
   }
 
   endTest() {
     this.stepperService.endTest$(this.testOfUserId).subscribe(_ => {
       this.router.navigate([appRoutes.App, appRoutes.Test]);
     });
+  }
+
+  setQuestionActive(questionId: string) {
+    const question = this.questions$.value.find(question => question.question.questionId === questionId);
+    this.activeQuestion = question;
+  }
+
+  getQuestionNumber(questionId: string, choices: KeyValue<string, boolean>[]) {
+    return choices.findIndex(choice => choice.key === questionId) + 1;
   }
 }

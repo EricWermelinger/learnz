@@ -201,7 +201,10 @@
         "timeUsed":"Time Used",
         "group":"Group",
         "time":"Time",
-        "points":"Points"
+        "points":"Points",
+        "endTest":"End Test",
+        "editPoints":"Edit Points",
+        "isCorrect":"Correct"
     },
     "draw":{
         "draw":"Draw"

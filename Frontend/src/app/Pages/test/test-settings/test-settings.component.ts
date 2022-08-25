@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { TestSaveSettingsDTO } from 'src/app/DTOs/Test/TestSaveSettingsDTO';
 import { TestSettingDTO } from 'src/app/DTOs/Test/TestSettingDTO';
 import { TestSettingsService } from './test-settings.service';
 
@@ -23,7 +24,7 @@ export class TestSettingsComponent {
     this.settings$ = this.settingsService.getSettings$(this.testId);
   }
 
-  saveSettings(settings: TestSettingDTO) {
+  saveSettings(settings: TestSaveSettingsDTO) {
     this.settingsService.setSettings$(settings);
   }
 }

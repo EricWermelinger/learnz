@@ -66,6 +66,7 @@ import { TestResultComponent } from './Pages/test/test-result/test-result.compon
 import { TestSettingsComponent } from './Pages/test/test-settings/test-settings.component';
 import { TestCreateDialogComponent } from './Pages/test/test-create-dialog/test-create-dialog.component';
 import { TestResultOverviewComponent } from './Pages/test/test-result-overview/test-result-overview.component';
+import { TestEditPointsComponent } from './Pages/test/test-edit-points/test-edit-points.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -127,6 +128,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestResultComponent,
     TestSettingsComponent,
     TestResultOverviewComponent,
+    TestEditPointsComponent,
   ],
   imports: [
     BrowserModule,

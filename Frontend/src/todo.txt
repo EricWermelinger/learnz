@@ -1,4 +1,3 @@
 todo
-test result
-test settings
-test stepper
+test result -> edit user points
+test settings -> change settings

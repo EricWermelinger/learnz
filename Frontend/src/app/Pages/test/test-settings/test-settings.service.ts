@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
+import { TestSaveSettingsDTO } from 'src/app/DTOs/Test/TestSaveSettingsDTO';
 import { TestSettingDTO } from 'src/app/DTOs/Test/TestSettingDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 
@@ -16,7 +17,7 @@ export class TestSettingsService {
     return this.api.callApi<TestSettingDTO>(endpoints.TestSettings, { testId }, 'GET');
   }
 
-  setSettings$(value: TestSettingDTO) {
+  setSettings$(value: TestSaveSettingsDTO) {
     this.api.callApi(endpoints.TestSettings, value, 'POST').subscribe();
   }
 }
