@@ -1,1 +1,4 @@
 todo
+test result
+test settings
+test stepper

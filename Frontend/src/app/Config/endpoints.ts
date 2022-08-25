@@ -33,8 +33,10 @@ export const endpoints = {
     TestGroupTestCreate: 'testGroupTestCreate', // post -> create dialog
     TestGroupTestVisibility: 'testGroupTestVisibility', // post -> context menu on overview for group tests
     TestOpen: 'testOpen', // get -> overview
+    TestPossibleGroups: 'testPossibleGroups', // get -> create dialog
     TestQuestions: 'testQuestions', // get / post -> stepper
     TestResult: 'testResult', // get -> result
+    TestResultOverview: 'testResultOverview', // get -> result overview
     TestSettings: 'testSettings', // get / post -> settings
     TestStart: 'testStart', // post -> overview
     TogetherAskUser: 'togetherAskUser',

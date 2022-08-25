@@ -16,6 +16,7 @@ import { LearnComponent } from './Pages/learn/learn.component';
 import { LoginComponent } from './Pages/login/login.component';
 import { SettingsComponent } from './Pages/settings/settings.component';
 import { SignUpComponent } from './Pages/sign-up/sign-up.component';
+import { TestResultOverviewComponent } from './Pages/test/test-result-overview/test-result-overview.component';
 import { TestResultComponent } from './Pages/test/test-result/test-result.component';
 import { TestSettingsComponent } from './Pages/test/test-settings/test-settings.component';
 import { TestStepperComponent } from './Pages/test/test-stepper/test-stepper.component';
@@ -50,10 +51,10 @@ const routes: Routes = [
       { path: `${appRoutes.Challenge}/:${appRoutes.ChallengeId}`, component: ChallengeActiveComponent },
       { path: appRoutes.Test, component: TestComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestResult}/:${appRoutes.TestId}`, component: TestResultComponent },
+      { path: `${appRoutes.Test}/${appRoutes.TestResultOverview}/:${appRoutes.TestId}`, component: TestResultOverviewComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestResult}/:${appRoutes.TestUserId}/:${appRoutes.TestId}`, component: TestResultComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestSetting}/:${appRoutes.TestId}`, component: TestSettingsComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestStepper}/:${appRoutes.TestId}`, component: TestStepperComponent },
-
       { path: appRoutes.Draw, component: DrawComponent },
       { path: appRoutes.Settings, component: SettingsComponent },
     ],

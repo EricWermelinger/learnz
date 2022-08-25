@@ -44,7 +44,7 @@ public class TestResult : Controller
             PointsScored = test.TestQuestionOfUsers.Sum(tqu => tqu.PointsScored ?? 0),
             SubjectMain = test.Test.Set.SubjectMain,
             SubjectSecond = test.Test.Set.SubjectSecond,
-            TimeUsed = test.Ended == null ? test.Test.MaxTime : (int)((TimeSpan)(test.Ended - test.Started)).TotalMinutes,
+            TimeUsed = test.Ended == null ? test.Test.MaxTime : Math.Min(((int)((TimeSpan)(test.Ended - test.Started)).TotalMinutes), test.Test.MaxTime),
             Questions = test.TestQuestionOfUsers.Select(tqs => new TestQuestionResultDTO
             {
                 Answer = tqs.AnswerByUser,

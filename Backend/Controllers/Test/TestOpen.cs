@@ -21,7 +21,7 @@ public class TestOpen : Controller
     {
         var guid = _userService.GetUserGuid();
         var tests = await _dataContext.Tests.Where(tst => (tst.OwnerId == guid || tst.TestGroups.Any(tgr => tgr.Group.GroupMembers.Any(grm => grm.UserId == guid)))
-                                                && !tst.Active
+                                                && tst.Active
                                                 && (tst.OwnerId == guid || tst.Visible))
                                             .OrderByDescending(tst => tst.TestGroups.Any() ? DateTime.MaxValue : tst.Created)
                                             .Select(tst => new TestDTO

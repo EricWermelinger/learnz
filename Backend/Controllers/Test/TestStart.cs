@@ -17,7 +17,7 @@ public class TestStart : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> StartTest(TestIdDTO request)
+    public async Task<ActionResult<TestIdDTO>> StartTest(TestIdDTO request)
     {
         var guid = _userService.GetUserGuid();
         var test = await _dataContext.Tests.FirstOrDefaultAsync(tst => tst.Id == request.TestId
@@ -56,7 +56,12 @@ public class TestStart : Controller
             }
         }
         await _dataContext.SaveChangesAsync();
+
+        var testDto = new TestIdDTO
+        {
+            TestId = testOfUserId
+        };
         
-        return Ok();
+        return Ok(testDto);
     }
 }

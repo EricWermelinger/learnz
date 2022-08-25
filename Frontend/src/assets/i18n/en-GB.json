@@ -184,7 +184,24 @@
         "points":"Points"
     },
     "test":{
-        "test":"Test"
+        "test":"Test",
+        "groupTest":"Group Test",
+        "createTest":"Create Test",
+        "newTest":"New Test",
+        "testName":"Test Name",
+        "maxTime":"Max Time in Minutes",
+        "openTests":"Open Tests",
+        "closedTests":"Closed Tests",
+        "noOpenTest":"No open Tests",
+        "noClosedTest":"No closed Tests",
+        "owner":"Owner",
+        "pointsScored":"Points Scored",
+        "pointsPossible":"Points Possible",
+        "percentage":"Percentage",
+        "timeUsed":"Time Used",
+        "group":"Group",
+        "time":"Time",
+        "points":"Points"
     },
     "draw":{
         "draw":"Draw"

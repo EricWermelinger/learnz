@@ -1,1 +1,34 @@
-<p>test-result works!</p>
+<div *ngIf="result$ | async as result">
+    <h2>{{ result.name }} - {{ translateSubject(result.subjectMain) | translate }}{{ !result.subjectSecond ? '' : ((' - ' + translateSubject(result.subjectSecond)) | translate) }}</h2>
+    <div>{{ 'test.maxTime' }}: {{ result.maxTime }}</div>
+    <div>{{ 'test.timeUsed' }}: {{ result.timeUsed }}</div>
+    <div>{{ result.pointsScored }} / {{ result.pointsPossible }}</div>
+    <div>{{ calculatePercentage(result.pointsScored, result.pointsPossible) }}</div>
+    <div *ngFor="let question of result.questions">
+        <div>
+            <div class="question">{{ question.question.question }}</div>
+            <div *ngIf="getQuestionType(question.question.questionType) === 'Distribute'" class="description distribute">
+                <div>
+                    <div *ngFor="let answer of question.question.answerSetOne" class="answer">{{ answer.answer }}</div>
+                </div>
+                <div>
+                    <div *ngFor="let answer of question.question.answerSetTwo" class="answer">{{ answer.answer }}</div>
+                </div>
+            </div>
+            <div *ngIf="getQuestionType(question.question.questionType) === 'Mathematic'" class="description">{{ 'generalQuestion.roundBy' | translate }} {{ question.question.description }} {{ 'generalQuestion.digits' | translate }}</div>
+            <div *ngIf="getQuestionType(question.question.questionType) === 'MultipleChoice'" class="description">
+                <div *ngFor="let answer of question.question.answerSetOne" class="answer">{{ answer.answer }}</div>
+            </div>
+            <div *ngIf="getQuestionType(question.question.questionType) === 'TrueFalse'" class="description">{{ 'generalQuestion.trueOfFalse' | translate }}</div>
+            <div *ngIf="getQuestionType(question.question.questionType) === 'Word'" class="description">{{ 'generalQuestion.translateTo' | translate }} {{ translateSubjectFromString(question.question.description ?? '') | translate }}</div>
+        </div>
+        <div>{{ question.answer }}</div>
+        <div>
+            <mat-icon *ngIf="question.wasRight; else notCorrect">check</mat-icon>
+            <ng-template #notCorrect>
+                <mat-icon>close</mat-icon>
+            </ng-template>
+        </div>
+        <div>{{ question.pointsScored }} / {{ question.pointsPossible }}</div>
+    </div>
+</div>

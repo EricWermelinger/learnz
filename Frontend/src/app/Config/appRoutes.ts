@@ -28,6 +28,7 @@ export const appRoutes = {
     Test: 'test',
     TestId: 'testId',
     TestResult: 'test-result',
+    TestResultOverview: 'test-result-overview',
     TestSetting: 'test-settings',
     TestStepper: 'test-stepper',
     TestUserId: 'testUserId',

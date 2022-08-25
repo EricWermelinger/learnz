@@ -21,7 +21,7 @@ public class TestClosed : Controller
     {
         var guid = _userService.GetUserGuid();
         var tests = await _dataContext.Tests.Where(tst => (tst.OwnerId == guid || tst.TestOfUsers.Any(tou => tou.UserId == guid))
-                                                && tst.Active
+                                                && !tst.Active
                                                 && (tst.OwnerId == guid || tst.Visible))
                                             .OrderByDescending(tst => tst.TestOfUsers.Any(tou => tou.UserId == guid) ? tst.TestOfUsers.First(tou => tou.UserId == guid).Started : tst.Created)
                                             .Select(tst => new TestDTO

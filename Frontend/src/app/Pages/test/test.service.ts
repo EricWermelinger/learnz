@@ -26,7 +26,7 @@ export class TestService {
     const value = {
       testId
     } as TestIdDTO;
-    return this.api.callApi(endpoints.TestStart, value, 'POST');
+    return this.api.callApi<TestIdDTO>(endpoints.TestStart, value, 'POST');
   }
 
   testVisibility$(testId: string, visible: boolean) {
