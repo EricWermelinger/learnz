@@ -2,7 +2,8 @@
     "framework":{
         "save":"Save",
         "cancel":"Cancel",
-        "back":"Back"
+        "back":"Back",
+        "yes":"Yes"
     },
     "login":{
         "login":"Login",
@@ -207,7 +208,8 @@
         "editPoints":"Edit Points",
         "isCorrect":"Correct",
         "visible":"Visible",
-        "active":"Active"
+        "active":"Active",
+        "areYouSureToEnd":"Are you sure you want to end the test?"
     },
     "draw":{
         "draw":"Draw"

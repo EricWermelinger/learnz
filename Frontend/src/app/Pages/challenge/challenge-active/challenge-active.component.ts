@@ -36,7 +36,7 @@ export class ChallengeActiveComponent implements OnDestroy {
     this.heartBeat$ = merge(
       interval(1000).pipe(takeUntil(this.destroyed$)),
       this.challenge$,
-    ).pipe(map(x => true));
+    ).pipe(map(_ => true));
   }
 
   challengeNextFlow() {

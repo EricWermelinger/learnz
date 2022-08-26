@@ -1,6 +1,7 @@
 todo
 test stepper answer not correctly shown after save
-test end test confirm dialog
+test stepper auto end
+test design result overview
 test design result
 
 test everything and fix

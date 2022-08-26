@@ -1,4 +1,5 @@
 .choice {
+    margin-top: 8px;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -12,7 +13,16 @@
 .answered {
     background-color: var(--learnz-primary);
 }
+.active {
+    margin-top: 0px;
+    border: 8px solid var(--learnz-primary);
+}
+.active.answered {
+    margin-top: 0px;
+    border: 8px solid var(--learnz-black);
+}
 button {
+    margin-top: 8px;
     width: 60px;
     height: 60px;
 }

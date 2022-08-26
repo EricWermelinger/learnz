@@ -19,7 +19,7 @@ public class TestQuestions : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TestQuestionDTO>>> GetQuestions(Guid testOfUserId)
+    public async Task<ActionResult<TestQuestionInfoDTO>> GetQuestions(Guid testOfUserId)
     {
         var guid = _userService.GetUserGuid();
         var testOfUser = await _dataContext.TestOfUsers.FirstOrDefaultAsync(tou => tou.UserId == guid
@@ -32,7 +32,8 @@ public class TestQuestions : Controller
         {
             return BadRequest(ErrorKeys.TestNotAccessible);
         }
-        
+
+        var test = await _dataContext.Tests.FirstAsync(tst => tst.Id == testOfUser.TestId);
         var questions = await _dataContext.TestQuestionOfUsers.Where(tou => tou.TestOfUserId == testOfUserId && tou.TestQuestion.Visible)
                                                               .Select(tqu => new TestQuestionDTO
                                                               {
@@ -49,7 +50,14 @@ public class TestQuestions : Controller
                                                               })
                                                               .ToListAsync();
 
-        return Ok(questions);
+        var dto = new TestQuestionInfoDTO
+        {
+            Name = test.Name,
+            End = testOfUser.Started.AddMinutes(test.MaxTime),
+            Questions = questions
+        };
+
+        return Ok(dto);
     }
 
     [HttpPost]

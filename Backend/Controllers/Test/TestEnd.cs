@@ -25,12 +25,13 @@ public class TestEnd : Controller
         {
             return BadRequest(ErrorKeys.TestNotAccessible);
         }
-        testOfUser.Ended = DateTime.UtcNow;
+        var test = await _dataContext.Tests.FirstAsync(tst => tst.Id == testOfUser.TestId);
+        DateTime maxEnding = testOfUser.Started.AddMinutes(test.MaxTime);
+        testOfUser.Ended = DateTime.UtcNow > maxEnding ? maxEnding : DateTime.UtcNow;
         await _dataContext.SaveChangesAsync();
         var isGroupTest = await _dataContext.TestGroups.AnyAsync(tgr => tgr.TestId == testOfUser.TestId);
         if (!isGroupTest)
         {
-            var test = await _dataContext.Tests.FirstAsync(tst => tst.Id == testOfUser.TestId);
             test.Active = false;
             await _dataContext.SaveChangesAsync();
         }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
 import { TestAnswerDTO } from 'src/app/DTOs/Test/TestAnswerDTO';
 import { TestIdDTO } from 'src/app/DTOs/Test/TestIdDTO';
-import { TestQuestionDTO } from 'src/app/DTOs/Test/TestQuestionDTO';
+import { TestQuestionInfoDTO } from 'src/app/DTOs/Test/TestQuestionInfoDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class TestStepperService {
   ) { }
 
   getQuestions$(testOfUserId: string) {
-    return this.api.callApi<TestQuestionDTO[]>(endpoints.TestQuestions, { testOfUserId }, 'GET');
+    return this.api.callApi<TestQuestionInfoDTO>(endpoints.TestQuestions, { testOfUserId }, 'GET');
   }
 
   questionAnswer$(value: TestAnswerDTO) {
@@ -26,6 +26,6 @@ export class TestStepperService {
     const value = {
       testId: testOfUserId,
     } as TestIdDTO;
-    return this.api.callApi(endpoints.TestEnd, value, 'POST');
+    return this.api.callApi(endpoints.TestEnd, value, 'POST').subscribe();
   }
 }
