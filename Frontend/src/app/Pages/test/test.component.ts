@@ -26,10 +26,6 @@ export class TestComponent {
     this.openTests$ = this.testService.openTests$();
     this.closedTests$ = this.testService.closedTests$();
   }
-  
-  testStartVisibility(testId: string, visible: boolean) {
-    this.testService.testVisibility$(testId, visible);
-  }
 
   createNewTest() {
     const dialogRef = this.dialog.open(TestCreateDialogComponent, {

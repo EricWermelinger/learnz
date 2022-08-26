@@ -48,4 +48,8 @@ export class CreateComponent {
       setId,
     }});
   }
+
+  isEmpty(value: any[]) {
+    return value.length === 0;
+  }
 }

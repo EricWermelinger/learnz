@@ -1,3 +1,2 @@
 todo
-test result -> edit user points
-test settings -> change settings
+test everything and fix

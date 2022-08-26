@@ -127,7 +127,8 @@
         "minEvaluated":"Answer at Minimum evaluated",
         "maxEvaluated":"Answer at Maximum evaluated",
         "evaluateQuestion":"Evaluate Question",
-        "errorOccured":"Error Occured while evaluating"
+        "errorOccured":"Error Occured while evaluating",
+        "noSet":"No Set so found"
     },
     "learn":{
         "learn":"Learn",
@@ -204,7 +205,9 @@
         "points":"Points",
         "endTest":"End Test",
         "editPoints":"Edit Points",
-        "isCorrect":"Correct"
+        "isCorrect":"Correct",
+        "visible":"Visible",
+        "active":"Active"
     },
     "draw":{
         "draw":"Draw"

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { endpoints } from 'src/app/Config/endpoints';
 import { TestDTO } from 'src/app/DTOs/Test/TestDTO';
 import { TestIdDTO } from 'src/app/DTOs/Test/TestIdDTO';
-import { TestVisibilityDTO } from 'src/app/DTOs/Test/TestVisibilityDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 
 @Injectable({
@@ -27,13 +26,5 @@ export class TestService {
       testId
     } as TestIdDTO;
     return this.api.callApi<TestIdDTO>(endpoints.TestStart, value, 'POST');
-  }
-
-  testVisibility$(testId: string, visible: boolean) {
-    const value = {
-      testId,
-      visible
-    } as TestVisibilityDTO;
-    this.api.callApi(endpoints.TestGroupTestVisibility, value, 'POST').subscribe();
   }
 }

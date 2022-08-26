@@ -31,7 +31,6 @@ export const endpoints = {
     TestEnd: 'testEnd', // post -> stepper
     TestGroupAdjustUserPoints: 'testGroupAdjustUserPoints', // post -> result
     TestGroupTestCreate: 'testGroupTestCreate', // post -> create dialog
-    TestGroupTestVisibility: 'testGroupTestVisibility', // post -> context menu on overview for group tests
     TestOpen: 'testOpen', // get -> overview
     TestPossibleGroups: 'testPossibleGroups', // get -> create dialog
     TestQuestions: 'testQuestions', // get / post -> stepper

@@ -18,6 +18,6 @@ export class TestSettingsService {
   }
 
   setSettings$(value: TestSaveSettingsDTO) {
-    this.api.callApi(endpoints.TestSettings, value, 'POST').subscribe();
+    return this.api.callApi(endpoints.TestSettings, value, 'POST');
   }
 }
