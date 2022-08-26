@@ -51,7 +51,15 @@ export class TestStepperComponent {
       questionOfUserId,
     } as TestAnswerDTO;
     this.stepperService.questionAnswer$(value).subscribe(_ => {
-      this.stepperService.getQuestions$(this.testOfUserId).subscribe(questions => this.questions$.next(questions));
+      this.stepperService.getQuestions$(this.testOfUserId).subscribe(questions => {
+        this.questions$.next(questions);
+        const lastQuestionIndex = questions.findIndex(q => q.question.questionId == questionOfUserId);
+        if (lastQuestionIndex === questions.length - 1) {
+          this.activeQuestion = questions[0];
+        } else {
+          this.activeQuestion = questions[lastQuestionIndex + 1];
+        }
+      });
     });
   }
 

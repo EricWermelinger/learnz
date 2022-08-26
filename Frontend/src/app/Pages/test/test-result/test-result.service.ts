@@ -13,6 +13,7 @@ export class TestResultService {
   ) { }
 
   getResult$(testOfUserId: string, userId: string | null = null) {
-    return this.api.callApi<TestResultDTO>(endpoints.TestQuestions, { testOfUserId, userId }, 'GET');
+    const queryParam = userId === null ? { testOfUserId } : { testOfUserId, userId };
+    return this.api.callApi<TestResultDTO>(endpoints.TestResult, queryParam, 'GET');
   }
 }

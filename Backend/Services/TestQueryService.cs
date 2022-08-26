@@ -204,7 +204,7 @@ public class TestQueryService : ITestQueryService
             case QuestionType.MultipleChoice:
                 if (firstSet)
                 {
-                    var answerMultipleChoice = testQuestion.RightAnswer.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                    var answerMultipleChoice = testQuestion.PossibleAnswers!.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
                     {
                         AnswerId = new Guid(ans.Split("|")[0]),
                         Answer = ans.Split("|")[1]

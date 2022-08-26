@@ -31,7 +31,7 @@ export class TestSettingsComponent {
   ) {
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
-      maxTime: [0, Validators.required, Validators.min(1)],
+      maxTime: [0, [Validators.required, Validators.min(1)]],
       visible: [true, Validators.required],
       active: [true, Validators.required]
     });

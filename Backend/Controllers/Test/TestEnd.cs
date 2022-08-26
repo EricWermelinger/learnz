@@ -20,13 +20,20 @@ public class TestEnd : Controller
     public async Task<ActionResult> EndTest(TestIdDTO request)
     {
         var guid = _userService.GetUserGuid();
-        var test = await _dataContext.TestOfUsers.FirstOrDefaultAsync(tou => tou.UserId == guid && tou.TestId == request.TestId && tou.Ended == null);
-        if (test == null)
+        var testOfUser = await _dataContext.TestOfUsers.FirstOrDefaultAsync(tou => tou.UserId == guid && tou.Id == request.TestId && tou.Ended == null);
+        if (testOfUser == null)
         {
             return BadRequest(ErrorKeys.TestNotAccessible);
         }
-        test.Ended = DateTime.UtcNow;
+        testOfUser.Ended = DateTime.UtcNow;
         await _dataContext.SaveChangesAsync();
+        var isGroupTest = await _dataContext.TestGroups.AnyAsync(tgr => tgr.TestId == testOfUser.TestId);
+        if (!isGroupTest)
+        {
+            var test = await _dataContext.Tests.FirstAsync(tst => tst.Id == testOfUser.TestId);
+            test.Active = false;
+            await _dataContext.SaveChangesAsync();
+        }
         return Ok();
     }
 }

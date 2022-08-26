@@ -47,14 +47,14 @@ export class TestCreateDialogComponent {
       testId: [guid(), Validators.required],
       setId: ['', Validators.required],
       name: ['', Validators.required],
-      maxTime: [0, Validators.required, Validators.min(1)]
+      maxTime: [0, [Validators.required, Validators.min(1)]],
     }) as FormGroupTyped<TestCreateDTO>;
 
     this.formGroupTestGroupTest = this.formBuilder.group({
       testId: [guid(), Validators.required],
       setId: ['', Validators.required],
       name: ['', Validators.required],
-      maxTime: [0, Validators.required, Validators.min(1)],
+      maxTime: [0, [Validators.required, Validators.min(1)]],
       groupId: ['', Validators.required],
     }) as FormGroupTyped<TestGroupTestCreateDTO>;
 

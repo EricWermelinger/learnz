@@ -12,3 +12,13 @@
 .answered {
     background-color: var(--learnz-primary);
 }
+button {
+    width: 60px;
+    height: 60px;
+}
+.choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}

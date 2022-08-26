@@ -38,7 +38,7 @@ public class TestQuestions : Controller
                                                               {
                                                                   Question = new GeneralQuestionQuestionDTO
                                                                   {
-                                                                      QuestionId = tqu.TestQuestion.QuestionId,
+                                                                      QuestionId = tqu.Id,
                                                                       Question = tqu.TestQuestion.Question,
                                                                       Description = tqu.TestQuestion.Description,
                                                                       QuestionType = tqu.TestQuestion.QuestionType,

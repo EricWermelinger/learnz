@@ -1,2 +1,6 @@
 todo
+test stepper answer not correctly shown after save
+test end test confirm dialog
+test design result
+
 test everything and fix

@@ -1,7 +1,7 @@
 <div *ngIf="result$ | async as result">
-    <h2>{{ result.name }} - {{ translateSubject(result.subjectMain) | translate }}{{ !result.subjectSecond ? '' : ((' - ' + translateSubject(result.subjectSecond)) | translate) }}</h2>
-    <div>{{ 'test.maxTime' }}: {{ result.maxTime }}</div>
-    <div>{{ 'test.timeUsed' }}: {{ result.timeUsed }}</div>
+    <h2>{{ result.name }} - {{ translateSubject(result.subjectMain) | translate }}{{ !result.subjectSecond ? '' : ' - ' }}{{ !result.subjectSecond ? '' : translateSubject(result.subjectSecond) | translate }}</h2>
+    <div>{{ 'test.maxTime' | translate }}: {{ result.maxTime }}</div>
+    <div>{{ 'test.timeUsed' | translate }}: {{ result.timeUsed }}</div>
     <div>{{ result.pointsScored }} / {{ result.pointsPossible }}</div>
     <div>{{ calculatePercentage(result.pointsScored, result.pointsPossible) }}</div>
     <div *ngFor="let question of result.questions">
