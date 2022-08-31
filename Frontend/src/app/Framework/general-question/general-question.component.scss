@@ -39,3 +39,6 @@ button {
     justify-content: space-between;
     gap: 40px;
 }
+.selected {
+    border: 2px solid var(--learnz-black);
+}

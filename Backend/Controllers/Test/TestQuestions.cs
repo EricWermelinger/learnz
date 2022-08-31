@@ -22,14 +22,29 @@ public class TestQuestions : Controller
     public async Task<ActionResult<TestQuestionInfoDTO>> GetQuestions(Guid testOfUserId)
     {
         var guid = _userService.GetUserGuid();
-        var testOfUser = await _dataContext.TestOfUsers.FirstOrDefaultAsync(tou => tou.UserId == guid
+        var testOfUser = await _dataContext.TestOfUsers.Include(tou => tou.Test)
+                                                       .FirstOrDefaultAsync(tou => tou.UserId == guid
                                                                             && tou.Id == testOfUserId
                                                                             && tou.Test.Visible
                                                                             && tou.Test.Active
-                                                                            && tou.Ended == null
-                                                                            && tou.Started.AddMinutes(tou.Test.MaxTime) > DateTime.UtcNow);
+                                                                            && tou.Ended == null);
         if (testOfUser == null)
         {
+            return BadRequest(ErrorKeys.TestNotAccessible);
+        }
+
+        if (testOfUser.Started.AddMinutes(testOfUser.Test.MaxTime) < DateTime.UtcNow)
+        {
+            DateTime maxEnding = testOfUser.Started.AddMinutes(testOfUser.Test.MaxTime);
+            testOfUser.Ended = DateTime.UtcNow > maxEnding ? maxEnding : DateTime.UtcNow;
+            await _dataContext.SaveChangesAsync();
+            var isGroupTest = await _dataContext.TestGroups.AnyAsync(tgr => tgr.TestId == testOfUser.TestId);
+            if (!isGroupTest)
+            {
+                var singleTest = await _dataContext.Tests.FirstAsync(tst => tst.Id == testOfUser.TestId);
+                singleTest.Active = false;
+                await _dataContext.SaveChangesAsync();
+            }
             return BadRequest(ErrorKeys.TestNotAccessible);
         }
 

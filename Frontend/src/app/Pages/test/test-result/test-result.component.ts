@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
-import { TestAdjustUserPointDTO } from 'src/app/DTOs/Test/TestAdjustUserPointDTO';
+import { TestQuestionResultDTO } from 'src/app/DTOs/Test/TestQuestionResultDTO';
 import { TestResultDTO } from 'src/app/DTOs/Test/TestResultDTO';
 import { getQuestionTypes } from 'src/app/Enums/QuestionType';
 import { getSubjects } from 'src/app/Enums/Subject';
@@ -66,5 +66,67 @@ export class TestResultComponent {
         pointsScored,
       }
     });
+  }
+
+  cleanupAnswer(answer: TestQuestionResultDTO) {
+    switch (this.getQuestionType(answer.question.questionType)){
+      case 'Distribute':
+        const answersDistribute = (answer.answer ?? '').split('||').map(s => {
+          return {
+            leftId: s.split('|')[0],
+            rightId: s.split('|')[1],
+          }
+        }).map(s => {
+          return {
+            left: answer.question.answerSetOne?.filter(a => a.answerId === s.leftId)[0]?.answer ?? '',
+            right: answer.question.answerSetTwo?.filter(a => a.answerId === s.rightId)[0]?.answer ?? '',
+          }
+        });
+        return answersDistribute.map(s => s.left + ' - ' + s.right).join(' & ');
+      case 'MultipleChoice':
+        const answersGivenMultipleChoice = (answer.answer ?? '').split('|');
+        const answersMultipleChoice = answer.question.answerSetOne?.filter(a => answersGivenMultipleChoice.includes(a.answerId)).map(a => a.answer) ?? [];
+        return answersMultipleChoice.join(' & ');
+      case 'TrueFalse':
+        return answer.answer === 'true' ? 'generalQuestion.true' : 'generalQuestion.false';
+      case 'Mathematic':
+      case 'OpenQuestion':
+      case 'TextField':
+      case 'Word':
+        return answer.answer;
+    }
+  }
+
+  cleanupSolution(solution: TestQuestionResultDTO) {
+    switch (this.getQuestionType(solution.question.questionType)){
+      case 'Distribute':
+        const solutionsDistribute = (solution.solution ?? '').split('|||').filter(s => !!s).map(s => {
+          return {
+            leftId: s.split('||')[0].split('|')[0],
+            rightId: s.split('||')[1].split('|')[0],
+          }
+        }).map(s => {
+          return {
+            left: solution.question.answerSetOne?.filter(a => a.answerId === s.leftId)[0]?.answer ?? '',
+            right: solution.question.answerSetTwo?.filter(a => a.answerId === s.rightId)[0]?.answer ?? '',
+          }
+        });
+        return solutionsDistribute.map(s => s.left + ' - ' + s.right).join(' & ');
+      case 'MultipleChoice':
+        const solutionsGivenMultipleChoice = (solution.solution ?? '').split('|');
+        const solutionsMultipleChoice = solution.question.answerSetOne?.filter(a => solutionsGivenMultipleChoice.includes(a.answerId)).map(a => a.answer) ?? [];
+        return solutionsMultipleChoice.join(' & ');
+      case 'TrueFalse':
+        return solution.solution === 'true' ? 'generalQuestion.true' : 'generalQuestion.false';
+      case 'Mathematic':
+      case 'OpenQuestion':
+      case 'TextField':
+      case 'Word':
+        return solution.solution;
+    }
+  }
+
+  isTrueFalse(question: TestQuestionResultDTO) {
+    return this.getQuestionType(question.question.questionType) === 'TrueFalse';
   }
 }

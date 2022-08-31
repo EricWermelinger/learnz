@@ -8,7 +8,7 @@
 <div *ngIf="showDistribute(question.questionType)">
     <div *ngFor="let leftSide of question.answerSetOne" class="distribute">
         <div class="text-smaller">{{ leftSide.answer }}</div>
-        <mat-select *ngIf="!disabled" (selectionChange)="distributeConnect(leftSide.answerId, $event.value, question.answerSetTwo ?? [])" class="text-smaller">
+        <mat-select *ngIf="!disabled" [value]="distributeValue(leftSide.answerId)" (selectionChange)="distributeConnect(leftSide.answerId, $event.value, question.answerSetTwo ?? [])" class="text-smaller">
             <mat-option *ngFor="let rightSide of question.answerSetTwo" [value]="rightSide.answer">
                 {{ rightSide.answer }}
             </mat-option>
@@ -17,12 +17,12 @@
     <button *ngIf="!disabled" mat-flat-button color="primary" (click)="saveDistribute()">{{ 'framework.save' | translate }}</button>
 </div>
 <div *ngIf="showMultipleChoice(question.questionType)" class="grid">
-    <mat-checkbox *ngFor="let answer of question.answerSetOne" (change)="toggleMultipleChoice(answer.answerId)" [disabled]="disabled">{{ answer.answer }}</mat-checkbox>
+    <mat-checkbox *ngFor="let answer of question.answerSetOne" (change)="toggleMultipleChoice(answer.answerId)" [checked]="checkBoxChecked(answer.answerId)" [disabled]="disabled">{{ answer.answer }}</mat-checkbox>
     <button *ngIf="!disabled" mat-flat-button color="primary" (click)="saveMultipleChoice()">{{ 'framework.save' | translate }}</button>
 </div>
 <div *ngIf="showTrueFalse(question.questionType)" class="true-false">
-    <button *ngIf="!disabled" mat-flat-button color="primary" (click)="saveTrueFalse(true)">{{ 'generalQuestion.true' | translate }}</button>
-    <button *ngIf="!disabled" mat-flat-button color="primary" (click)="saveTrueFalse(false)">{{ 'generalQuestion.false' | translate }}</button>
+    <button *ngIf="!disabled" mat-flat-button color="primary" [ngClass]="{ 'selected': trueFalseIsSelected(true) }" (click)="saveTrueFalse(true)">{{ 'generalQuestion.true' | translate }}</button>
+    <button *ngIf="!disabled" mat-flat-button color="primary" [ngClass]="{ 'selected': trueFalseIsSelected(false) }" (click)="saveTrueFalse(false)">{{ 'generalQuestion.false' | translate }}</button>
 </div>
 <form *ngIf="showForm(question.questionType) && !disabled" [formGroup]="formGroup" class="form">
     <mat-form-field *ngIf="showText(question.questionType); else showNumeric">

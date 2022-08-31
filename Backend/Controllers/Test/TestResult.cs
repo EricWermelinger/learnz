@@ -48,6 +48,7 @@ public class TestResult : Controller
             Questions = test.TestQuestionOfUsers.Select(tqs => new TestQuestionResultDTO
             {
                 Answer = tqs.AnswerByUser,
+                Solution = tqs.TestQuestion.RightAnswer,
                 PointsScored = tqs.PointsScored ?? 0,
                 PointsPossible = tqs.TestQuestion.PointsPossible,
                 WasRight = tqs.AnsweredCorrect ?? false,

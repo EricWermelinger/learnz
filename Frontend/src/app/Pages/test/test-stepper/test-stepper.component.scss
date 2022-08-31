@@ -1,5 +1,5 @@
 .choice {
-    margin-top: 8px;
+    margin-top: 4px;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -15,14 +15,14 @@
 }
 .active {
     margin-top: 0px;
-    border: 8px solid var(--learnz-primary);
+    border: 4px solid var(--learnz-primary);
 }
 .active.answered {
     margin-top: 0px;
-    border: 8px solid var(--learnz-black);
+    border: 4px solid var(--learnz-black);
 }
 button {
-    margin-top: 8px;
+    margin-top: 4px;
     width: 60px;
     height: 60px;
 }

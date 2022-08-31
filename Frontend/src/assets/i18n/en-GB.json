@@ -209,6 +209,7 @@
         "isCorrect":"Correct",
         "visible":"Visible",
         "active":"Active",
+        "solution":"Solution",
         "areYouSureToEnd":"Are you sure you want to end the test?"
     },
     "draw":{

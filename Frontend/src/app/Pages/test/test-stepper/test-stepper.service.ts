@@ -26,6 +26,6 @@ export class TestStepperService {
     const value = {
       testId: testOfUserId,
     } as TestIdDTO;
-    return this.api.callApi(endpoints.TestEnd, value, 'POST').subscribe();
+    return this.api.callApi(endpoints.TestEnd, value, 'POST');
   }
 }
