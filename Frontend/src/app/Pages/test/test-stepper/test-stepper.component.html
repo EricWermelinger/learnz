@@ -9,6 +9,6 @@
         </button>
     </div>
     <div *ngIf="activeQuestion$ | async as activeQuestion">
-        <app-general-question [question]="activeQuestion.question" [currentAnswer]="activeAnswer$ | async" [isTest]="true" (answered)="answerQuestion($event)"></app-general-question>
+        <app-general-question [question]="activeQuestion.question" [currentAnswer]="activeAnswer$ | async" [isTest]="true" [maxPoints]="activeQuestion.maxPoints" (answered)="answerQuestion($event)"></app-general-question>
     </div>
 </div>

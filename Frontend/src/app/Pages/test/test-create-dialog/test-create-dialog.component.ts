@@ -125,11 +125,4 @@ export class TestCreateDialogComponent {
     this.filterGroupControl.patchValue(value.key);
     this.formGroupTestGroupTest.controls.groupId.patchValue(value.value);
   }
-
-  isValid() {
-    if (this.formControlGroupTest.value) {
-      return this.formGroupTestGroupTest.valid;
-    }
-    return this.formGroupTestNormal.valid;
-  }
 }

@@ -22,6 +22,7 @@ export class GeneralQuestionComponent implements OnInit {
   @Input() challengeId: string = '';
   @Input() progress: string = '';
   @Input() isTest: boolean = false;
+  @Input() maxPoints: number | null = null;
   @Input() set currentAnswer(answer: string | null) {
     this._currentAnswer = answer;
     this.patchCurrentAnswer();

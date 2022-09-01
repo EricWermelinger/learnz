@@ -61,6 +61,7 @@ public class TestQuestions : Controller
                                                                       AnswerSetOne = tqu.TestQuestion.PossibleAnswers == null ? null : _testQueryService.GetAnswerSet(tqu.TestQuestion, true),
                                                                       AnswerSetTwo = tqu.TestQuestion.PossibleAnswers == null ? null : _testQueryService.GetAnswerSet(tqu.TestQuestion, false)
                                                                   },
+                                                                  MaxPoints = tqu.TestQuestion.PointsPossible,
                                                                   Answer = tqu.AnswerByUser
                                                               })
                                                               .ToListAsync();
