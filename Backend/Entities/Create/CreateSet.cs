@@ -23,4 +23,5 @@ public class CreateSet
     public ICollection<CreateQuestionWord> QuestionWords { get; set; }
     public ICollection<Challenge> Challenges { get; set; }
     public ICollection<LearnSession> LearnSessions { get; set; }
+    public ICollection<Test> Tests { get; set; }
 }

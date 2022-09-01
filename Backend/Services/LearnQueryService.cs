@@ -57,7 +57,7 @@ public class LearnQueryService : ILearnQueryService
                 }
                 return true;
             default:
-                return answer.ToLower() == rightAnswer.ToLower();
+                return answer.Trim().ToLower() == rightAnswer.Trim().ToLower();
         }
     }
 }

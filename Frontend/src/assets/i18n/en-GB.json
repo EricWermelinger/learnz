@@ -2,7 +2,8 @@
     "framework":{
         "save":"Save",
         "cancel":"Cancel",
-        "back":"Back"
+        "back":"Back",
+        "yes":"Yes"
     },
     "login":{
         "login":"Login",
@@ -127,7 +128,8 @@
         "minEvaluated":"Answer at Minimum evaluated",
         "maxEvaluated":"Answer at Maximum evaluated",
         "evaluateQuestion":"Evaluate Question",
-        "errorOccured":"Error Occured while evaluating"
+        "errorOccured":"Error Occured while evaluating",
+        "noSet":"No Set so found"
     },
     "learn":{
         "learn":"Learn",
@@ -184,7 +186,33 @@
         "points":"Points"
     },
     "test":{
-        "test":"Test"
+        "test":"Test",
+        "groupTest":"Group Test",
+        "createTest":"Create Test",
+        "newTest":"New Test",
+        "testName":"Test Name",
+        "maxTime":"Max Time in Minutes",
+        "openTests":"Open Tests",
+        "closedTests":"Closed Tests",
+        "noOpenTest":"No open Tests",
+        "noClosedTest":"No closed Tests",
+        "owner":"Owner",
+        "pointsScored":"Points Scored",
+        "pointsPossible":"Points Possible",
+        "percentage":"Percentage",
+        "timeUsed":"Time Used",
+        "group":"Group",
+        "time":"Time",
+        "points":"Points",
+        "endTest":"End Test",
+        "editPoints":"Edit Points",
+        "isCorrect":"Correct",
+        "visible":"Visible",
+        "active":"Active",
+        "solution":"Solution",
+        "areYouSureToEnd":"Are you sure you want to end the test?",
+        "setName":"Set Name",
+        "username":"Username"
     },
     "draw":{
         "draw":"Draw"
@@ -240,6 +268,7 @@
         "fileNotProvided":"File not provided",
         "fileNotFound":"File not found",
         "fileNotValid":"File not valid",
+        "groupNotAccessible":"Group is not accessible",
         "accessBlocked":"Access blocked",
         "fillFormCorrectly":"Fill form correctly",
         "invalidLogin":"Invalid login",
@@ -250,6 +279,7 @@
         "learnSessionNotAccessible":"Learn Session is currently not accessible.",
         "learnSetContainsNoHardQuesitons":"Set contains no hard questions.",
         "setNotAccessible":"Set is currently not accessible",
+        "testNotAccessible":"Test is currently not accessible",
         "unknownError":"Unknown error"
     },
     "Subject":{

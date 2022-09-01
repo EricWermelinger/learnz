@@ -202,9 +202,10 @@ public class ChallengeFlow : Controller
         {
             if (variable != null)
             {
-                int steps = (int)Math.Floor((variable.Max - variable.Min) / variable.Interval == 0 ? 1 : variable.Interval);
+                double stepsDouble = (double)(variable.Max - variable.Min) / (double)(variable.Interval == 0 ? 1 : variable.Interval);
+                int steps = (int)Math.Floor(stepsDouble);
                 int randomStep = random.Next(0, steps);
-                double variableValue = Math.Round(variable.Min + randomStep * variable.Interval, variable.Digits);
+                double variableValue = Math.Round(variable.Min + randomStep * (variable.Interval == 0 ? 1 : variable.Interval), variable.Digits);
                 mathematicQuestion = mathematicQuestion.Replace(variable.Display, variableValue.ToString());
                 mathematicAnswer = mathematicAnswer.Replace(variable.Display, variableValue.ToString());
             }

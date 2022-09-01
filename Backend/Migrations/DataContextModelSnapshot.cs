@@ -581,6 +581,10 @@ namespace Learnz.Migrations
                     b.Property<string>("PossibleAnswers")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -715,6 +719,146 @@ namespace Learnz.Migrations
                     b.HasIndex("FileId");
 
                     b.ToTable("FileVersions");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.Test", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxTime")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SetId");
+
+                    b.ToTable("Tests");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("TestGroups");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestOfUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Ended")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Started")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TestUsers");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PointsPossible")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PossibleAnswers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RightAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("TestQuestions");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestQuestionOfUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AnswerByUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("AnsweredCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PointsScored")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TestOfUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestOfUserId");
+
+                    b.ToTable("TestQuestionUsers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.TogetherAsk", b =>
@@ -1242,6 +1386,77 @@ namespace Learnz.Migrations
                     b.Navigation("File");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.Test", b =>
+                {
+                    b.HasOne("Learnz.Entities.CreateSet", "Set")
+                        .WithMany("Tests")
+                        .HasForeignKey("SetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Set");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestGroup", b =>
+                {
+                    b.HasOne("Learnz.Entities.Group", "Group")
+                        .WithMany("TestGroups")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.Test", "Test")
+                        .WithMany("TestGroups")
+                        .HasForeignKey("TestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestOfUser", b =>
+                {
+                    b.HasOne("Learnz.Entities.Test", "Test")
+                        .WithMany("TestOfUsers")
+                        .HasForeignKey("TestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "User")
+                        .WithMany("TestOfUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Test");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestQuestion", b =>
+                {
+                    b.HasOne("Learnz.Entities.Test", "Test")
+                        .WithMany("TestQuestions")
+                        .HasForeignKey("TestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestQuestionOfUser", b =>
+                {
+                    b.HasOne("Learnz.Entities.TestOfUser", "TestOfUser")
+                        .WithMany("TestQuestionOfUsers")
+                        .HasForeignKey("TestOfUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TestOfUser");
+                });
+
             modelBuilder.Entity("Learnz.Entities.TogetherAsk", b =>
                 {
                     b.HasOne("Learnz.Entities.User", "AskedUser")
@@ -1379,6 +1594,8 @@ namespace Learnz.Migrations
                     b.Navigation("QuestionTrueFalses");
 
                     b.Navigation("QuestionWords");
+
+                    b.Navigation("Tests");
                 });
 
             modelBuilder.Entity("Learnz.Entities.Group", b =>
@@ -1388,6 +1605,8 @@ namespace Learnz.Migrations
                     b.Navigation("GroupMembers");
 
                     b.Navigation("GroupMessages");
+
+                    b.Navigation("TestGroups");
                 });
 
             modelBuilder.Entity("Learnz.Entities.LearnSession", b =>
@@ -1407,6 +1626,20 @@ namespace Learnz.Migrations
             modelBuilder.Entity("Learnz.Entities.LearnzFileAnonymous", b =>
                 {
                     b.Navigation("ProfileImages");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.Test", b =>
+                {
+                    b.Navigation("TestGroups");
+
+                    b.Navigation("TestOfUsers");
+
+                    b.Navigation("TestQuestions");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.TestOfUser", b =>
+                {
+                    b.Navigation("TestQuestionOfUsers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.User", b =>
@@ -1430,6 +1663,8 @@ namespace Learnz.Migrations
                     b.Navigation("LearnSessions");
 
                     b.Navigation("LearnzFileOwner");
+
+                    b.Navigation("TestOfUsers");
 
                     b.Navigation("TogetherAskAskedUsers");
 

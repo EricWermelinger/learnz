@@ -61,6 +61,13 @@ import { ChallengeCancelledDialogComponent } from './Pages/challenge/challenge-c
 import { LearnCreateDialogComponent } from './Pages/learn/learn-create-dialog/learn-create-dialog.component';
 import { LearnQuestionStepperComponent } from './Pages/learn/learn-question-stepper/learn-question-stepper.component';
 import { LearnResultComponent } from './Pages/learn/learn-result/learn-result.component';
+import { TestStepperComponent } from './Pages/test/test-stepper/test-stepper.component';
+import { TestResultComponent } from './Pages/test/test-result/test-result.component';
+import { TestSettingsComponent } from './Pages/test/test-settings/test-settings.component';
+import { TestCreateDialogComponent } from './Pages/test/test-create-dialog/test-create-dialog.component';
+import { TestResultOverviewComponent } from './Pages/test/test-result-overview/test-result-overview.component';
+import { TestEditPointsComponent } from './Pages/test/test-edit-points/test-edit-points.component';
+import { TestEndConfirmDialogComponent } from './Pages/test/test-end-confirm-dialog/test-end-confirm-dialog.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -117,6 +124,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     LearnCreateDialogComponent,
     LearnQuestionStepperComponent,
     LearnResultComponent,
+    TestCreateDialogComponent,
+    TestStepperComponent,
+    TestResultComponent,
+    TestSettingsComponent,
+    TestResultOverviewComponent,
+    TestEditPointsComponent,
+    TestEndConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,

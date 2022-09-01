@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GeneralQuestionQuestionDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionQuestionDTO';
 import { GeneralQuestionAnswerDTO } from 'src/app/DTOs/GeneralQuestion/GeneralQuestionAnswerDTO';
 import { getSubjects } from 'src/app/Enums/Subject';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { getQuestionTypes } from 'src/app/Enums/QuestionType';
 import { ChallengeQuestionAnswerDTO } from 'src/app/DTOs/Challenge/ChallengeQuestionAnswerDTO';
 import { KeyValue } from '@angular/common';
@@ -12,14 +12,21 @@ import { KeyValue } from '@angular/common';
   templateUrl: './general-question.component.html',
   styleUrls: ['./general-question.component.scss']
 })
-export class GeneralQuestionComponent {
+export class GeneralQuestionComponent implements OnInit {
 
   formGroup: FormGroup;
   multipleChoiceValues: string[] = [];
   distributeAnswers: KeyValue<string, string>[] = [];
+  _currentAnswer: string | null = null;
   @Input() question: GeneralQuestionQuestionDTO = { } as GeneralQuestionQuestionDTO;
   @Input() challengeId: string = '';
   @Input() progress: string = '';
+  @Input() isTest: boolean = false;
+  @Input() maxPoints: number | null = null;
+  @Input() set currentAnswer(answer: string | null) {
+    this._currentAnswer = answer;
+    this.patchCurrentAnswer();
+  }
   @Input() disabled: boolean = false;
   @Output() answered: EventEmitter<GeneralQuestionAnswerDTO> = new EventEmitter();
 
@@ -29,6 +36,32 @@ export class GeneralQuestionComponent {
     this.formGroup = this.formBuilder.group({
       answer: ['', Validators.required],
     });
+  }
+
+  ngOnInit(): void {
+    this.patchCurrentAnswer();
+  }
+
+  patchCurrentAnswer() {
+    if (this.isTest) {
+      const questionTpye = this.getQuestionType(this.question.questionType);
+      if (this.showForm(this.question.questionType)) {
+        this.formGroup.controls['answer'].patchValue(this._currentAnswer ?? '');
+        this.formGroup.controls['answer'].updateValueAndValidity();
+      }
+      else if (questionTpye === 'MultipleChoice') {
+        this.multipleChoiceValues = (this._currentAnswer ?? '').split('|').filter(a => !!a);
+      }
+      else if (questionTpye === 'Distribute') {
+        this.distributeAnswers = (this._currentAnswer ?? '').split('||').filter(a => !!a).map(a => {
+          const split = a.split('|');
+          return {
+            key: split[0],
+            value: split[1],
+          } as KeyValue<string, string>;
+        }).filter(a => !!a.key) ?? [];
+      }
+    }
   }
 
   saveForm() {
@@ -90,9 +123,7 @@ export class GeneralQuestionComponent {
       key: leftSideId,
       value: rightSide.filter(rs => rs.answer === rightSideAnswer)[0].answerId,
     } as KeyValue<string, string>;
-    if (this.distributeAnswers.includes(answer)) {
-      this.distributeAnswers = this.distributeAnswers.filter(a => a.key !== leftSideId);
-    }
+    this.distributeAnswers = this.distributeAnswers.filter(a => a.key !== leftSideId);
     this.distributeAnswers.push(answer);
   }
 
@@ -116,5 +147,30 @@ export class GeneralQuestionComponent {
 
   showDistribute(type: number) {
     return this.getQuestionType(type) === 'Distribute';
+  }
+
+  trueFalseIsSelected(answer: boolean) {
+    if (answer) {
+      return this._currentAnswer === 'true';
+    }
+    return this._currentAnswer === 'false';
+  }
+
+  checkBoxChecked(answerId: string) {
+    const values = (this._currentAnswer ?? '').split('|');
+    return values.includes(answerId);
+  }
+
+  distributeValue(answerIdLeftSide: string) {
+    const answersFiltered = this.distributeAnswers.filter(a => a.key === answerIdLeftSide);
+    if (answersFiltered.length === 0) {
+      return null;
+    }
+    const answerId = answersFiltered[0].value;
+    const resultFiltered = this.question.answerSetTwo?.filter(a => a.answerId === answerId) ?? [];
+    if (resultFiltered.length === 0) {
+      return null;
+    }
+    return resultFiltered[0].answer;
   }
 }

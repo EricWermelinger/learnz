@@ -9,6 +9,7 @@ public static class ErrorKeys
     public static string FileNotProvided = "fileNotProvided";
     public static string FileNotFound = "fileNotFound";
     public static string FileNotValid = "fileNotValid";
+    public static string GroupNotAccessible = "groupNotAccessible";
     public static string AccessBlocked = "accessBlocked";
     public static string FillFormCorrectly = "fillFormCorrectly";
     public static string InvalidLogin = "invalidLogin";
@@ -19,5 +20,6 @@ public static class ErrorKeys
     public static string LearnSessionNotAccessible = "learnSessionNotAccessible";
     public static string LearnSetContainsNoHardQuesitons = "learnSetContainsNoHardQuesitons";
     public static string SetNotAccessible = "setNotAccessible";
+    public static string TestNotAccessible = "testNotAccessible";
     public static string UnknownError = "unknownError";
 }

@@ -42,4 +42,6 @@ public class User
     public ICollection<ChallengeQuestionAnswer> ChallengeQuestionAnswers { get; set; }
     public ICollection<ChallengeUser> ChallengeUsers { get; set; }
     public ICollection<LearnSession> LearnSessions { get; set; }
+    public ICollection<Test> TestOwners { get; set; }
+    public ICollection<TestOfUser> TestOfUsers { get; set; }
 }

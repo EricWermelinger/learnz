@@ -19,13 +19,26 @@ export const endpoints = {
     GroupMessages: 'groupMessages',
     GroupOverview: 'groupOverview',
     GroupPossibleUsers: 'groupPossibleUsers',
-    LearnClosedSession: 'learnClosedSession', // use get
-    LearnMarkQuestion: 'learnMarkQuestion', // use post
-    LearnOpenSession: 'learnOpenSession', // use get / post
-    LearnQuestionAnswerCard: 'learnQuestionAnswerCard', // use get
-    LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite', // use get / post
-    LearnQuestionSetCorrect: 'learnQuestionSetCorrect', // use post
-    LearnSessionQuestions: 'learnSessionQuestions', // use get
+    LearnClosedSession: 'learnClosedSession',
+    LearnMarkQuestion: 'learnMarkQuestion',
+    LearnOpenSession: 'learnOpenSession',
+    LearnQuestionAnswerCard: 'learnQuestionAnswerCard',
+    LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite',
+    LearnQuestionSetCorrect: 'learnQuestionSetCorrect',
+    LearnSessionQuestions: 'learnSessionQuestions',
+    TestClosed: 'testClosed', // get -> overview
+    TestCreate: 'testCreate', // post -> create dialog
+    TestEnd: 'testEnd', // post -> stepper
+    TestGroupAdjustUserPoints: 'testGroupAdjustUserPoints', // post -> result
+    TestGroupTestCreate: 'testGroupTestCreate', // post -> create dialog
+    TestOpen: 'testOpen', // get -> overview
+    TestPossibleGroups: 'testPossibleGroups', // get -> create dialog
+    TestQuestions: 'testQuestions', // get / post -> stepper
+    TestResult: 'testResult', // get -> result
+    TestResultOverview: 'testResultOverview', // get -> result overview
+    TestSettings: 'testSettings', // get / post -> settings
+    TestStart: 'testStart', // post -> overview
+    TestVisibility: 'testVisibility', // post -> result overview
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',

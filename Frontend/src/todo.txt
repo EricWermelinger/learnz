@@ -1,1 +1,5 @@
 todo
+test result overview design
+test create validator wrong
+test group tests
+test everything and fix

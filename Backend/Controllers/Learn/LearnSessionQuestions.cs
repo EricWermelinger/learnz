@@ -66,7 +66,7 @@ public class LearnSessionQuestions : Controller
             case QuestionType.MultipleChoice:
                 if (firstSet)
                 {
-                    var answerMultipleChoice = lqs.RightAnswer.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
+                    var answerMultipleChoice = lqs.PossibleAnswers!.Split("||").Select(ans => new ChallengeQuestionAnswerDTO
                     {
                         AnswerId = new Guid(ans.Split("|")[0]),
                         Answer = ans.Split("|")[1]
