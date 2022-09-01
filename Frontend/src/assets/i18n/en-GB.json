@@ -263,6 +263,7 @@
         "challengeAlreadyAnswered":"You have already answered this question.",
         "challengeAnswerNotPossible":"You can't answer this question anymore.",
         "challengeNotAccessible":"Challenge not accessible",
+        "drawNotAccessible":"Draw is currently not accessible",
         "fileUploadUnsuccessful":"File upload unsuccessful",
         "fileNotAccessible":"File not accessible",
         "fileNotProvided":"File not provided",

@@ -1,5 +1,10 @@
 todo
-test result overview design
-test create validator wrong
-test group tests
-test everything and fix
+-> DrawCollections GET (-), POST (upsert), DELETE (collectionId)
+-> DrawPages GET (collectionId), POST (collectionId), PUT (collectionId, pageId, dataUrl), DELETE (collectionId, pageId)
+-> Adjust Group Files
+
+-> GET Pages needs to be Websocket, triggered on POST, PUT and DELETE of Pages
+-> GET Collections needs to be Websocket, triggered on POST, PUT and DELETE of Pages & POST, DELETE of Collections
+-> Group Files triggered on POST, DELETE of Collections
+
+Implement Frontend

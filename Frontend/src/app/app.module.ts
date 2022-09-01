@@ -68,6 +68,9 @@ import { TestCreateDialogComponent } from './Pages/test/test-create-dialog/test-
 import { TestResultOverviewComponent } from './Pages/test/test-result-overview/test-result-overview.component';
 import { TestEditPointsComponent } from './Pages/test/test-edit-points/test-edit-points.component';
 import { TestEndConfirmDialogComponent } from './Pages/test/test-end-confirm-dialog/test-end-confirm-dialog.component';
+import { DrawingComponent } from './Pages/draw/drawing/drawing.component';
+import { DrawSettingsComponent } from './Pages/draw/draw-settings/draw-settings.component';
+import { DrawDeleteConfirmComponent } from './Pages/draw/draw-delete-confirm/draw-delete-confirm.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -131,6 +134,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     TestResultOverviewComponent,
     TestEditPointsComponent,
     TestEndConfirmDialogComponent,
+    DrawingComponent,
+    DrawSettingsComponent,
+    DrawDeleteConfirmComponent,
   ],
   imports: [
     BrowserModule,

@@ -44,4 +44,8 @@ public class User
     public ICollection<LearnSession> LearnSessions { get; set; }
     public ICollection<Test> TestOwners { get; set; }
     public ICollection<TestOfUser> TestOfUsers { get; set; }
+    public ICollection<DrawCollection> DrawCollectionsOwner { get; set; }
+    public ICollection<DrawCollection> DrawCollectionsChangedBy { get; set; }
+    public ICollection<DrawPage> DrawPagesOwner { get; set; }
+    public ICollection<DrawPage> DrawPagesChangedBy { get; set; }
 }
