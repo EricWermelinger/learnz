@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { TestDTO } from 'src/app/DTOs/Test/TestDTO';
 import { getSubjects } from 'src/app/Enums/Subject';
+import { formatTime } from 'src/app/Framework/Helpers/StringHelpers';
 import { TestCreateDialogComponent } from './test-create-dialog/test-create-dialog.component';
 import { TestService } from './test.service';
 
@@ -74,5 +75,9 @@ export class TestComponent {
 
   translateSubject(subject: number) {
     return 'Subject.' + getSubjects().filter(s => s.value === subject)[0].key;
+  }
+
+  formatTime(minutes: number) {
+    return formatTime(minutes);
   }
 }

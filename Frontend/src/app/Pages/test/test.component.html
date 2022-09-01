@@ -16,7 +16,7 @@
                 </mat-card>
                 <mat-card *ngFor="let openTest of openTests" (click)="openStepper(openTest.testId, openTest.testOfUserId, openTest.isOwner, openTest.isGroupTest)" class="test active">
                     <div>{{ openTest.name }}</div>
-                    <div>{{ openTest.maxTime }}</div>
+                    <div>{{ formatTime(openTest.maxTime) }}</div>
                     <div>{{ translateSubject(openTest.subjectMain) | translate }}</div>
                     <div>{{ !!openTest.subjectSecond ? (translateSubject(openTest.subjectSecond) | translate) : '' }}</div>
                     <div>

@@ -3,9 +3,9 @@
     <div class="page">
         <div class="info">
             <div>{{ 'test.timeUsed' | translate }}:</div>
-            <div class="bold">{{ result.timeUsed }}</div>
+            <div class="bold">{{ formatTime(result.timeUsed) }}</div>
             <div>{{ 'test.maxTime' | translate }}:</div>
-            <div class="bold">{{ result.maxTime }}</div>
+            <div class="bold">{{ formatTime(result.maxTime) }}</div>
             <div>{{ 'test.points' | translate }}:</div>
             <div class="bold">{{ result.pointsScored }} / {{ result.pointsPossible }}</div>
             <div>{{ 'test.percentage' | translate }}:</div>

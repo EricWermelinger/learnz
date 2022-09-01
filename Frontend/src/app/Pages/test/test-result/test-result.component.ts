@@ -7,6 +7,7 @@ import { TestQuestionResultDTO } from 'src/app/DTOs/Test/TestQuestionResultDTO';
 import { TestResultDTO } from 'src/app/DTOs/Test/TestResultDTO';
 import { getQuestionTypes } from 'src/app/Enums/QuestionType';
 import { getSubjects } from 'src/app/Enums/Subject';
+import { formatTime } from 'src/app/Framework/Helpers/StringHelpers';
 import { TestEditPointsComponent } from '../test-edit-points/test-edit-points.component';
 import { TestResultService } from './test-result.service';
 
@@ -65,7 +66,7 @@ export class TestResultComponent {
         isCorrect: isRight,
         pointsScored,
       }
-    });
+    }).afterClosed().subscribe(_ => this.result$ = this.resultService.getResult$(this.testOfUserId, this.userId));
   }
 
   cleanupAnswer(answer: TestQuestionResultDTO) {
@@ -128,5 +129,9 @@ export class TestResultComponent {
 
   isTrueFalse(question: TestQuestionResultDTO) {
     return this.getQuestionType(question.question.questionType) === 'TrueFalse';
+  }
+
+  formatTime(minutes: number) {
+    return formatTime(minutes);
   }
 }

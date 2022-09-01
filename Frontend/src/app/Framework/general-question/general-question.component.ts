@@ -24,8 +24,7 @@ export class GeneralQuestionComponent implements OnInit {
   @Input() isTest: boolean = false;
   @Input() set currentAnswer(answer: string | null) {
     this._currentAnswer = answer;
-    this.formGroup.controls['answer'].patchValue(answer);
-    this.formGroup.controls['answer'].updateValueAndValidity();
+    this.patchCurrentAnswer();
   }
   @Input() disabled: boolean = false;
   @Output() answered: EventEmitter<GeneralQuestionAnswerDTO> = new EventEmitter();
@@ -39,6 +38,10 @@ export class GeneralQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.patchCurrentAnswer();
+  }
+
+  patchCurrentAnswer() {
     if (this.isTest) {
       const questionTpye = this.getQuestionType(this.question.questionType);
       if (this.showForm(this.question.questionType)) {
@@ -46,10 +49,10 @@ export class GeneralQuestionComponent implements OnInit {
         this.formGroup.controls['answer'].updateValueAndValidity();
       }
       else if (questionTpye === 'MultipleChoice') {
-        this.multipleChoiceValues = (this._currentAnswer ?? '').split('|');
+        this.multipleChoiceValues = (this._currentAnswer ?? '').split('|').filter(a => !!a);
       }
       else if (questionTpye === 'Distribute') {
-        this.distributeAnswers = (this._currentAnswer ?? '').split('||').map(a => {
+        this.distributeAnswers = (this._currentAnswer ?? '').split('||').filter(a => !!a).map(a => {
           const split = a.split('|');
           return {
             key: split[0],

@@ -45,8 +45,6 @@ export class TestCreateDialogComponent {
     this.formControlGroupTest.valueChanges.subscribe(_ => {
       this.formGroupTestNormal.updateValueAndValidity();
       this.formGroupTestGroupTest.updateValueAndValidity();
-      console.log(this.formGroupTestNormal.valid);
-      console.log(this.formGroupTestGroupTest.valid);
     });
 
     this.formGroupTestNormal = this.formBuilder.group({

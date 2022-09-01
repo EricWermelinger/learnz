@@ -38,6 +38,7 @@ export const endpoints = {
     TestResultOverview: 'testResultOverview', // get -> result overview
     TestSettings: 'testSettings', // get / post -> settings
     TestStart: 'testStart', // post -> overview
+    TestVisibility: 'testVisibility', // post -> result overview
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',

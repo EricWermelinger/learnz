@@ -40,6 +40,7 @@ public class TestResultOverview : Controller
         {
             TestName = test.Name,
             MaxTime = test.MaxTime,
+            Visible = test.Visible,
             PointsPossible = test.TestQuestions.Where(tqs => tqs.Visible).Sum(tqs => tqs.PointsPossible),
             Results = testResultUsers
         };
