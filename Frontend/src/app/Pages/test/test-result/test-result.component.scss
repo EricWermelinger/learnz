@@ -26,7 +26,7 @@
 }
 .question-wrap.adjustable,
 .question-info.adjustable {
-    grid-template-columns: 40px 1fr 1fr 1fr 80px 40px;
+    grid-template-columns: 40px 1fr 1fr 1fr 80px 80px;
 }
 .question-wrap.correct {
     border: 2px solid var(--learnz-correct);

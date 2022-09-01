@@ -36,7 +36,7 @@ public class TestOpen : Controller
                                                 IsOwner = tst.OwnerId == guid,
                                                 IsGroupTest = tst.TestGroups.Any(),
                                                 PointsScored = null,
-                                                PointsPossible = tst.TestQuestions.Sum(tqs => tqs.PointsPossible)
+                                                PointsPossible = tst.TestQuestions.Where(tqs => tqs.Visible).Sum(tqs => tqs.PointsPossible)
                                             })
                                             .ToListAsync();
         return Ok(tests);

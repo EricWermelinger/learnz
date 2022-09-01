@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first, map } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { appRoutes } from 'src/app/Config/appRoutes';
+import { TestQuestionSettingDTO } from 'src/app/DTOs/Test/TestQuestionSettingDTO';
 import { TestSaveSettingsDTO } from 'src/app/DTOs/Test/TestSaveSettingsDTO';
 import { TestSettingDTO } from 'src/app/DTOs/Test/TestSettingDTO';
 import { TestSettingsSaveQuestionDTO } from 'src/app/DTOs/Test/TestSettingsSaveQuestionDTO';
@@ -54,8 +55,8 @@ export class TestSettingsComponent {
       this.formGroup.controls["visible"].patchValue(value.visible);
       this.formGroup.controls["active"].patchValue(value.active);
       for (let question of value.questions) {
-        this.formGroup.addControl(question.question.questionId + '_visible', this.formBuilder.control(question.visible, Validators.required));
-        this.formGroup.addControl(question.question.questionId + '_points', this.formBuilder.control(question.pointsPossible, Validators.required));
+        this.formGroup.addControl(question.question.questionId + '_visible', this.formBuilder.control(question.visible, [Validators.required, Validators.min(1)]));
+        this.formGroup.addControl(question.question.questionId + '_points', this.formBuilder.control(question.pointsPossible, [Validators.required, Validators.min(1)]));
       }
       this.questionIds = value.questions.map(q => q.question.questionId);
     });
@@ -63,6 +64,7 @@ export class TestSettingsComponent {
 
   save() {
     const value = {
+      testId: this.testId,
       name: this.formGroup.controls["name"].value,
       maxTime: this.formGroup.controls["maxTime"].value,
       visible: this.formGroup.controls["visible"].value,
@@ -94,5 +96,42 @@ export class TestSettingsComponent {
 
   getQuestionType(type: number) {
     return getQuestionTypes().filter(t => t.value === type)[0].key;
+  }
+
+  hideDivider(type: number) {
+    return this.getQuestionType(type) === 'OpenQuestion' || this.getQuestionType(type) === 'TextField';
+  }
+
+  cleanupSolution(solution: TestQuestionSettingDTO) {
+    switch (this.getQuestionType(solution.question.questionType)){
+      case 'Distribute':
+        const solutionsDistribute = (solution.solution ?? '').split('|||').filter(s => !!s).map(s => {
+          return {
+            leftId: s.split('||')[0].split('|')[0],
+            rightId: s.split('||')[1].split('|')[0],
+          }
+        }).map(s => {
+          return {
+            left: solution.question.answerSetOne?.filter(a => a.answerId === s.leftId)[0]?.answer ?? '',
+            right: solution.question.answerSetTwo?.filter(a => a.answerId === s.rightId)[0]?.answer ?? '',
+          }
+        });
+        return solutionsDistribute.map(s => s.left + ' - ' + s.right).join(' & ');
+      case 'MultipleChoice':
+        const solutionsGivenMultipleChoice = (solution.solution ?? '').split('|');
+        const solutionsMultipleChoice = solution.question.answerSetOne?.filter(a => solutionsGivenMultipleChoice.includes(a.answerId)).map(a => a.answer) ?? [];
+        return solutionsMultipleChoice.join(' & ');
+      case 'TrueFalse':
+        return solution.solution === 'true' ? 'generalQuestion.true' : 'generalQuestion.false';
+      case 'Mathematic':
+      case 'OpenQuestion':
+      case 'TextField':
+      case 'Word':
+        return solution.solution;
+    }
+  }
+
+  isTrueFalse(question: TestQuestionSettingDTO) {
+    return this.getQuestionType(question.question.questionType) === 'TrueFalse';
   }
 }

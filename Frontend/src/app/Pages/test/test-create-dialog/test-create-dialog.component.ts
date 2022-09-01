@@ -42,6 +42,12 @@ export class TestCreateDialogComponent {
     private challengeCreateService: ChallengeCreateDialogService,
   ) {
     this.formControlGroupTest = new FormControl(false);
+    this.formControlGroupTest.valueChanges.subscribe(_ => {
+      this.formGroupTestNormal.updateValueAndValidity();
+      this.formGroupTestGroupTest.updateValueAndValidity();
+      console.log(this.formGroupTestNormal.valid);
+      console.log(this.formGroupTestGroupTest.valid);
+    });
 
     this.formGroupTestNormal = this.formBuilder.group({
       testId: [guid(), Validators.required],
@@ -118,7 +124,14 @@ export class TestCreateDialogComponent {
 
   selectGroup(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.value;
-    this.formControlGroupTest.patchValue(value.key);
+    this.filterGroupControl.patchValue(value.key);
     this.formGroupTestGroupTest.controls.groupId.patchValue(value.value);
+  }
+
+  isValid() {
+    if (this.formControlGroupTest.value) {
+      return this.formGroupTestGroupTest.valid;
+    }
+    return this.formGroupTestNormal.valid;
   }
 }

@@ -24,7 +24,7 @@ public class TestResult : Controller
         var guid = _userService.GetUserGuid();
         var test = await _dataContext.TestOfUsers
             .Where(tou => (tou.UserId == guid && tou.Id == testOfUserId)
-                            || (tou.Test.OwnerId == guid && tou.UserId == userId))
+                            || (tou.Test.OwnerId == guid && tou.Id == userId))
             .Include(tou => tou.Test)
             .ThenInclude(tqs => tqs.TestQuestions)
             .Include(tou => tou.Test)
@@ -45,7 +45,8 @@ public class TestResult : Controller
             SubjectMain = test.Test.Set.SubjectMain,
             SubjectSecond = test.Test.Set.SubjectSecond,
             TimeUsed = test.Ended == null ? test.Test.MaxTime : Math.Min(((int)((TimeSpan)(test.Ended - test.Started)).TotalMinutes), test.Test.MaxTime),
-            Questions = test.TestQuestionOfUsers.Select(tqs => new TestQuestionResultDTO
+            Questions = test.TestQuestionOfUsers.Where(tqs => tqs.TestQuestion.Visible)
+                                                .Select(tqs => new TestQuestionResultDTO
             {
                 Answer = tqs.AnswerByUser,
                 Solution = tqs.TestQuestion.RightAnswer,

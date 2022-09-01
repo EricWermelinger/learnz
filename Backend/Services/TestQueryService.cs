@@ -20,6 +20,7 @@ public class TestQueryService : ITestQueryService
             .Include(crs => crs.QuestionMultipleChoices)
             .ThenInclude(qmc => qmc.Answers)
             .Include(crs => crs.QuestionOpenQuestions)
+            .Include(crs => crs.QuestionTextFields)
             .Include(crs => crs.QuestionTrueFalses)
             .Include(crs => crs.QuestionWords)
             .FirstOrDefaultAsync();
@@ -115,6 +116,20 @@ public class TestQueryService : ITestQueryService
             };
             _dataContext.TestQuestions.Add(newQuestion);
         }
+        foreach (var question in set.QuestionTextFields)
+        {
+            var newQuestion = new TestQuestion
+            {
+                TestId = testId,
+                QuestionId = question.Id,
+                Question = question.Question,
+                QuestionType = QuestionType.TextField,
+                RightAnswer = string.Empty,
+                PointsPossible = 1,
+                Visible = true
+            };
+            _dataContext.TestQuestions.Add(newQuestion);
+        }
         foreach (var question in set.QuestionTrueFalses)
         {
             var newQuestion = new TestQuestion
@@ -183,6 +198,8 @@ public class TestQueryService : ITestQueryService
                     }
                 }
                 return true;
+            case QuestionType.TextField:
+                return false;
             default:
                 return answer.Trim().ToLower() == rightAnswer.Trim().ToLower();
         }

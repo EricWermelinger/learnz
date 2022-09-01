@@ -57,6 +57,9 @@ export class TestComponent {
   }
 
   calculatePercentage(value: TestDTO) {
+    if (!value.pointsScored) {
+      return null;
+    }
     const points = value.pointsScored ?? 0;
     const total = value.pointsPossible ?? 0;
     if (total == 0) {

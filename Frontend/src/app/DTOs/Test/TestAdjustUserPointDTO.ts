@@ -1,6 +1,5 @@
 ﻿export interface TestAdjustUserPointDTO {
-    userId: string;
-    testId: string;
+    testOfUserId: string;
     questionId: string;
     pointsScored: number;
     isCorrect: boolean;

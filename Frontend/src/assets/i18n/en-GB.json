@@ -210,7 +210,9 @@
         "visible":"Visible",
         "active":"Active",
         "solution":"Solution",
-        "areYouSureToEnd":"Are you sure you want to end the test?"
+        "areYouSureToEnd":"Are you sure you want to end the test?",
+        "setName":"Set Name",
+        "username":"Username"
     },
     "draw":{
         "draw":"Draw"

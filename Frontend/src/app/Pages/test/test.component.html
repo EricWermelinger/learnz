@@ -55,7 +55,7 @@
                     <div>{{ !!closedTest.subjectSecond ? (translateSubject(closedTest.subjectSecond) | translate) : '' }}</div>
                     <div>{{ !!closedTest.pointsScored ? closedTest.pointsScored : '-' }}</div>
                     <div>{{ closedTest.pointsPossible }}</div>
-                    <div>{{ calculatePercentage(closedTest) }}%</div>
+                    <div>{{ !calculatePercentage(closedTest) ? '-' : calculatePercentage(closedTest) + '%' }}</div>
                     <div>
                         <mat-icon *ngIf="closedTest.isGroupTest; else strokeGroup">group</mat-icon>
                         <ng-template #strokeGroup>

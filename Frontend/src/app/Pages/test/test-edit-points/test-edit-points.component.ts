@@ -12,7 +12,6 @@ import { TestEditPointsService } from './test-edit-points.service';
 export class TestEditPointsComponent {
 
   userId: string;
-  testOfUserId: string;
   questionId: string;
   isCorrect: FormControl;
   pointsScored: FormControl;
@@ -22,7 +21,6 @@ export class TestEditPointsComponent {
     private dialogRef: MatDialogRef<TestEditPointsComponent>,
     private editPointsService: TestEditPointsService,
   ) {
-    this.testOfUserId = data.testOfUserId;
     this.userId = data.userId;
     this.questionId = data.questionId;
     this.isCorrect = new FormControl(data.isCorrect);
@@ -31,8 +29,7 @@ export class TestEditPointsComponent {
 
   save() {
     const value = {
-      testId: this.testOfUserId,
-      userId: this.userId ?? '',
+      testOfUserId: this.userId ?? '',
       questionId: this.questionId,
       isCorrect: this.isCorrect.value,
       pointsScored: this.pointsScored.value,

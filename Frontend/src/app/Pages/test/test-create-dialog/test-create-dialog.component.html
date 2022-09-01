@@ -66,7 +66,7 @@
             </mat-form-field>
             <div class="buttons">
                 <button mat-button (click)="cancel()">{{ 'framework.cancel' | translate }}</button>
-                <button mat-button color="primary" [disabled]="!formGroupTestNormal.valid" (click)="save()">{{ 'framework.save' | translate }}</button>
+                <button mat-button color="primary" [disabled]="!isValid()" (click)="save()">{{ 'framework.save' | translate }}</button>
             </div>
         </form>
     </ng-template>

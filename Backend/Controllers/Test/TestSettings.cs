@@ -22,7 +22,9 @@ public class TestSettings : Controller
     public async Task<ActionResult<TestSettingDTO>> GetSettings(Guid testId)
     {
         var guid = _userService.GetUserGuid();
-        var test = await _dataContext.Tests.FirstOrDefaultAsync(tst => tst.Id == testId
+        var test = await _dataContext.Tests.Include(tst => tst.Set)
+                                           .Include(tst => tst.TestQuestions)
+                                           .FirstOrDefaultAsync(tst => tst.Id == testId
                                                                     && tst.OwnerId == guid);
         var groupTest = await _dataContext.TestGroups.FirstOrDefaultAsync(tst => tst.TestId == testId);
         if (test == null || groupTest == null)
@@ -41,6 +43,7 @@ public class TestSettings : Controller
             Visible = test.Visible,
             Questions = test.TestQuestions.Select(tqs => new TestQuestionSettingDTO
             {
+                Solution = tqs.RightAnswer,
                 Visible = tqs.Visible,
                 PointsPossible = tqs.PointsPossible,
                 Question = new GeneralQuestionQuestionDTO
@@ -66,7 +69,7 @@ public class TestSettings : Controller
         {
             return BadRequest(ErrorKeys.TestNotAccessible);
         }
-        if (test.Visible && !request.Visible)
+        if (test.Active && !request.Active)
         {
             var timeStamp = DateTime.UtcNow;
             var notEndedTestOfUsers = await _dataContext.TestOfUsers.Where(tou => tou.TestId == test.Id && tou.Ended == null).ToListAsync();

@@ -21,8 +21,7 @@ public class TestGroupAdjustUserPoints : Controller
     {
         var guid = _userService.GetUserGuid();
         var testQuestion = await _dataContext.TestQuestionOfUsers.Where(tqu => tqu.TestOfUser.Test.OwnerId == guid
-                                                                                && tqu.TestOfUser.TestId == request.TestId
-                                                                                && tqu.TestOfUser.UserId == request.UserId
+                                                                                && tqu.TestOfUser.Id == request.TestOfUserId
                                                                                 && tqu.TestQuestion.QuestionId == request.QuestionId)
                                                                  .FirstOrDefaultAsync();
         if (testQuestion == null)
