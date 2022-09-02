@@ -1,0 +1,26 @@
+<div *ngIf="collections$ | async as collections">
+    <mat-card *ngFor="let collection of collections">
+        <div>{{ collection.name }}</div>
+        <div>{{ collection.numberOfPages }}</div>
+        <div>
+            <mat-icon *ngIf="collection.editable; else nonEdit">edit</mat-icon>
+            <ng-template #nonEdit>
+                <div>-</div>
+            </ng-template>
+        </div>
+        <div>
+            <mat-icon *ngIf="collection.deletable; else nonDelete">delete</mat-icon>
+            <ng-template #nonDelete>
+                <div>-</div>
+            </ng-template>
+        </div>
+        <div>
+            <mat-icon *ngIf="collection.isGroupCollection; else nonGroup">group</mat-icon>
+            <ng-template #nonGroup>
+                <div>-</div>
+            </ng-template>
+        </div>
+        <div>{{ !!collection.groupName ? collection.groupName : '-' }}</div>
+        <div>{{ collection.lastChangedBy }} ({{ collection.lastChanged | date: 'dd.MM.yyyy HH:mm:ss' }})</div>
+    </mat-card>
+</div>

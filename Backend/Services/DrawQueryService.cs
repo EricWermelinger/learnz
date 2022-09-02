@@ -67,10 +67,10 @@ public class DrawQueryService : IDrawQueryService
                                                                     }).ToList();
         if (ownCollections == null)
         {
-            return groupCollectionsWithPolicy ?? new List<DrawCollectionGetDTO>();
+            return (groupCollectionsWithPolicy ?? new List<DrawCollectionGetDTO>()).OrderByDescending(clc => clc.LastChangedBy).ToList();
         }
         ownCollections.AddRange(groupCollectionsWithPolicy ?? new List<DrawCollectionGetDTO>());
-        return ownCollections;
+        return ownCollections.OrderByDescending(clc => clc.LastChangedBy).ToList();
     }
 
     public async Task<List<DrawPageGetDTO>?> GetPages(Guid userId, Guid collectionId)
@@ -100,6 +100,7 @@ public class DrawQueryService : IDrawQueryService
     {
         var timestamp = DateTime.UtcNow;
         var pages = await _dataContext.DrawPages.Where(drp => drp.DrawCollectionId == collectionId)
+                                                .OrderByDescending(drp => drp.Created)
                                                 .Select(drp => new DrawPageGetBackendDTO
                                                 {
                                                     DataUrl = drp.DataUrl,

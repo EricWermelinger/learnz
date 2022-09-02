@@ -12,7 +12,7 @@ import { DrawDeleteConfirmService } from './draw-delete-confirm.service';
 export class DrawDeleteConfirmComponent {
 
   collectionId: string;
-  pageId: string = '';
+  pageId: string | null = null;
 
   constructor(
     private deleteConfirmService: DrawDeleteConfirmService,
@@ -23,6 +23,14 @@ export class DrawDeleteConfirmComponent {
     this.collectionId = data.collectionId;
     if (data.pageId) {
       this.pageId = data.pageId;
+    }
+  }
+
+  save() {
+    if (this.pageId) {
+      this.deletePage(this.collectionId, this.pageId);
+    } else {
+      this.deleteCollection(this.collectionId);
     }
   }
 

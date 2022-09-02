@@ -3,7 +3,8 @@
         "save":"Save",
         "cancel":"Cancel",
         "back":"Back",
-        "yes":"Yes"
+        "yes":"Yes",
+        "deleteConfirm":"Are you sure that you want to delete this?"
     },
     "login":{
         "login":"Login",
@@ -215,7 +216,10 @@
         "username":"Username"
     },
     "draw":{
-        "draw":"Draw"
+        "draw":"Draw",
+        "collectionSettings":"Collection Settings",
+        "name":"Collection Name",
+        "drawGroupPolicy":"Draw Editing Policy"
     },
     "settings":{
         "settings":"Settings",
@@ -333,6 +337,10 @@
         "TextField":"Text Field",
         "TrueFalse":"True False",
         "Word":"Word"
+    },
+    "DrawGroupPolicy":{
+        "OnlySelfEditable":"Only Self Editable",
+        "Public":"Public"
     },
     "languages":{
         "languages":"Language",
