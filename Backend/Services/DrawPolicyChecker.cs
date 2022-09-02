@@ -1,26 +1,26 @@
 ﻿namespace Learnz.Services;
 public class DrawPolicyChecker : IDrawPolicyChecker
 {
-    public bool GroupPageEditable(DrawGroupCollection collection, Guid userId)
+    public bool GroupPageDeletable(DrawGroupPolicy policy, Guid ownerId, Guid userId)
     {
-        switch (collection.DrawGroupPolicy)
+        switch (policy)
         {
             case DrawGroupPolicy.OnlySelfEditable:
-                return collection.DrawCollection.OwnerId == userId;
             case DrawGroupPolicy.Public:
-                return true;
+                return ownerId == userId;
             default:
                 return false;
         }
     }
 
-    public bool GroupPageDeletable(DrawGroupCollection collection, Guid userId)
+    public bool GroupPageEditable(DrawGroupPolicy policy, Guid ownerId, Guid userId)
     {
-        switch (collection.DrawGroupPolicy)
+        switch (policy)
         {
             case DrawGroupPolicy.OnlySelfEditable:
+                return ownerId == userId;
             case DrawGroupPolicy.Public:
-                return collection.DrawCollection.OwnerId == userId;
+                return true;
             default:
                 return false;
         }
