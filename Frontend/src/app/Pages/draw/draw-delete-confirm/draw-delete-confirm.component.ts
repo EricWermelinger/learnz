@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { appRoutes } from 'src/app/Config/appRoutes';
 import { DrawDeleteConfirmService } from './draw-delete-confirm.service';
 
 @Component({
@@ -8,8 +11,36 @@ import { DrawDeleteConfirmService } from './draw-delete-confirm.service';
 })
 export class DrawDeleteConfirmComponent {
 
+  collectionId: string;
+  pageId: string = '';
+
   constructor(
     private deleteConfirmService: DrawDeleteConfirmService,
-  ) { }
+    private dialogRef: MatDialogRef<DrawDeleteConfirmComponent>,
+    private router: Router,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {
+    this.collectionId = data.collectionId;
+    if (data.pageId) {
+      this.pageId = data.pageId;
+    }
+  }
 
+  deleteCollection(collectionId: string) {
+    this.deleteConfirmService.deleteCollection$(collectionId).subscribe(_ => {
+      this.dialogRef.close();
+      this.router.navigate([appRoutes.App, appRoutes.Draw]);
+    });
+  }
+
+  deletePage(collectionId: string, pageId: string) {
+    this.deleteConfirmService.deletePage$(collectionId, pageId).subscribe(_ => {
+      this.dialogRef.close();
+      this.router.navigate([appRoutes.App, appRoutes.Draw]);
+    });
+  }
+
+  cancel() {
+    this.dialogRef.close();
+  }
 }

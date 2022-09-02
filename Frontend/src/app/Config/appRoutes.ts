@@ -33,5 +33,7 @@ export const appRoutes = {
     TestStepper: 'test-stepper',
     TestUserId: 'testUserId',
     Draw: 'draw',
+    DrawCollectionId: 'drawCollectionId',
+    DrawPageId: 'drawPageId',
     Settings: 'settings'
 }

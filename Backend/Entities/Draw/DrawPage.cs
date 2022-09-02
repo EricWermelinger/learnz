@@ -6,7 +6,6 @@ public class DrawPage
     public DrawCollection DrawCollection { get; set; }
     public Guid OwnerId { get; set; }
     public User Owner { get; set; }
-    public string Name { get; set; }
     public DateTime Created { get; set; }
     public DateTime Changed { get; set; }
     public Guid ChangedById { get; set; }

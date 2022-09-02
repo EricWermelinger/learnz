@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { DrawCollectionGetDTO } from 'src/app/DTOs/Draw/DrawCollectionGetDTO';
 import { DrawService } from './draw.service';
 
 @Component({
@@ -10,10 +11,15 @@ import { DrawService } from './draw.service';
 export class DrawComponent implements OnDestroy {
 
   private destroyed$ = new Subject<void>();
+  collections$: Observable<DrawCollectionGetDTO[]>;
 
   constructor(
     private drawService: DrawService,
-  ) { }
+  ) {
+    this.collections$ = this.drawService.getCollections$().pipe(
+      takeUntil(this.destroyed$),
+    );
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next();

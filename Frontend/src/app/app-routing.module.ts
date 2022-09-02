@@ -56,6 +56,7 @@ const routes: Routes = [
       { path: `${appRoutes.Test}/${appRoutes.TestSetting}/:${appRoutes.TestId}`, component: TestSettingsComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestStepper}/:${appRoutes.TestId}`, component: TestStepperComponent },
       { path: appRoutes.Draw, component: DrawComponent },
+      { path: `${appRoutes.Draw}/:${appRoutes.DrawCollectionId}/:${appRoutes.DrawPageId}`, component: TestResultComponent },
       { path: appRoutes.Settings, component: SettingsComponent },
     ],
   },
