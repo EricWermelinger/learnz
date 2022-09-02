@@ -87,7 +87,8 @@ public class DrawCollections : Controller
                 ChangedById = guid,
                 Created = timeStamp,
                 DataUrl = "",
-                OwnerId = guid
+                OwnerId = guid,
+                DrawCollectionId = newDrawCollection.Id,
             };
             _dataContext.DrawPages.Add(newDrawCollectionFirstPage);
             await _dataContext.SaveChangesAsync();

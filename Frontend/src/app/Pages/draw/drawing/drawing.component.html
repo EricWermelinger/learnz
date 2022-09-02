@@ -1,0 +1,22 @@
+<div class="site">
+    <div *ngIf="activePage$ | async as activePage">
+
+    </div>
+    <div *ngIf="pages$ | async as pages">
+        <div *ngFor="let page of pages" class="page">
+            <div *ngIf="!!page.editingPersonName && !!page.editingPersonProfileImagePath">
+                <img [src]="page.editingPersonProfileImagePath" [matTooltip]="page.editingPersonName">
+            </div>
+            <div>
+                <mat-icon *ngIf="page.editable" (click)="editPage(page.pageId)">edit</mat-icon>
+            </div>
+            <div>
+                <mat-icon *ngIf="page.deletable" (click)="deletePage(page.pageId, pages)">delete</mat-icon>
+            </div>
+            <div>
+                <img [src]="page.dataUrl" (click)="openPage(page.pageId)" [ngClass]="{ 'active': this.pageId === page.pageId }">
+            </div>
+        </div>
+        <button mat-flat-button color="primary" (click)="createPage()">{{ 'draw.addPage' | translate }}</button>
+    </div>
+</div>

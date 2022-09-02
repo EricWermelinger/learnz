@@ -7,6 +7,8 @@
     deletable: boolean;
     isGroupCollection: boolean;
     groupName: string | null;
+    groupId: string | null;
+    drawGroupPolicy: number | null;
     lastChanged: Date;
     lastChangedBy: string;
 }

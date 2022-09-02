@@ -44,7 +44,6 @@ export class DrawDeleteConfirmComponent {
   deletePage(collectionId: string, pageId: string) {
     this.deleteConfirmService.deletePage$(collectionId, pageId).subscribe(_ => {
       this.dialogRef.close();
-      this.router.navigate([appRoutes.App, appRoutes.Draw]);
     });
   }
 

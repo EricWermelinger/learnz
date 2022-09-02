@@ -219,7 +219,14 @@
         "draw":"Draw",
         "collectionSettings":"Collection Settings",
         "name":"Collection Name",
-        "drawGroupPolicy":"Draw Editing Policy"
+        "drawGroupPolicy":"Draw Editing Policy",
+        "pages":"Pages",
+        "groupConnect":"Connect Group",
+        "groupName":"Group Name",
+        "changed":"Last Changes",
+        "drawings":"Drawings",
+        "newDrawing":"New Drawing",
+        "addPage":"Add Page"
     },
     "settings":{
         "settings":"Settings",

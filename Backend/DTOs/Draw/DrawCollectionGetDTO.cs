@@ -9,6 +9,8 @@ public class DrawCollectionGetDTO
     public bool Deletable { get; set; }
     public bool IsGroupCollection { get; set; }
     public string? GroupName { get; set; }
+    public Guid? GroupId { get; set; }
+    public DrawGroupPolicy? DrawGroupPolicy { get; set; }
     public DateTime LastChanged { get; set; }
     public string LastChangedBy { get; set; }
 }

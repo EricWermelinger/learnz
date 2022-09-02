@@ -24,6 +24,8 @@ public class DrawQueryService : IDrawQueryService
                                                                    Editable = true,
                                                                    FirstPageId = drc.DrawPages.OrderBy(p => p.Created).First().Id,
                                                                    GroupName = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.Name : null,
+                                                                   GroupId = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().GroupId : null,
+                                                                   DrawGroupPolicy = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().DrawGroupPolicy : null,
                                                                    IsGroupCollection = drc.DrawGroupCollections.Any(),
                                                                    LastChanged = drc.Changed,
                                                                    LastChangedBy = drc.ChangedBy.Username,
@@ -37,16 +39,21 @@ public class DrawQueryService : IDrawQueryService
                                                                       .Select(drc => drc.DrawCollection)
                                                                       .Select(drc => new
                                                                       {
-                                                                          CollectionId = drc.Id,
-                                                                          Deletable = false,
-                                                                          Editable = false,
-                                                                          FirstPageId = drc.DrawPages.OrderBy(p => p.Created).First().Id,
-                                                                          GroupName = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.Name : null,
-                                                                          IsGroupCollection = drc.DrawGroupCollections.Any(),
-                                                                          LastChanged = drc.Changed,
-                                                                          LastChangedBy = drc.ChangedBy.Username,
-                                                                          Name = drc.Name,
-                                                                          NumberOfPages = drc.DrawPages.Count(),
+                                                                          Collection = new DrawCollectionGetDTO
+                                                                          {
+                                                                              CollectionId = drc.Id,
+                                                                              Deletable = false,
+                                                                              Editable = false,
+                                                                              FirstPageId = drc.DrawPages.OrderBy(p => p.Created).First().Id,
+                                                                              GroupName = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.Name : null,
+                                                                              GroupId = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().GroupId : null,
+                                                                              DrawGroupPolicy = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().DrawGroupPolicy : null,
+                                                                              IsGroupCollection = drc.DrawGroupCollections.Any(),
+                                                                              LastChanged = drc.Changed,
+                                                                              LastChangedBy = drc.ChangedBy.Username,
+                                                                              Name = drc.Name,
+                                                                              NumberOfPages = drc.DrawPages.Count(),
+                                                                          },
                                                                           Policy = drc.DrawGroupCollections.First().DrawGroupPolicy,
                                                                           OwnerId = drc.OwnerId
                                                                       })
@@ -54,17 +61,17 @@ public class DrawQueryService : IDrawQueryService
         
         var groupCollectionsWithPolicy = groupCollections.Select(drc => new DrawCollectionGetDTO
                                                                     {
-                                                                        CollectionId = drc.CollectionId,
+                                                                        CollectionId = drc.Collection.CollectionId,
                                                                         Deletable = _drawPolicyChecker.GroupPageDeletable(drc.Policy, drc.OwnerId, userId),
                                                                         Editable = _drawPolicyChecker.GroupPageEditable(drc.Policy, drc.OwnerId, userId),
-                                                                        FirstPageId = drc.FirstPageId,
-                                                                        GroupName = drc.GroupName,
-                                                                        IsGroupCollection = drc.IsGroupCollection,
-                                                                        LastChanged = drc.LastChanged,
-                                                                        LastChangedBy = drc.LastChangedBy,
-                                                                        Name = drc.Name,
-                                                                        NumberOfPages = drc.NumberOfPages
-                                                                    }).ToList();
+                                                                        FirstPageId = drc.Collection.FirstPageId,
+                                                                        GroupName = drc.Collection.GroupName,
+                                                                        IsGroupCollection = drc.Collection.IsGroupCollection,
+                                                                        LastChanged = drc.Collection.LastChanged,
+                                                                        LastChangedBy = drc.Collection.LastChangedBy,
+                                                                        Name = drc.Collection.Name,
+                                                                        NumberOfPages = drc.Collection.NumberOfPages
+        }).ToList();
         if (ownCollections == null)
         {
             return (groupCollectionsWithPolicy ?? new List<DrawCollectionGetDTO>()).OrderByDescending(clc => clc.LastChangedBy).ToList();
@@ -164,10 +171,24 @@ public class DrawQueryService : IDrawQueryService
 
     public async Task TriggerWebsocketPages(Guid collectionChangedId)
     {
-        var usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
-                                                              .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
-                                                              .SelectMany(usr => usr)
+        var usersToNotifyList = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
+                                                              .Select(drc => new
+                                                              {
+                                                                  UserIds = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId }
+                                                              })
                                                               .ToListAsync();
+        // todo here
+        var usersToNotify = new List<Guid>();
+        foreach (var userIds in usersToNotifyList)
+        {
+            if (userIds != null)
+            {
+                foreach (var userId in userIds)
+                {
+                    usersToNotify.Add(userId);
+                }
+            }
+        }
         var pages = await PagesWithoutPolicy(collectionChangedId);
         foreach (Guid userToNotify in usersToNotify)
         {

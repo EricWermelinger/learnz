@@ -24,7 +24,7 @@ public class DrawPages : Controller
     public async Task<ActionResult<List<DrawPageGetDTO>>> GetPages(Guid collectionId)
     {
         var guid = _userService.GetUserGuid();
-        var result = await _drawQueryService.GetPages(collectionId, guid);
+        var result = await _drawQueryService.GetPages(guid, collectionId);
         if (result == null)
         {
             return BadRequest(ErrorKeys.DrawNotAccessible);
