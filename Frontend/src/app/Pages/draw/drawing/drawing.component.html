@@ -1,22 +1,30 @@
-<div class="site">
-    <div *ngIf="activePage$ | async as activePage">
-
+<div *ngIf="info$ | async as info">
+    <div *ngIf="getActivePage(info.pages) as activePage" class="header">
+        <h2>{{ info.name }}</h2>
+        <mat-slide-toggle *ngIf="activePage.editable" [formControl]="formControlEditMode" class="slide" (change)="changeEditMode($event.checked)">{{ 'draw.editMode' | translate }}</mat-slide-toggle>
     </div>
-    <div *ngIf="pages$ | async as pages">
-        <div *ngFor="let page of pages" class="page">
-            <div *ngIf="!!page.editingPersonName && !!page.editingPersonProfileImagePath">
-                <img [src]="page.editingPersonProfileImagePath" [matTooltip]="page.editingPersonName">
-            </div>
-            <div>
-                <mat-icon *ngIf="page.editable" (click)="editPage(page.pageId)">edit</mat-icon>
-            </div>
-            <div>
-                <mat-icon *ngIf="page.deletable" (click)="deletePage(page.pageId, pages)">delete</mat-icon>
-            </div>
-            <div>
-                <img [src]="page.dataUrl" (click)="openPage(page.pageId)" [ngClass]="{ 'active': this.pageId === page.pageId }">
+    <div class="site">
+        <div *ngIf="getActivePage(info.pages) as activePage" class="header">
+            <div class="active-page">{{ activePage.pageId }}</div>
+        </div>
+        <div class="page-collection">
+            <button *ngIf="info.editable" mat-flat-button color="primary" (click)="createPage()" class="add-page">{{ 'draw.addPage' | translate }}</button>
+            <div *ngFor="let page of info.pages" class="page">
+                <div [ngClass]="{ 'active': this.pageId === page.pageId, 'drawing': true, 'pointer': true }" (click)="openPage(page.pageId)">
+                    <img [src]="page.dataUrl">
+                </div>
+                <div class="action-bar">
+                    <div class="action">
+                        <mat-icon *ngIf="page.editable" (click)="editPage(page.pageId)" class="pointer">edit</mat-icon>
+                    </div>
+                    <div class="action">
+                        <mat-icon *ngIf="page.deletable" (click)="deletePage(page.pageId, info.pages)" class="pointer">delete</mat-icon>
+                    </div>
+                    <div class="action profile-image">
+                        <img *ngIf="!!page.editingPersonName && !!page.editingPersonProfileImagePath" [src]="page.editingPersonProfileImagePath" [matTooltip]="page.editingPersonName">
+                    </div>
+                </div>
             </div>
         </div>
-        <button mat-flat-button color="primary" (click)="createPage()">{{ 'draw.addPage' | translate }}</button>
     </div>
 </div>

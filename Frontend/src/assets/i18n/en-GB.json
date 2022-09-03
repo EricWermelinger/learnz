@@ -226,7 +226,8 @@
         "changed":"Last Changes",
         "drawings":"Drawings",
         "newDrawing":"New Drawing",
-        "addPage":"Add Page"
+        "addPage":"Add Page",
+        "editMode":"Edit Mode"
     },
     "settings":{
         "settings":"Settings",

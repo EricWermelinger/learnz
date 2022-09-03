@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
+import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
 import { DrawPageCreateDTO } from 'src/app/DTOs/Draw/DrawPageCreateDTO';
 import { DrawPageEditDTO } from 'src/app/DTOs/Draw/DrawPageEditDTO';
-import { DrawPageGetDTO } from 'src/app/DTOs/Draw/DrawPageGetDTO';
 import { ApiService } from 'src/app/Framework/API/api.service';
 import { WebSocketService } from 'src/app/Framework/API/web-socket.service';
 
@@ -17,10 +17,10 @@ export class DrawingService {
     private ws: WebSocketService,
   ) { }
 
-  getPages$(collectionId: string): Observable<DrawPageGetDTO[]> {
+  getPages$(collectionId: string): Observable<DrawDrawingDTO> {
     return merge(
-      this.api.callApi<DrawPageGetDTO[]>(endpoints.DrawPages, { collectionId }, 'GET'),
-      this.ws.webSocketData<DrawPageGetDTO[]>(endpoints.DrawPages, [] as DrawPageGetDTO[], collectionId)
+      this.api.callApi<DrawDrawingDTO>(endpoints.DrawPages, { collectionId }, 'GET'),
+      this.ws.webSocketData<DrawDrawingDTO>(endpoints.DrawPages, {} as DrawDrawingDTO, collectionId)
     );
   }
 

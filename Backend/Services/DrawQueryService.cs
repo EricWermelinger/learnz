@@ -7,11 +7,14 @@ public class DrawQueryService : IDrawQueryService
     private readonly DataContext _dataContext;
     private readonly HubService _hubService;
     private readonly IDrawPolicyChecker _drawPolicyChecker;
-    public DrawQueryService(DataContext dataContext, IHubContext<LearnzHub> learnzHub, IDrawPolicyChecker drawPolicyChecker)
+    private readonly ILearnzFrontendFileGenerator _learnzFrontendFileGenerator;
+
+    public DrawQueryService(DataContext dataContext, IHubContext<LearnzHub> learnzHub, IDrawPolicyChecker drawPolicyChecker, ILearnzFrontendFileGenerator learnzFrontendFileGenerator)
     {
         _dataContext = dataContext;
         _hubService = new HubService(learnzHub);
         _drawPolicyChecker = drawPolicyChecker;
+        _learnzFrontendFileGenerator = learnzFrontendFileGenerator;
     }
     
     public async Task<List<DrawCollectionGetDTO>> GetCollections(Guid userId)
@@ -80,7 +83,7 @@ public class DrawQueryService : IDrawQueryService
         return ownCollections.OrderByDescending(clc => clc.LastChangedBy).ToList();
     }
 
-    public async Task<List<DrawPageGetDTO>?> GetPages(Guid userId, Guid collectionId)
+    public async Task<DrawDrawingDTO?> GetPages(Guid userId, Guid collectionId)
     {
         bool? isOwn = await PagesIsOwn(userId, collectionId);
         if (isOwn == null)
@@ -89,7 +92,13 @@ public class DrawQueryService : IDrawQueryService
         }
         var pages = await PagesWithoutPolicy(collectionId);
         var result = await PagesApplyPolicy(isOwn, pages, userId);
-        return result;
+        var name = await PageCollectionName(collectionId);
+        return new DrawDrawingDTO
+        {
+            Name = name ?? "",
+            Pages = result ?? new List<DrawPageGetDTO>(),
+            Editable = result != null && result.ElementAt(0).Editable
+        };
     }
 
     private async Task<bool?> PagesIsOwn(Guid userId, Guid collectionId)
@@ -106,15 +115,21 @@ public class DrawQueryService : IDrawQueryService
     private async Task<List<DrawPageGetBackendDTO>?> PagesWithoutPolicy(Guid collectionId)
     {
         var timestamp = DateTime.UtcNow;
+        var currentEditing = await _dataContext.DrawPages.Where(drp => drp.DrawCollectionId == collectionId)
+                                                         .Where(drp => drp.Changed.AddMinutes(1) > timestamp)
+                                                         .OrderByDescending(drp => drp.Changed)
+                                                         .Select(drp => drp.Id)
+                                                         .FirstOrDefaultAsync();
+
         var pages = await _dataContext.DrawPages.Where(drp => drp.DrawCollectionId == collectionId)
-                                                .OrderByDescending(drp => drp.Created)
+                                                .OrderBy(drp => drp.Created)
                                                 .Select(drp => new DrawPageGetBackendDTO
                                                 {
                                                     DataUrl = drp.DataUrl,
                                                     Editable = false,
                                                     Deletable = false,
-                                                    EditingPersonName = drp.Changed.AddMinutes(1) > timestamp ? drp.ChangedBy.Username : null,
-                                                    EditingPersonProfileImagePath = drp.Changed.AddMinutes(1) > timestamp ? drp.ChangedBy.ProfileImage.Path : null,
+                                                    EditingPersonName = currentEditing == drp.Id ? drp.ChangedBy.Username : null,
+                                                    EditingPersonProfileImagePath = currentEditing == drp.Id ? drp.ChangedBy.ProfileImage.Path : null,
                                                     PageId = drp.Id,
                                                     OwnerId = drp.OwnerId,
                                                     Policy = drp.DrawCollection.DrawGroupCollections.Any() ? drp.DrawCollection.DrawGroupCollections.First().DrawGroupPolicy : DrawGroupPolicy.Public,
@@ -134,12 +149,18 @@ public class DrawQueryService : IDrawQueryService
         {
             DataUrl = dpg.DataUrl,
             Deletable = dpg.PageCount > 1 ? ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageDeletable(dpg.Policy, dpg.OwnerId, userId)) : false,
-            Editable = dpg.PageCount > 1 ? ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageEditable(dpg.Policy, dpg.OwnerId, userId)) : false,
+            Editable = ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageEditable(dpg.Policy, dpg.OwnerId, userId)),
             EditingPersonName = dpg.EditingPersonName,
-            EditingPersonProfileImagePath = dpg.EditingPersonProfileImagePath,
+            EditingPersonProfileImagePath = _learnzFrontendFileGenerator.PathToImage(dpg.EditingPersonProfileImagePath),
             PageId = dpg.PageId
         }).ToList();
         return pagesWithPolicy ?? new List<DrawPageGetDTO>();
+    }
+
+    private async Task<string?> PageCollectionName(Guid collectionId)
+    {
+        var name = await _dataContext.DrawCollections.Where(clc => clc.Id == collectionId).Select(clc => clc.Name).FirstOrDefaultAsync();
+        return name;
     }
 
     public async Task TriggerWebsocketCollections(Guid collectionChangedId, Guid? groupId, Guid? userId)
@@ -158,45 +179,44 @@ public class DrawQueryService : IDrawQueryService
         else
         {
             usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
-                                                              .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
-                                                              .SelectMany(usr => usr)
-                                                              .ToListAsync();
+                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
+                                                                .FirstOrDefaultAsync();
         }
-        foreach (Guid userToNotify in usersToNotify)
+        if (usersToNotify != null)
         {
-            var data = await GetCollections(userToNotify);
-            await _hubService.SendMessageToUser(nameof(DrawCollections), data, userToNotify);
+            foreach (Guid userToNotify in usersToNotify)
+            {
+                var data = await GetCollections(userToNotify);
+                await _hubService.SendMessageToUser(nameof(DrawCollections), data, userToNotify);
+            }
         }
     }
 
     public async Task TriggerWebsocketPages(Guid collectionChangedId)
     {
-        var usersToNotifyList = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
-                                                              .Select(drc => new
-                                                              {
-                                                                  UserIds = drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId }
-                                                              })
-                                                              .ToListAsync();
-        // todo here
-        var usersToNotify = new List<Guid>();
-        foreach (var userIds in usersToNotifyList)
-        {
-            if (userIds != null)
-            {
-                foreach (var userId in userIds)
-                {
-                    usersToNotify.Add(userId);
-                }
-            }
-        }
+        var usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
+                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
+                                                                .FirstOrDefaultAsync();
         var pages = await PagesWithoutPolicy(collectionChangedId);
-        foreach (Guid userToNotify in usersToNotify)
+        if (usersToNotify != null)
         {
-            var isOwn = await PagesIsOwn(userToNotify, collectionChangedId);
-            if (isOwn != null)
+            foreach (Guid userToNotify in usersToNotify)
             {
-                var data = PagesApplyPolicy(isOwn, pages, userToNotify);
-                await _hubService.SendMessageToUser(nameof(DrawPages), data, userToNotify, collectionChangedId);
+                var isOwn = await PagesIsOwn(userToNotify, collectionChangedId);
+                if (isOwn != null)
+                {
+                    var pagesPolicy = await PagesApplyPolicy(isOwn, pages, userToNotify);
+                    if (pagesPolicy != null)
+                    {
+                        var data = new DrawDrawingDTO
+                        {
+                            Pages = pagesPolicy ?? new List<DrawPageGetDTO>(),
+                            Name = await PageCollectionName(collectionChangedId) ?? "",
+                            Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable
+                        };
+                        await _hubService.SendMessageToUser(nameof(DrawPages), data, userToNotify, collectionChangedId);
+                    }
+                }
             }
         }
     }

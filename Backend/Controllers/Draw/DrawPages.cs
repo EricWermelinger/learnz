@@ -21,7 +21,7 @@ public class DrawPages : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrawPageGetDTO>>> GetPages(Guid collectionId)
+    public async Task<ActionResult<DrawDrawingDTO>> GetPages(Guid collectionId)
     {
         var guid = _userService.GetUserGuid();
         var result = await _drawQueryService.GetPages(guid, collectionId);
