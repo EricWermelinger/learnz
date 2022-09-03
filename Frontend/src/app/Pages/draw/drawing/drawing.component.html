@@ -5,13 +5,19 @@
     </div>
     <div class="site">
         <div *ngIf="getActivePage(info.pages) as activePage" class="header">
-            <div class="active-page">{{ activePage.pageId }}</div>
+            <canvas #canvas [ngClass]="{ 'active-page': true, 'hidden': !(editMode$ | async) }"></canvas>
+            <img *ngIf="!(editMode$ | async)" [src]="activePage.dataUrl" class="active-page">
         </div>
         <div class="page-collection">
             <button *ngIf="info.editable" mat-flat-button color="primary" (click)="createPage()" class="add-page">{{ 'draw.addPage' | translate }}</button>
             <div *ngFor="let page of info.pages" class="page">
-                <div [ngClass]="{ 'active': this.pageId === page.pageId, 'drawing': true, 'pointer': true }" (click)="openPage(page.pageId)">
-                    <img [src]="page.dataUrl">
+                <div [ngClass]="{ 'active': pageId$.value === page.pageId, 'drawing': true, 'pointer': true }" (click)="openPage(page.pageId)">
+                    <img *ngIf="page.dataUrl; else emptyImage" [src]="page.dataUrl" class="drawing-image">
+                    <ng-template #emptyImage>
+                        <div class="drawing-image empty-image">
+                            <div>{{ 'draw.empty' | translate }}</div>
+                        </div>
+                    </ng-template>
                 </div>
                 <div class="action-bar">
                     <div class="action">

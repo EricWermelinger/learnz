@@ -5,6 +5,7 @@
     display: block;
     height: 600px;
     width: 600px;
+    border-radius: 4px;
     border: 1px solid var(--learnz-black);
 }
 .site {
@@ -16,7 +17,13 @@
     display: block;
     height: 100px;
     width: 100px;
+    border-radius: 4px;
     border: 1px solid var(--learnz-black);
+    .drawing-image {
+        height: 100px;
+        width: 100px;
+        object-fit: cover;
+    }
 }
 .page {
     display: grid;
@@ -60,4 +67,13 @@
         height: 33px;
         object-fit: cover;
     }
+}
+.empty-image {
+    background-color: var(--learnz-light-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hidden {
+    display: none;
 }

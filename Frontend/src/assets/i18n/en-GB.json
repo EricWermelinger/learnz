@@ -227,7 +227,8 @@
         "drawings":"Drawings",
         "newDrawing":"New Drawing",
         "addPage":"Add Page",
-        "editMode":"Edit Mode"
+        "editMode":"Edit Mode",
+        "empty":"Empty"
     },
     "settings":{
         "settings":"Settings",

@@ -8,3 +8,7 @@ todo
 -> Group Files triggered on POST, DELETE of Collections
 
 Implement Frontend
+
+Adjust changed on DrawCollection
+
+// todo make sure darkmode works aswell
