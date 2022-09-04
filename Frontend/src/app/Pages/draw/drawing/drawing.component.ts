@@ -7,10 +7,11 @@ import { DrawingService } from './drawing.service';
 import { v4 as guid } from 'uuid';
 import { DrawPageCreateDTO } from 'src/app/DTOs/Draw/DrawPageCreateDTO';
 import { DrawPageEditDTO } from 'src/app/DTOs/Draw/DrawPageEditDTO';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DrawDeleteConfirmComponent } from '../draw-delete-confirm/draw-delete-confirm.component';
 import { FormControl } from '@angular/forms';
 import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
+import { DrawNotifyComponent } from '../draw-notify/draw-notify.component';
 
 @Component({
   selector: 'app-drawing',
@@ -30,6 +31,7 @@ export class DrawingComponent implements OnDestroy {
   canvasContext: CanvasRenderingContext2D | null = null;
   previousPage: string | undefined = undefined;
   previousEditmode: boolean | null = null;
+  newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
 
   constructor(
     private drawingService: DrawingService,
@@ -55,6 +57,28 @@ export class DrawingComponent implements OnDestroy {
       first(),
     ).subscribe(_ => this.canvasSetup());
 
+    this.info$.pipe(
+      filter(_ => this.formControlEditMode.value),
+      map(info => info.newUserMakingChangesName),
+      distinctUntilChanged(),
+      filter(name => !!name),
+      filter(_ => this.newUserMakingChangesNameDialogRef == null),
+    ).subscribe(name => {
+      this.newUserMakingChangesNameDialogRef = this.dialog.open(DrawNotifyComponent, {
+        data: {
+          newUserMakingChangesName: name,
+          currentUserMakingChangesName: null,
+        },
+      });
+      this.newUserMakingChangesNameDialogRef!.afterClosed().subscribe(_ => {
+        this.info$ = this.drawingService.getPages$(this.collectionId).pipe(
+          takeUntil(this.destroyed$),
+        );
+        this.newUserMakingChangesNameDialogRef = null;
+        this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.pageId$.value]);
+      });
+    });
+
     combineLatest([
       this.info$,
       this.editMode$,
@@ -77,7 +101,6 @@ export class DrawingComponent implements OnDestroy {
 
   canvasSetup() {
     const canvas = this.canvas?.nativeElement;
-    console.log(canvas)
     if (canvas) {
       this.canvasContext = canvas.getContext('2d');
       canvas.width = this.CANVAS_SIZE;
@@ -172,9 +195,19 @@ export class DrawingComponent implements OnDestroy {
     this.drawingService.updatePage$(value).subscribe();
   }
 
-  editPage(pageId: string) {
+  editPage(pageId: string, editingPersonName: string | null) {
     this.pageId$.next(pageId);
-    this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }});
+    if (!!editingPersonName) {
+      const dialog$ = this.dialog.open(DrawNotifyComponent, {
+        data: {
+          newUserMakingChangesName: null,
+          currentUserMakingChangesName: editingPersonName,
+        },
+      });
+      dialog$.afterClosed().subscribe(_ => this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }}));
+    } else {
+      this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }});
+    }
   }
 
   deletePage(pageId: string, pages: DrawPageGetDTO[]) {
@@ -210,7 +243,21 @@ export class DrawingComponent implements OnDestroy {
     return filtered[0];
   }
 
-  changeEditMode(editMode: boolean) {
+  changeEditMode(editMode: boolean, editingPersonName: string | null) {
+    if (!!editingPersonName) {
+      const dalog$ = this.dialog.open(DrawNotifyComponent, {
+        data: {
+          newUserMakingChangesName: null,
+          currentUserMakingChangesName: editingPersonName,
+        },
+      });
+      dalog$.afterClosed().subscribe(_ => this.navigateEditMode(editMode));
+    } else {
+      this.navigateEditMode(editMode);
+    }
+  }
+
+  navigateEditMode(editMode: boolean) {
     if (editMode) {
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.pageId$.value], { queryParams: { [appRoutes.Edit]: true }});
     } else {

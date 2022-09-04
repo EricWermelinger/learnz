@@ -228,7 +228,10 @@
         "newDrawing":"New Drawing",
         "addPage":"Add Page",
         "editMode":"Edit Mode",
-        "empty":"Empty"
+        "empty":"Empty",
+        "multipleUsersEditing":"Attention, multiple Users are editing this page",
+        "isCurrentlyMakingChanges":"Is currently making changes. This User won't see your changes.",
+        "hasChangedTheSite":"Has changed the Page."
     },
     "settings":{
         "settings":"Settings",

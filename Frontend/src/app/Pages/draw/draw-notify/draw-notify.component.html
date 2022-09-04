@@ -1,0 +1,3 @@
+<h1>{{ 'draw.multipleUsersEditing' | translate }}</h1>
+<div *ngIf="!!currentUserMakingChangesName">{{ currentUserMakingChangesName }} {{ 'draw.isCurrentlyMakingChanges' | translate }}</div>
+<div *ngIf="!!newUserMakingChangesName">{{ newUserMakingChangesName }} {{ 'draw.hasChangedTheSite' | translate }}</div>

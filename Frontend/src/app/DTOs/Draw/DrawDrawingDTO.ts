@@ -4,4 +4,5 @@ export interface DrawDrawingDTO {
     pages: DrawPageGetDTO[];
     name: string;
     editable: boolean;
+    newUserMakingChangesName: string | null;
 }

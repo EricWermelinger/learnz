@@ -66,6 +66,14 @@ public class DrawCollections : Controller
                     existingGroupCollection!.DrawGroupPolicy = (DrawGroupPolicy)request.DrawGroupPolicy;
                 }
             }
+            else if (request.GroupId == null)
+            {
+                var existingGroupCollection = await _dataContext.DrawGroupCollections.FirstOrDefaultAsync(dgr => dgr.DrawCollectionId == request.CollectionId);
+                if (existingGroupCollection != null && existingGroupCollection.GroupId != null)
+                {
+                    _dataContext.DrawGroupCollections.Remove(existingGroupCollection);
+                }
+            }
         }
         else if (request.FirstPageId != null)
         {

@@ -52,6 +52,9 @@ public class DrawPages : Controller
             };
             _dataContext.DrawPages.Add(newPage);
             await _dataContext.SaveChangesAsync();
+            await _drawQueryService.AdjustChangedOnCollection(request.CollectionId, guid);
+            var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == request.CollectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
+            await _drawQueryService.TriggerWebsocketCollections(request.CollectionId, groupId, groupId == Guid.Empty ? guid : null);
             await _drawQueryService.TriggerWebsocketPages(request.CollectionId);
         }
         return Ok();
@@ -61,6 +64,7 @@ public class DrawPages : Controller
     public async Task<ActionResult> EditPage(DrawPageEditDTO request)
     {
         var guid = _userService.GetUserGuid();
+        var timestamp = DateTime.UtcNow;
         var existingPage = await _dataContext.DrawPages.FirstOrDefaultAsync(dpg => dpg.Id == request.PageId && dpg.DrawCollectionId == request.CollectionId);
         if (existingPage == null)
         {
@@ -73,7 +77,7 @@ public class DrawPages : Controller
                                                                      OwnerId = dgr.DrawCollection.OwnerId
                                                                  })
                                                                  .FirstOrDefaultAsync();
-        if (groupPage != null && _drawPolicyChecker.GroupPageEditable(groupPage.Policy, groupPage.OwnerId, guid))
+        if (groupPage != null && !_drawPolicyChecker.GroupPageEditable(groupPage.Policy, groupPage.OwnerId, guid))
         {
             return BadRequest(ErrorKeys.DrawNotAccessible);
         }
@@ -84,10 +88,19 @@ public class DrawPages : Controller
             return BadRequest(ErrorKeys.DrawNotAccessible);
         }
 
-        existingPage.Changed = DateTime.UtcNow;
+        bool currentlyOtherUserEditing = existingPage.Changed.AddMinutes(1) > timestamp && existingPage.ChangedById != guid;
+        if (currentlyOtherUserEditing)
+        {
+            await _drawQueryService.TriggerWebsocketNewUserEditing(request.CollectionId, existingPage.ChangedById, guid);
+        }
+
+        existingPage.Changed = timestamp;
         existingPage.ChangedById = guid;
         existingPage.DataUrl = request.DataUrl;
         await _dataContext.SaveChangesAsync();
+        await _drawQueryService.AdjustChangedOnCollection(request.CollectionId, guid);
+        var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == request.CollectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
+        await _drawQueryService.TriggerWebsocketCollections(request.CollectionId, groupId, groupId == Guid.Empty ? guid : null);
         await _drawQueryService.TriggerWebsocketPages(request.CollectionId);
         return Ok();
     }
@@ -103,6 +116,9 @@ public class DrawPages : Controller
         }
         _dataContext.DrawPages.Remove(existingPage);
         await _dataContext.SaveChangesAsync();
+        await _drawQueryService.AdjustChangedOnCollection(collectionId, guid);
+        var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == collectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
+        await _drawQueryService.TriggerWebsocketCollections(collectionId, groupId, groupId == Guid.Empty ? guid : null);
         await _drawQueryService.TriggerWebsocketPages(collectionId);
         return Ok();
     }

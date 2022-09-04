@@ -15,6 +15,7 @@ public class DrawPageGetBackendDTO
     public string DataUrl { get; set; }
     public bool Editable { get; set; }
     public bool Deletable { get; set; }
+    public Guid? EditingPersonId { get; set; }
     public string? EditingPersonProfileImagePath { get; set; }
     public string? EditingPersonName { get; set; }
     public Guid OwnerId { get; set; }

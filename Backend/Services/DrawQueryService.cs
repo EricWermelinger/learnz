@@ -97,7 +97,8 @@ public class DrawQueryService : IDrawQueryService
         {
             Name = name ?? "",
             Pages = result ?? new List<DrawPageGetDTO>(),
-            Editable = result != null && result.ElementAt(0).Editable
+            Editable = result != null && result.ElementAt(0).Editable,
+            NewUserMakingChangesName = null
         };
     }
 
@@ -128,6 +129,7 @@ public class DrawQueryService : IDrawQueryService
                                                     DataUrl = drp.DataUrl,
                                                     Editable = false,
                                                     Deletable = false,
+                                                    EditingPersonId = currentEditing == drp.Id ? drp.ChangedById : null,
                                                     EditingPersonName = currentEditing == drp.Id ? drp.ChangedBy.Username : null,
                                                     EditingPersonProfileImagePath = currentEditing == drp.Id ? drp.ChangedBy.ProfileImage.Path : null,
                                                     PageId = drp.Id,
@@ -150,8 +152,8 @@ public class DrawQueryService : IDrawQueryService
             DataUrl = dpg.DataUrl,
             Deletable = dpg.PageCount > 1 ? ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageDeletable(dpg.Policy, dpg.OwnerId, userId)) : false,
             Editable = ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageEditable(dpg.Policy, dpg.OwnerId, userId)),
-            EditingPersonName = dpg.EditingPersonName,
-            EditingPersonProfileImagePath = _learnzFrontendFileGenerator.PathToImage(dpg.EditingPersonProfileImagePath),
+            EditingPersonName = dpg.EditingPersonId == userId ? null : dpg.EditingPersonName,
+            EditingPersonProfileImagePath = dpg.EditingPersonId == userId ? null : _learnzFrontendFileGenerator.PathToImage(dpg.EditingPersonProfileImagePath),
             PageId = dpg.PageId
         }).ToList();
         return pagesWithPolicy ?? new List<DrawPageGetDTO>();
@@ -179,7 +181,7 @@ public class DrawQueryService : IDrawQueryService
         else
         {
             usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
-                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
+                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.UserId).ToList() : new List<Guid> { drc.OwnerId })
                                                                 .FirstOrDefaultAsync();
         }
         if (usersToNotify != null)
@@ -195,7 +197,7 @@ public class DrawQueryService : IDrawQueryService
     public async Task TriggerWebsocketPages(Guid collectionChangedId)
     {
         var usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
-                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.Id).ToList() : new List<Guid> { drc.OwnerId })
+                                                                .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.UserId).ToList() : new List<Guid> { drc.OwnerId })
                                                                 .FirstOrDefaultAsync();
         var pages = await PagesWithoutPolicy(collectionChangedId);
         if (usersToNotify != null)
@@ -212,12 +214,38 @@ public class DrawQueryService : IDrawQueryService
                         {
                             Pages = pagesPolicy ?? new List<DrawPageGetDTO>(),
                             Name = await PageCollectionName(collectionChangedId) ?? "",
-                            Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable
+                            Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable,
+                            NewUserMakingChangesName = null
                         };
                         await _hubService.SendMessageToUser(nameof(DrawPages), data, userToNotify, collectionChangedId);
                     }
                 }
             }
         }
+    }
+
+    public async Task TriggerWebsocketNewUserEditing(Guid collectionChangedId, Guid previousUserId, Guid newUserId)
+    {
+        string userNameNewUser = (await _dataContext.Users.FirstAsync(usr => usr.Id == newUserId)).Username;
+        var pages = await PagesWithoutPolicy(collectionChangedId);
+        var isOwn = await PagesIsOwn(previousUserId, collectionChangedId);
+        var pagesPolicy = await PagesApplyPolicy(isOwn, pages, previousUserId);
+        var data = new DrawDrawingDTO
+        {
+            Pages = pagesPolicy ?? new List<DrawPageGetDTO>(),
+            Name = await PageCollectionName(collectionChangedId) ?? "",
+            Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable,
+            NewUserMakingChangesName = userNameNewUser
+        };
+        await _hubService.SendMessageToUser(nameof(DrawPages), data, previousUserId, collectionChangedId);
+    }
+
+    public async Task AdjustChangedOnCollection(Guid collectionId, Guid changedById)
+    {
+        var timeStamp = DateTime.UtcNow;
+        var collection = await _dataContext.DrawCollections.FirstAsync(clc => clc.Id == collectionId);
+        collection.ChangedById = changedById;
+        collection.Changed = timeStamp;
+        await _dataContext.SaveChangesAsync();
     }
 }

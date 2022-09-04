@@ -9,6 +9,6 @@ todo
 
 Implement Frontend
 
-Adjust changed on DrawCollection
+Fix Group selected in Create Draw Dialog not working
 
 // todo make sure darkmode works aswell

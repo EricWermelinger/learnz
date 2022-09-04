@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable, startWith, switchMap } from 'rxjs';
+import { first, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { DrawCollectionUpsertDTO } from 'src/app/DTOs/Draw/DrawCollectionUpsertDTO';
 import { getDrawGroupPolicies } from 'src/app/Enums/DrawGroupPolicy';
@@ -12,6 +12,7 @@ import { FormGroupTyped } from 'src/app/Material/types';
 import { TestCreateDialogService } from '../../test/test-create-dialog/test-create-dialog.service';
 import { DrawSettingsService } from './draw-settings.service';
 import { v4 as guid } from 'uuid';
+import { filter } from 'mathjs';
 
 @Component({
   selector: 'app-draw-settings',
@@ -51,10 +52,30 @@ export class DrawSettingsComponent {
       startWith(''),
       switchMap(filter => this.testCreateDialogService.getFilteredGroups$(filter ?? '')),
     );
+
+    if (data.groupId) {
+      this.filteredOptions$.pipe(
+        first(),
+        tap(x => console.log(x, data.groupId)),
+        map(groups => groups.find(g => g.value === data.groupId)),
+      ).subscribe(group => {
+        if (!group) {
+          console.log('s')
+          this.formControlIsGroup.patchValue(false);
+          this.formGroup.controls.groupId.patchValue(null);
+        } else {
+          this.formControlGroupFilter.patchValue(group.key);
+        }
+      });
+    }
   }
 
   save() {
-    this.drawSettingsService.upsertSettings$(this.formGroup.value).subscribe(_ => {
+    const value = {
+      ...this.formGroup.value,
+      groupId: this.formControlIsGroup.value ? this.formGroup.value.groupId : null,
+    }
+    this.drawSettingsService.upsertSettings$(value).subscribe(_ => {
       this.dialogRef.close();
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.activePageId]);
     });
