@@ -377,6 +377,25 @@
         "turkish":"Turkish",
         "vietnamese":"Vietnamese"
     },
+    "Colors":{
+        "Standard":"Standard",
+        "White":"White",
+        "Grey":"Grey",
+        "Yellow":"Yellow",
+        "Orange":"Orange",
+        "Red":"Red",
+        "Pink":"Pink",
+        "Purple":"Purple",
+        "Green":"Green",
+        "Blue":"Blue",
+        "Brown":"Brown",
+        "Black":"Black"
+    },
+    "DrawMode":{
+        "Draw":"Draw",
+        "Line":"Line",
+        "Text":"Text"
+    },
     "errorHandling":{
         "errorOccured":"Error Occured",
         "input":"Input",

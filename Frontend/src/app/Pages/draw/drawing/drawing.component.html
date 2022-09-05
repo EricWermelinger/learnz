@@ -2,6 +2,22 @@
     <div *ngIf="getActivePage(info.pages) as activePage" class="header">
         <h2>{{ info.name }}</h2>
         <mat-slide-toggle *ngIf="activePage.editable" [formControl]="formControlEditMode" class="slide" (change)="changeEditMode($event.checked, activePage.editingPersonName)">{{ 'draw.editMode' | translate }}</mat-slide-toggle>
+        <div *ngIf="formControlEditMode.value" class="mode-picker">
+            <mat-icon>{{ selectedModeIcon() }}</mat-icon>
+            <mat-select [formControl]="formControlMode" (valueChange)="canvasChangeMode()">
+                <mat-option *ngFor="let mode of modes" [value]="mode.key"class="color-option" [disabled]="isSelectedMode(mode.key)">
+                    <mat-icon *ngIf="!isSelectedMode(mode.key)">{{ mode.value }}</mat-icon>{{ ('DrawMode.' + mode.key) | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div *ngIf="formControlEditMode.value" class="color-picker">
+            <mat-icon [ngStyle]="{ 'color': formControlColor.value }">format_color_fill</mat-icon>
+            <mat-select [formControl]="formControlColor">
+                <mat-option *ngFor="let color of colors" [value]="color.value"class="color-option" [disabled]="isSelectedColor(color.value)">
+                    <mat-icon *ngIf="!isSelectedColor(color.value)" [ngStyle]="{ 'color': color.value }">format_color_fill</mat-icon>{{ ('Colors.' + color.key) | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
     </div>
     <div class="site header">
         <canvas #canvas [ngClass]="{ 'active-page': true, 'hidden': !(editMode$ | async) }"></canvas>

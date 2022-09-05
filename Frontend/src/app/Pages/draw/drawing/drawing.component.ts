@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, Observable, pairwise, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, merge, Observable, pairwise, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { DrawPageGetDTO } from 'src/app/DTOs/Draw/DrawPageGetDTO';
 import { DrawingService } from './drawing.service';
@@ -12,6 +12,9 @@ import { DrawDeleteConfirmComponent } from '../draw-delete-confirm/draw-delete-c
 import { FormControl } from '@angular/forms';
 import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
 import { DrawNotifyComponent } from '../draw-notify/draw-notify.component';
+import { KeyValue } from '@angular/common';
+
+type DrawMode = 'Draw' | 'Line' | 'Text';
 
 @Component({
   selector: 'app-drawing',
@@ -32,6 +35,11 @@ export class DrawingComponent implements OnDestroy {
   previousPage: string | undefined = undefined;
   previousEditmode: boolean | null = null;
   newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
+  formControlMode: FormControl;
+  modeLinePreviousPoint: Event | null = null;
+  formControlColor: FormControl;
+  colors: KeyValue<string, string>[];
+  modes: KeyValue<DrawMode, string>[];
 
   constructor(
     private drawingService: DrawingService,
@@ -97,6 +105,30 @@ export class DrawingComponent implements OnDestroy {
       }),
       map(([info, _, pageId]) => info.pages.filter(page => page.pageId === pageId).length === 0 ? undefined : info.pages.filter(page => page.pageId === pageId)[0].dataUrl),
     ).subscribe(dataUrl => this.canvasSetImage(dataUrl ?? ''));
+
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-black');
+    this.formControlColor = new FormControl(color);
+    this.colors = [
+      { key: 'Standard', value: color },
+      { key: 'White', value: 'white' },
+      { key: 'Grey', value: 'grey' },
+      { key: 'Yellow', value: 'yellow' },
+      { key: 'Orange', value: 'orange' },
+      { key: 'Red', value: 'red' },
+      { key: 'Pink', value: 'pink' },
+      { key: 'Purple', value: 'purple' },
+      { key: 'Green', value: 'green' },
+      { key: 'Blue', value: 'blue' },
+      { key: 'Brown', value: 'brown' },
+      { key: 'Black', value: 'black' },
+    ];
+
+    this.formControlMode = new FormControl('Draw');
+    this.modes = [
+      { key: 'Draw', value: 'edit' },
+      { key: 'Line', value: 'minimize' },
+      { key: 'Text', value: 'text_fields' },
+    ];
   }
 
   canvasSetup() {
@@ -120,6 +152,7 @@ export class DrawingComponent implements OnDestroy {
   canvasDraw(canvas: HTMLCanvasElement) {
     const draw$ = fromEvent(canvas, 'mousedown').pipe(
       takeUntil(this.destroyed$),
+      filter(_ => this.formControlMode.value === 'Draw'),
       switchMap(_ => {
         return fromEvent(canvas, 'mousemove').pipe(
           takeUntil(fromEvent(canvas, 'mouseup')),
@@ -127,25 +160,45 @@ export class DrawingComponent implements OnDestroy {
           pairwise(),
         );
       }),
+      map(res => this.canvasMapPoints(canvas.getBoundingClientRect(), res)),
     );
-    draw$.subscribe(res => {
-      const rect = canvas.getBoundingClientRect();
-      const prevPos = {
-        x: (res[0] as any).clientX - rect.left,
-        y: (res[0] as any).clientY - rect.top
-      };
-      const currentPos = {
-        x: (res[1] as any).clientX - rect.left,
-        y: (res[1] as any).clientY - rect.top
-      };
-      this.canvasDrawOnMove(prevPos, currentPos);
+    draw$.subscribe(positions => {
+      this.canvasDrawOnMove(positions.prevPos, positions.currentPos);
     });
-    draw$.pipe(
-      debounceTime(500),
-      map(_ => canvas.toDataURL())
-    ).subscribe(data => {
-      this.updatePage(data);
+
+    const line$ = fromEvent(canvas, 'mousedown').pipe(
+      takeUntil(this.destroyed$),
+      filter(_ => this.formControlMode.value === 'Line'),
+      filter(point => {
+        if (this.modeLinePreviousPoint == null) {
+          this.modeLinePreviousPoint = point;
+          return false;
+        }
+        return true;
+      }),
+      map(point => this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLinePreviousPoint, point])),
+      tap(_ => this.modeLinePreviousPoint = null),
+    );
+    line$.subscribe(positions => {
+      this.canvasDrawOnMove(positions.prevPos, positions.currentPos);
     });
+
+    // todo save with updatepage
+  }
+
+  canvasMapPoints(rect: any, res: any) {
+    const prevPos = {
+      x: (res[0] as any).clientX - rect.left,
+      y: (res[0] as any).clientY - rect.top
+    };
+    const currentPos = {
+      x: (res[1] as any).clientX - rect.left,
+      y: (res[1] as any).clientY - rect.top
+    };
+    return {
+      prevPos,
+      currentPos,
+    };
   }
 
   canvasDrawOnMove(prevPos: { x: number; y: number; }, currentPos: { x: number; y: number; }) {
@@ -153,6 +206,7 @@ export class DrawingComponent implements OnDestroy {
       return;
     }
     this.canvasContext.beginPath();
+    this.canvasContext.strokeStyle = this.formControlColor.value;
     if (prevPos) {
       this.canvasContext.moveTo(prevPos.x, prevPos.y);
       this.canvasContext.lineTo(currentPos.x, currentPos.y);
@@ -173,6 +227,10 @@ export class DrawingComponent implements OnDestroy {
         this.canvasSetup();
       }
     }
+  }
+
+  canvasChangeMode() {
+    this.modeLinePreviousPoint = null;
   }
 
   createPage() {
@@ -264,6 +322,19 @@ export class DrawingComponent implements OnDestroy {
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.pageId$.value]);
     }
     this.pageId$.next(this.pageId$.value);
+  }
+
+  isSelectedColor(color: string) {
+    return this.formControlColor.value === color;
+  }
+
+  isSelectedMode(mode: DrawMode) {
+    return this.formControlMode.value === mode;
+  }
+
+  selectedModeIcon() {
+    const mode = this.modes.find(m => m.key === this.formControlMode.value);
+    return mode?.value;
   }
 
   ngOnDestroy(): void {
