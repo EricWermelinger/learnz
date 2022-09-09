@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, merge, Observable, pairwise, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, merge, Observable, pairwise, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { DrawPageGetDTO } from 'src/app/DTOs/Draw/DrawPageGetDTO';
 import { DrawingService } from './drawing.service';
@@ -12,9 +12,9 @@ import { DrawDeleteConfirmComponent } from '../draw-delete-confirm/draw-delete-c
 import { FormControl } from '@angular/forms';
 import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
 import { DrawNotifyComponent } from '../draw-notify/draw-notify.component';
-import { KeyValue } from '@angular/common';
-
-type DrawMode = 'Draw' | 'Line' | 'Text';
+import { DrawCanvasType, getDrawCanvasColors, getDrawCanvasTypeWithIcons } from 'src/app/Enums/DrawCanvasType';
+import { DrawCanvasStorageDTO } from 'src/app/DTOs/Draw/DrawCanvasStorageDTO';
+import { getCanvasStandardColor, intersects } from 'src/app/Framework/Helpers/CanvasHelper';
 
 @Component({
   selector: 'app-drawing',
@@ -25,21 +25,32 @@ export class DrawingComponent implements OnDestroy {
 
   private destroyed$ = new Subject<void>();
   private CANVAS_SIZE = 600;
+
   collectionId: string;
+
   pageId$ = new BehaviorSubject<string | undefined>(undefined);
   info$: Observable<DrawDrawingDTO>;
   editMode$: Observable<boolean>;
-  formControlEditMode: FormControl;
+
+  formControlEditMode = new FormControl<boolean>(false);
+  formControlMode = new FormControl('Draw');
+  formControlColor = new FormControl(getCanvasStandardColor());
+  
+  colors = getDrawCanvasColors();
+  modes = getDrawCanvasTypeWithIcons();
+
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> | undefined;
   canvasContext: CanvasRenderingContext2D | null = null;
   previousPage: string | undefined = undefined;
   previousEditmode: boolean | null = null;
-  newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
-  formControlMode: FormControl;
   modeLinePreviousPoint: Event | null = null;
-  formControlColor: FormControl;
-  colors: KeyValue<string, string>[];
-  modes: KeyValue<DrawMode, string>[];
+  modeLineLastEndedPoint: Event | null = null;
+  eraseSegmentsBuffer: DrawCanvasStorageDTO[] = [];
+  setupDone = false;
+
+  newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
+
+  canvasStorage: DrawCanvasStorageDTO[] = [];
 
   constructor(
     private drawingService: DrawingService,
@@ -58,7 +69,7 @@ export class DrawingComponent implements OnDestroy {
     this.editMode$ = this.activatedRoute.queryParamMap.pipe(
       map(params => params.has(appRoutes.Edit))
     );
-    this.formControlEditMode = new FormControl(false);
+    this.formControlEditMode 
     this.editMode$.subscribe(editMode => this.formControlEditMode.patchValue(editMode));
     
     this.info$.pipe(
@@ -66,7 +77,7 @@ export class DrawingComponent implements OnDestroy {
     ).subscribe(_ => this.canvasSetup());
 
     this.info$.pipe(
-      filter(_ => this.formControlEditMode.value),
+      filter(_ => !!this.formControlEditMode.value),
       map(info => info.newUserMakingChangesName),
       distinctUntilChanged(),
       filter(name => !!name),
@@ -105,30 +116,6 @@ export class DrawingComponent implements OnDestroy {
       }),
       map(([info, _, pageId]) => info.pages.filter(page => page.pageId === pageId).length === 0 ? undefined : info.pages.filter(page => page.pageId === pageId)[0].dataUrl),
     ).subscribe(dataUrl => this.canvasSetImage(dataUrl ?? ''));
-
-    const color = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-black');
-    this.formControlColor = new FormControl(color);
-    this.colors = [
-      { key: 'Standard', value: color },
-      { key: 'White', value: 'white' },
-      { key: 'Grey', value: 'grey' },
-      { key: 'Yellow', value: 'yellow' },
-      { key: 'Orange', value: 'orange' },
-      { key: 'Red', value: 'red' },
-      { key: 'Pink', value: 'pink' },
-      { key: 'Purple', value: 'purple' },
-      { key: 'Green', value: 'green' },
-      { key: 'Blue', value: 'blue' },
-      { key: 'Brown', value: 'brown' },
-      { key: 'Black', value: 'black' },
-    ];
-
-    this.formControlMode = new FormControl('Draw');
-    this.modes = [
-      { key: 'Draw', value: 'edit' },
-      { key: 'Line', value: 'minimize' },
-      { key: 'Text', value: 'text_fields' },
-    ];
   }
 
   canvasSetup() {
@@ -145,7 +132,12 @@ export class DrawingComponent implements OnDestroy {
       this.canvasContext!.fillRect(0, 0, canvas.width, canvas.height);
       this.canvasContext!.strokeStyle = black;
       this.canvasDraw(canvas);
+      const notDeleted = this.canvasStorage.filter(storage => !storage.deleted);
+      this.canvasDrawMultipleLines(notDeleted);
+    }
+    if (!this.setupDone) {
       this.pageId$.next(this.pageId$.value);
+      this.setupDone = true;
     }
   }
 
@@ -163,55 +155,151 @@ export class DrawingComponent implements OnDestroy {
       map(res => this.canvasMapPoints(canvas.getBoundingClientRect(), res)),
     );
     draw$.subscribe(positions => {
-      this.canvasDrawOnMove(positions.prevPos, positions.currentPos);
+      this.canvasDrawOnMove(positions);
     });
 
     const line$ = fromEvent(canvas, 'mousedown').pipe(
       takeUntil(this.destroyed$),
       filter(_ => this.formControlMode.value === 'Line'),
       filter(point => {
-        if (this.modeLinePreviousPoint == null) {
-          this.modeLinePreviousPoint = point;
+        if (!this.modeLinePreviousPoint) {
+          if (!this.modeLineLastEndedPoint) {
+            this.modeLinePreviousPoint = point;
+          } else {
+            const positions = this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLineLastEndedPoint, point]);
+            if (positions.fromPosistion.x !== positions.toPosition?.x || positions.fromPosistion.y !== positions.toPosition?.y) {
+              this.modeLinePreviousPoint = point;
+            }
+          }
           return false;
         }
         return true;
       }),
-      map(point => this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLinePreviousPoint, point])),
-      tap(_ => this.modeLinePreviousPoint = null),
+      map(point => { return { positions: this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLinePreviousPoint, point]), point }}),
+      filter(pos => pos.positions.fromPosistion.x !== pos.positions.toPosition!.x || pos.positions.fromPosistion.y !== pos.positions.toPosition!.y),
     );
-    line$.subscribe(positions => {
-      this.canvasDrawOnMove(positions.prevPos, positions.currentPos);
+    line$.subscribe(pos => {
+      this.modeLinePreviousPoint = null;
+      this.modeLineLastEndedPoint = pos.point;
+      this.canvasDrawOnMove(pos.positions);
     });
 
-    // todo save with updatepage
+    const erase$ = fromEvent(canvas, 'mousedown').pipe(
+      takeUntil(this.destroyed$),
+      filter(_ => this.formControlMode.value === 'Erase'),
+      switchMap(_ => {
+        return fromEvent(canvas, 'mousemove').pipe(
+          takeUntil(fromEvent(canvas, 'mouseup')),
+          takeUntil(fromEvent(canvas, 'mouseleave')),
+          pairwise(),
+        );
+      }),
+      map(res => this.canvasMapPoints(canvas.getBoundingClientRect(), res)),
+      tap(points => {
+        this.eraseSegmentsBuffer.push(points);
+      }),
+      debounceTime(100),
+    );
+    erase$.subscribe(_ => {
+      console.log('Erase');
+      // maybe because of pairwise
+      // triggered too much 2^n times
+      this.canvasEraseOnMove(this.eraseSegmentsBuffer);
+      this.eraseSegmentsBuffer = [];
+    });
+
+    merge(
+      draw$,
+      line$,
+      erase$,
+    ).pipe(
+      debounceTime(500),
+    ).subscribe(_ => {
+      this.updatePage(canvas.toDataURL());
+    });
   }
 
   canvasMapPoints(rect: any, res: any) {
-    const prevPos = {
+    const fromPosistion = {
       x: (res[0] as any).clientX - rect.left,
       y: (res[0] as any).clientY - rect.top
     };
-    const currentPos = {
+    const toPosition = {
       x: (res[1] as any).clientX - rect.left,
       y: (res[1] as any).clientY - rect.top
     };
     return {
-      prevPos,
-      currentPos,
-    };
+      id: guid(),
+      color: this.formControlColor.value,
+      created: new Date(),
+      deleted: null,
+      fromPosistion: {
+        id: guid(),
+        x: fromPosistion.x,
+        y: fromPosistion.y,
+      },
+      toPosition: {
+        id: guid(),
+        x: toPosition!.x,
+        y: toPosition!.y,
+      },
+      text: null,
+    } as DrawCanvasStorageDTO;
   }
 
-  canvasDrawOnMove(prevPos: { x: number; y: number; }, currentPos: { x: number; y: number; }) {
+  canvasDrawOnMove(storage: DrawCanvasStorageDTO) {
     if (!this.canvasContext) {
       return;
     }
     this.canvasContext.beginPath();
-    this.canvasContext.strokeStyle = this.formControlColor.value;
-    if (prevPos) {
-      this.canvasContext.moveTo(prevPos.x, prevPos.y);
-      this.canvasContext.lineTo(currentPos.x, currentPos.y);
+    this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
+    if (storage.fromPosistion && storage.toPosition) {
+      this.canvasContext.moveTo(storage.fromPosistion.x, storage.fromPosistion.y);
+      this.canvasContext.lineTo(storage.toPosition.x, storage.toPosition.y);
       this.canvasContext.stroke();
+      this.canvasStorage.push(storage);
     }
+  }
+
+  canvasDrawMultipleLines(storage: DrawCanvasStorageDTO[]) {
+    if (!this.canvasContext) {
+      return;
+    }
+    this.canvasContext.beginPath();
+    this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
+    for (let i = 0; i < storage.length; i++) {
+      const item = storage[i];
+      if (item.fromPosistion && item.toPosition) {
+        this.canvasContext.moveTo(item.fromPosistion.x, item.fromPosistion.y);
+        this.canvasContext.lineTo(item.toPosition.x, item.toPosition.y);
+        this.canvasContext.stroke();
+      }
+    }
+  }
+
+  canvasEraseOnMove(eraseAll: DrawCanvasStorageDTO[]) {
+    if (!this.canvasContext) {
+      return;
+    }
+
+    const timeStamp = new Date();
+    for (let i = 0; i < eraseAll.length; i++) {
+      const erase = eraseAll[i];
+      const erased = this.canvasStorage
+        .filter(s => s.deleted === null)
+        .filter(s => {
+          const path = { from: s.fromPosistion, to: s.toPosition };
+          return intersects(path.from.x, path.from.y, path.to!.x, path.to!.y, erase.fromPosistion.x, erase.fromPosistion.y, erase.toPosition!.x, erase.toPosition!.y);
+      });
+      for (let j = 0; j < erased.length; j++) {
+        const storage = this.canvasStorage.find(s => s.id === erased[j].id);
+        if (storage) {
+          storage.deleted = timeStamp;
+        }
+      }
+    }
+    console.log(this.canvasStorage.filter(s => s.deleted === timeStamp))
+    this.canvasSetup();
   }
 
   canvasSetImage(image: string) {
@@ -328,7 +416,7 @@ export class DrawingComponent implements OnDestroy {
     return this.formControlColor.value === color;
   }
 
-  isSelectedMode(mode: DrawMode) {
+  isSelectedMode(mode: DrawCanvasType) {
     return this.formControlMode.value === mode;
   }
 

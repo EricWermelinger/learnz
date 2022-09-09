@@ -394,7 +394,8 @@
     "DrawMode":{
         "Draw":"Draw",
         "Line":"Line",
-        "Text":"Text"
+        "Text":"Text",
+        "Erase":"Erase"
     },
     "errorHandling":{
         "errorOccured":"Error Occured",

@@ -74,6 +74,7 @@
     align-items: center;
     justify-content: center;
     background-color: var(--learnz-light-white);
+    color: var(--learnz-light-black);
 }
 .hidden {
     display: none;
@@ -83,6 +84,7 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
+    color: var(--learnz-light-black);
 }
 .color-picker,
 .mode-picker {

@@ -56,11 +56,9 @@ export class DrawSettingsComponent {
     if (data.groupId) {
       this.filteredOptions$.pipe(
         first(),
-        tap(x => console.log(x, data.groupId)),
         map(groups => groups.find(g => g.value === data.groupId)),
       ).subscribe(group => {
         if (!group) {
-          console.log('s')
           this.formControlIsGroup.patchValue(false);
           this.formGroup.controls.groupId.patchValue(null);
         } else {
