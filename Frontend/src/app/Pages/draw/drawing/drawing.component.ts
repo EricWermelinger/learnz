@@ -14,7 +14,7 @@ import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
 import { DrawNotifyComponent } from '../draw-notify/draw-notify.component';
 import { DrawCanvasType, getDrawCanvasColors, getDrawCanvasTypeWithIcons } from 'src/app/Enums/DrawCanvasType';
 import { DrawCanvasStorageDTO } from 'src/app/DTOs/Draw/DrawCanvasStorageDTO';
-import { getCanvasStandardColor, intersects } from 'src/app/Framework/Helpers/CanvasHelper';
+import { getCanvasStandardColor, getDistanceBetweenSegments } from 'src/app/Framework/Helpers/CanvasHelper';
 
 @Component({
   selector: 'app-drawing',
@@ -24,6 +24,7 @@ import { getCanvasStandardColor, intersects } from 'src/app/Framework/Helpers/Ca
 export class DrawingComponent implements OnDestroy {
 
   private destroyed$ = new Subject<void>();
+  private reloaded$ = new Subject<void>();
   private CANVAS_SIZE = 600;
 
   collectionId: string;
@@ -61,19 +62,20 @@ export class DrawingComponent implements OnDestroy {
     this.collectionId = this.activatedRoute.snapshot.paramMap.get(appRoutes.DrawCollectionId) ?? '';
     this.pageId$.next(this.activatedRoute.snapshot.paramMap.get(appRoutes.DrawPageId) ?? '');
 
-    this.info$ = this.drawingService.getPages$(this.collectionId).pipe(
+    this.editMode$ = this.activatedRoute.queryParamMap.pipe(
+      map(params => params.has(appRoutes.Edit))
+    );
+    this.editMode$.subscribe(editMode => this.formControlEditMode.patchValue(editMode));
+
+    this.info$ = this.editMode$.pipe(
+      switchMap(editMode => this.drawingService.getPages$(this.collectionId, editMode)),
       takeUntil(this.destroyed$),
     );
     this.info$.subscribe();
     
-    this.editMode$ = this.activatedRoute.queryParamMap.pipe(
-      map(params => params.has(appRoutes.Edit))
-    );
-    this.formControlEditMode 
-    this.editMode$.subscribe(editMode => this.formControlEditMode.patchValue(editMode));
-    
     this.info$.pipe(
       first(),
+      tap(info => this.canvasStorage = info.drawSegmensts ?? []),
     ).subscribe(_ => this.canvasSetup());
 
     this.info$.pipe(
@@ -90,7 +92,7 @@ export class DrawingComponent implements OnDestroy {
         },
       });
       this.newUserMakingChangesNameDialogRef!.afterClosed().subscribe(_ => {
-        this.info$ = this.drawingService.getPages$(this.collectionId).pipe(
+        this.info$ = this.drawingService.getPages$(this.collectionId, !!this.formControlEditMode.value).pipe(
           takeUntil(this.destroyed$),
         );
         this.newUserMakingChangesNameDialogRef = null;
@@ -142,8 +144,16 @@ export class DrawingComponent implements OnDestroy {
   }
 
   canvasDraw(canvas: HTMLCanvasElement) {
-    const draw$ = fromEvent(canvas, 'mousedown').pipe(
-      takeUntil(this.destroyed$),
+    this.reloaded$.next();
+    this.reloaded$.complete();
+    this.reloaded$ = new Subject<void>();
+
+    const mouseDown$ = fromEvent(canvas, 'mousedown').pipe(
+      takeUntil(this.reloaded$),
+      takeUntil(this.destroyed$)
+    );
+
+    const draw$ = mouseDown$.pipe(
       filter(_ => this.formControlMode.value === 'Draw'),
       switchMap(_ => {
         return fromEvent(canvas, 'mousemove').pipe(
@@ -158,8 +168,7 @@ export class DrawingComponent implements OnDestroy {
       this.canvasDrawOnMove(positions);
     });
 
-    const line$ = fromEvent(canvas, 'mousedown').pipe(
-      takeUntil(this.destroyed$),
+    const line$ = mouseDown$.pipe(
       filter(_ => this.formControlMode.value === 'Line'),
       filter(point => {
         if (!this.modeLinePreviousPoint) {
@@ -184,8 +193,7 @@ export class DrawingComponent implements OnDestroy {
       this.canvasDrawOnMove(pos.positions);
     });
 
-    const erase$ = fromEvent(canvas, 'mousedown').pipe(
-      takeUntil(this.destroyed$),
+    const erase$ = mouseDown$.pipe(
       filter(_ => this.formControlMode.value === 'Erase'),
       switchMap(_ => {
         return fromEvent(canvas, 'mousemove').pipe(
@@ -198,12 +206,10 @@ export class DrawingComponent implements OnDestroy {
       tap(points => {
         this.eraseSegmentsBuffer.push(points);
       }),
+      distinctUntilChanged(),
       debounceTime(100),
     );
     erase$.subscribe(_ => {
-      console.log('Erase');
-      // maybe because of pairwise
-      // triggered too much 2^n times
       this.canvasEraseOnMove(this.eraseSegmentsBuffer);
       this.eraseSegmentsBuffer = [];
     });
@@ -289,7 +295,7 @@ export class DrawingComponent implements OnDestroy {
         .filter(s => s.deleted === null)
         .filter(s => {
           const path = { from: s.fromPosistion, to: s.toPosition };
-          return intersects(path.from.x, path.from.y, path.to!.x, path.to!.y, erase.fromPosistion.x, erase.fromPosistion.y, erase.toPosition!.x, erase.toPosition!.y);
+          return getDistanceBetweenSegments(path.from.x, path.from.y, path.to!.x, path.to!.y, erase.fromPosistion.x, erase.fromPosistion.y, erase.toPosition!.x, erase.toPosition!.y) < 10;
       });
       for (let j = 0; j < erased.length; j++) {
         const storage = this.canvasStorage.find(s => s.id === erased[j].id);
@@ -298,7 +304,6 @@ export class DrawingComponent implements OnDestroy {
         }
       }
     }
-    console.log(this.canvasStorage.filter(s => s.deleted === timeStamp))
     this.canvasSetup();
   }
 

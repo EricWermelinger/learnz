@@ -364,6 +364,24 @@ public class DataContext : DbContext
             .WithMany(usr => usr.DrawPagesChangedBy)
             .HasForeignKey(drp => drp.ChangedById)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.DrawPage)
+            .WithMany(drp => drp.DrawCanvasStorages)
+            .HasForeignKey(dcs => dcs.DrawPageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.FromPosition)
+            .WithMany(drp => drp.DrawCanvasStoragesFrom)
+            .HasForeignKey(dcs => dcs.FromPositionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.ToPosition)
+            .WithMany(drp => drp.DrawCanvasStoragesTo)
+            .HasForeignKey(dcs => dcs.ToPositionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -412,4 +430,6 @@ public class DataContext : DbContext
     public virtual DbSet<DrawGroupCollection> DrawGroupCollections { get; set; }
     public virtual DbSet<DrawCollection> DrawCollections { get; set; }
     public virtual DbSet<DrawPage> DrawPages { get; set; }
+    public virtual DbSet<DrawCanvasStorage> DrawCanvasStorages { get; set; }
+    public virtual DbSet<DrawCanvasStoragePoint> DrawCanvasStoragePoints { get; set; }
 }

@@ -1,4 +1,10 @@
 todo
+- Draw -> adjust backend to store segments
+- Create entities
+
+- Fix bugs in Frontend
+- Implement Text
+
 -> DrawCollections GET (-), POST (upsert), DELETE (collectionId)
 -> DrawPages GET (collectionId), POST (collectionId), PUT (collectionId, pageId, dataUrl), DELETE (collectionId, pageId)
 -> Adjust Group Files

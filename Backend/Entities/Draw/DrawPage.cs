@@ -11,4 +11,6 @@ public class DrawPage
     public Guid ChangedById { get; set; }
     public User ChangedBy { get; set; }
     public string DataUrl { get; set; }
+
+    public ICollection<DrawCanvasStorage> DrawCanvasStorages { get; set; }
 }

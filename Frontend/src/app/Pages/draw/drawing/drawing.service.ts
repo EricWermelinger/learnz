@@ -17,9 +17,9 @@ export class DrawingService {
     private ws: WebSocketService,
   ) { }
 
-  getPages$(collectionId: string): Observable<DrawDrawingDTO> {
+  getPages$(collectionId: string, edit: boolean): Observable<DrawDrawingDTO> {
     return merge(
-      this.api.callApi<DrawDrawingDTO>(endpoints.DrawPages, { collectionId }, 'GET'),
+      this.api.callApi<DrawDrawingDTO>(endpoints.DrawPages, { collectionId, edit }, 'GET'),
       this.ws.webSocketData<DrawDrawingDTO>(endpoints.DrawPages, {} as DrawDrawingDTO, collectionId)
     );
   }
