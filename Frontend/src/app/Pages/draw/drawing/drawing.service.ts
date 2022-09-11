@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { merge, Observable } from 'rxjs';
 import { endpoints } from 'src/app/Config/endpoints';
+import { DrawCanvasSegmentsWrapperDTO } from 'src/app/DTOs/Draw/DrawCanvasSegmentsWrapperDTO';
 import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
 import { DrawPageCreateDTO } from 'src/app/DTOs/Draw/DrawPageCreateDTO';
 import { DrawPageEditDTO } from 'src/app/DTOs/Draw/DrawPageEditDTO';
@@ -22,6 +23,10 @@ export class DrawingService {
       this.api.callApi<DrawDrawingDTO>(endpoints.DrawPages, { collectionId, edit }, 'GET'),
       this.ws.webSocketData<DrawDrawingDTO>(endpoints.DrawPages, {} as DrawDrawingDTO, collectionId)
     );
+  }
+
+  getSegments$(pageId: string) {
+    return this.api.callApi<DrawCanvasSegmentsWrapperDTO>(endpoints.DrawSegments, { pageId }, 'GET');
   }
 
   createPage$(value: DrawPageCreateDTO) {

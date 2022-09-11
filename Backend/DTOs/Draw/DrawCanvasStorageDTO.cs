@@ -7,5 +7,5 @@ public class DrawCanvasStorageDTO
     public string Color { get; set; }
     public DrawCanvasStoragePointDTO FromPosition { get; set; }
     public DrawCanvasStoragePointDTO? ToPosition { get; set; }
-    public string Text { get; set; }
+    public string? Text { get; set; }
 }

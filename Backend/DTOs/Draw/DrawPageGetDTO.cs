@@ -7,6 +7,7 @@ public class DrawPageGetDTO
     public bool Deletable { get; set; }
     public string? EditingPersonProfileImagePath { get; set; }
     public string? EditingPersonName { get; set; }
+    public bool IsEmpty { get; set; }
 }
 
 public class DrawPageGetBackendDTO
@@ -21,4 +22,5 @@ public class DrawPageGetBackendDTO
     public Guid OwnerId { get; set; }
     public DrawGroupPolicy Policy { get; set; }
     public int PageCount { get; set; }
+    public bool IsEmpty { get; set; }
 }

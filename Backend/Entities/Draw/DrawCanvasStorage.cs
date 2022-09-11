@@ -11,5 +11,5 @@ public class DrawCanvasStorage
     public DrawCanvasStoragePoint FromPosition { get; set; }
     public Guid ToPositionId { get; set; }
     public DrawCanvasStoragePoint ToPosition { get; set; }
-    public string Text { get; set; }
+    public string? Text { get; set; }
 }

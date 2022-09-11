@@ -97,6 +97,57 @@ public class DrawPages : Controller
         existingPage.Changed = timestamp;
         existingPage.ChangedById = guid;
         existingPage.DataUrl = request.DataUrl;
+        existingPage.StepperPosition = request.StepperPosition;
+
+        var existingSegments = await _dataContext.DrawCanvasStorages.Where(dcs => dcs.DrawPageId == request.PageId).ToListAsync();
+        foreach (var segment in request.CanvasStorage)
+        {
+            if (segment != null)
+            {
+                var existingSegment = existingSegments.FirstOrDefault(s => s.Id == segment.Id);
+                if (existingSegment != null)
+                {
+                    existingSegment.Text = segment.Text;
+                    existingSegment.Created = segment.Created;
+                    existingSegment.Deleted = segment.Deleted;
+                    existingSegment.Color = segment.Color;
+                }
+                else
+                {
+                    var fromPoint = new DrawCanvasStoragePoint
+                    {
+                        Id = segment.FromPosition.Id,
+                        X = segment.FromPosition.X,
+                        Y = segment.FromPosition.Y
+                    };
+                    _dataContext.DrawCanvasStoragePoints.Add(fromPoint);
+                    if (segment.ToPosition != null)
+                    {
+                        var toPosition = new DrawCanvasStoragePoint
+                        {
+                            Id = segment.ToPosition.Id,
+                            X = segment.ToPosition.X,
+                            Y = segment.ToPosition.Y
+                        };
+                        _dataContext.DrawCanvasStoragePoints.Add(toPosition);
+                    }
+
+                    var newSegment = new DrawCanvasStorage
+                    {
+                        Id = segment.Id,
+                        Color = segment.Color,
+                        Created = segment.Created,
+                        Deleted = segment.Deleted,
+                        DrawPageId = request.PageId,
+                        FromPositionId = segment.FromPosition.Id,
+                        ToPositionId = segment.ToPosition != null ? segment.ToPosition.Id : segment.FromPosition.Id,
+                        Text = segment.Text
+                    };
+                    _dataContext.DrawCanvasStorages.Add(newSegment);
+                }
+            }
+        }
+
         await _dataContext.SaveChangesAsync();
         await _drawQueryService.AdjustChangedOnCollection(request.CollectionId, guid);
         var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == request.CollectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
@@ -114,6 +165,10 @@ public class DrawPages : Controller
         {
             return BadRequest(ErrorKeys.DrawNotAccessible);
         }
+        var existingStorages = await _dataContext.DrawCanvasStorages.Where(dcs => dcs.DrawPageId == pageId).ToListAsync();
+        var existingStoragePoints = await _dataContext.DrawCanvasStoragePoints.Where(dcp => dcp.DrawCanvasStoragesFrom.Any(dcs => dcs.DrawPageId == pageId)).ToListAsync();
+        _dataContext.DrawCanvasStorages.RemoveRange(existingStorages);
+        _dataContext.DrawCanvasStoragePoints.RemoveRange(existingStoragePoints);
         _dataContext.DrawPages.Remove(existingPage);
         await _dataContext.SaveChangesAsync();
         await _drawQueryService.AdjustChangedOnCollection(collectionId, guid);

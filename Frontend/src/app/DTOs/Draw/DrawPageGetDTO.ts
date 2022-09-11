@@ -5,4 +5,5 @@
     deletable: boolean;
     editingPersonProfileImagePath: string | null;
     editingPersonName: string | null;
+    isEmpty: boolean;
 }

@@ -18,12 +18,20 @@
                 </mat-option>
             </mat-select>
         </div>
+        <div *ngIf="formControlEditMode.value">
+            <button mat-icon-button (click)="stepBackward()" class="step-button">
+                <mat-icon>undo</mat-icon>
+            </button>
+            <button mat-icon-button (click)="stepForward()" class="step-button">
+                <mat-icon>redo</mat-icon>
+            </button>
+        </div>
     </div>
     <div class="site header">
         <canvas #canvas [ngClass]="{ 'active-page': true, 'hidden': !(editMode$ | async) }"></canvas>
         <div *ngIf="getActivePage(info.pages) as activePage">
             <div *ngIf="!(editMode$ | async)" class="active-page-wrapper">
-                <img *ngIf="activePage.dataUrl; else emptyActiveImage" [src]="activePage.dataUrl" class="active-page">
+                <img *ngIf="!activePage.isEmpty; else emptyActiveImage" [src]="activePage.dataUrl" class="active-page">
                 <ng-template #emptyActiveImage>
                     <div class="active-page active-image-empty">{{ 'draw.empty' | translate }}</div>
                 </ng-template>
@@ -33,7 +41,7 @@
             <button *ngIf="info.editable" mat-flat-button color="primary" (click)="createPage()" class="add-page">{{ 'draw.addPage' | translate }}</button>
             <div *ngFor="let page of info.pages" class="page">
                 <div [ngClass]="{ 'active': pageId$.value === page.pageId, 'drawing': true, 'pointer': true }" (click)="openPage(page.pageId)">
-                    <img *ngIf="page.dataUrl; else emptyImage" [src]="page.dataUrl" class="drawing-image">
+                    <img *ngIf="!page.isEmpty else emptyImage" [src]="page.dataUrl" class="drawing-image">
                     <ng-template #emptyImage>
                         <div class="drawing-image empty-image">
                             <div>{{ 'draw.empty' | translate }}</div>

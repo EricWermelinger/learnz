@@ -5,7 +5,7 @@ export interface DrawCanvasStorageDTO {
     created: Date;
     deleted: Date | null;
     color: string;
-    fromPosistion: DrawCanvasStoragePointDTO;
+    fromPosition: DrawCanvasStoragePointDTO;
     toPosition: DrawCanvasStoragePointDTO | null;
     text: string | null;
 }

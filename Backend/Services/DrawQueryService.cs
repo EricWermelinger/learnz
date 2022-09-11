@@ -135,7 +135,8 @@ public class DrawQueryService : IDrawQueryService
                                                     PageId = drp.Id,
                                                     OwnerId = drp.OwnerId,
                                                     Policy = drp.DrawCollection.DrawGroupCollections.Any() ? drp.DrawCollection.DrawGroupCollections.First().DrawGroupPolicy : DrawGroupPolicy.Public,
-                                                    PageCount = drp.DrawCollection.DrawPages.Count
+                                                    PageCount = drp.DrawCollection.DrawPages.Count,
+                                                    IsEmpty = !drp.DrawCanvasStorages.Any(),
                                                 })
                                                 .ToListAsync();
         return pages;
@@ -154,7 +155,8 @@ public class DrawQueryService : IDrawQueryService
             Editable = ((isOwn ?? true) ? true : _drawPolicyChecker.GroupPageEditable(dpg.Policy, dpg.OwnerId, userId)),
             EditingPersonName = dpg.EditingPersonId == userId ? null : dpg.EditingPersonName,
             EditingPersonProfileImagePath = dpg.EditingPersonId == userId ? null : _learnzFrontendFileGenerator.PathToImage(dpg.EditingPersonProfileImagePath),
-            PageId = dpg.PageId
+            PageId = dpg.PageId,
+            IsEmpty = dpg.IsEmpty
         }).ToList();
         return pagesWithPolicy ?? new List<DrawPageGetDTO>();
     }

@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, merge, Observable, pairwise, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, merge, Observable, of, pairwise, shareReplay, Subject, switchMap, takeUntil, tap, throttleTime } from 'rxjs';
 import { appRoutes } from 'src/app/Config/appRoutes';
 import { DrawPageGetDTO } from 'src/app/DTOs/Draw/DrawPageGetDTO';
 import { DrawingService } from './drawing.service';
@@ -52,6 +52,7 @@ export class DrawingComponent implements OnDestroy {
   newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
 
   canvasStorage: DrawCanvasStorageDTO[] = [];
+  currentStepperPoint: Date = new Date();
 
   constructor(
     private drawingService: DrawingService,
@@ -75,8 +76,19 @@ export class DrawingComponent implements OnDestroy {
     
     this.info$.pipe(
       first(),
-      tap(info => this.canvasStorage = info.drawSegmensts ?? []),
-    ).subscribe(_ => this.canvasSetup());
+      switchMap(_ => {
+        if (!!this.formControlEditMode.value) {
+          return this.drawingService.getSegments$(this.pageId$.value!);
+        }
+        return of(null);
+      })
+    ).subscribe(storage => {
+      if (!!this.formControlEditMode.value && !!storage) {
+        this.canvasStorage = storage.segments ?? [];
+        this.currentStepperPoint = storage.stepperPosition;
+      }
+      this.canvasSetup();
+    });
 
     this.info$.pipe(
       filter(_ => !!this.formControlEditMode.value),
@@ -117,7 +129,20 @@ export class DrawingComponent implements OnDestroy {
         this.previousEditmode = editMode;
       }),
       map(([info, _, pageId]) => info.pages.filter(page => page.pageId === pageId).length === 0 ? undefined : info.pages.filter(page => page.pageId === pageId)[0].dataUrl),
-    ).subscribe(dataUrl => this.canvasSetImage(dataUrl ?? ''));
+      tap(dataUrl => this.canvasSetImage(dataUrl ?? '')),
+      switchMap(_ => {
+        if (!!this.formControlEditMode.value) {
+          return this.drawingService.getSegments$(this.pageId$.value!);
+        }
+        return of(null);
+      })
+    ).subscribe(segments => {
+      if (!!this.formControlEditMode.value && !!segments) {
+        this.canvasStorage = segments.segments ?? [];
+        this.currentStepperPoint = segments.stepperPosition;
+        this.canvasRestoreStorage();
+      }
+    });
   }
 
   canvasSetup() {
@@ -134,8 +159,7 @@ export class DrawingComponent implements OnDestroy {
       this.canvasContext!.fillRect(0, 0, canvas.width, canvas.height);
       this.canvasContext!.strokeStyle = black;
       this.canvasDraw(canvas);
-      const notDeleted = this.canvasStorage.filter(storage => !storage.deleted);
-      this.canvasDrawMultipleLines(notDeleted);
+      this.canvasRestoreStorage();
     }
     if (!this.setupDone) {
       this.pageId$.next(this.pageId$.value);
@@ -163,6 +187,7 @@ export class DrawingComponent implements OnDestroy {
         );
       }),
       map(res => this.canvasMapPoints(canvas.getBoundingClientRect(), res)),
+      shareReplay(1),
     );
     draw$.subscribe(positions => {
       this.canvasDrawOnMove(positions);
@@ -176,7 +201,7 @@ export class DrawingComponent implements OnDestroy {
             this.modeLinePreviousPoint = point;
           } else {
             const positions = this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLineLastEndedPoint, point]);
-            if (positions.fromPosistion.x !== positions.toPosition?.x || positions.fromPosistion.y !== positions.toPosition?.y) {
+            if (positions.fromPosition.x !== positions.toPosition?.x || positions.fromPosition.y !== positions.toPosition?.y) {
               this.modeLinePreviousPoint = point;
             }
           }
@@ -185,7 +210,8 @@ export class DrawingComponent implements OnDestroy {
         return true;
       }),
       map(point => { return { positions: this.canvasMapPoints(canvas.getBoundingClientRect(), [this.modeLinePreviousPoint, point]), point }}),
-      filter(pos => pos.positions.fromPosistion.x !== pos.positions.toPosition!.x || pos.positions.fromPosistion.y !== pos.positions.toPosition!.y),
+      filter(pos => pos.positions.fromPosition.x !== pos.positions.toPosition!.x || pos.positions.fromPosition.y !== pos.positions.toPosition!.y),
+      shareReplay(1),
     );
     line$.subscribe(pos => {
       this.modeLinePreviousPoint = null;
@@ -208,6 +234,7 @@ export class DrawingComponent implements OnDestroy {
       }),
       distinctUntilChanged(),
       debounceTime(100),
+      shareReplay(1),
     );
     erase$.subscribe(_ => {
       this.canvasEraseOnMove(this.eraseSegmentsBuffer);
@@ -221,12 +248,13 @@ export class DrawingComponent implements OnDestroy {
     ).pipe(
       debounceTime(500),
     ).subscribe(_ => {
+      this.currentStepperPoint = new Date();
       this.updatePage(canvas.toDataURL());
     });
   }
 
   canvasMapPoints(rect: any, res: any) {
-    const fromPosistion = {
+    const fromPosition = {
       x: (res[0] as any).clientX - rect.left,
       y: (res[0] as any).clientY - rect.top
     };
@@ -239,10 +267,10 @@ export class DrawingComponent implements OnDestroy {
       color: this.formControlColor.value,
       created: new Date(),
       deleted: null,
-      fromPosistion: {
+      fromPosition: {
         id: guid(),
-        x: fromPosistion.x,
-        y: fromPosistion.y,
+        x: fromPosition.x,
+        y: fromPosition.y,
       },
       toPosition: {
         id: guid(),
@@ -259,24 +287,32 @@ export class DrawingComponent implements OnDestroy {
     }
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
-    if (storage.fromPosistion && storage.toPosition) {
-      this.canvasContext.moveTo(storage.fromPosistion.x, storage.fromPosistion.y);
+    if (storage.fromPosition && storage.toPosition) {
+      this.canvasContext.moveTo(storage.fromPosition.x, storage.fromPosition.y);
       this.canvasContext.lineTo(storage.toPosition.x, storage.toPosition.y);
       this.canvasContext.stroke();
       this.canvasStorage.push(storage);
     }
   }
 
-  canvasDrawMultipleLines(storage: DrawCanvasStorageDTO[]) {
-    if (!this.canvasContext) {
+  canvasRestoreStorage() {
+    const canvas = this.canvas?.nativeElement;
+    const storage = this.canvasStorage.filter(storage => !storage.deleted);
+    if (!this.canvasContext || !canvas) {
+      return;
+    }
+    const white = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-white');
+    this.canvasContext!.fillStyle = white;
+    this.canvasContext!.fillRect(0, 0, canvas.width, canvas.height);
+    if (storage.length === 0) {
       return;
     }
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
     for (let i = 0; i < storage.length; i++) {
       const item = storage[i];
-      if (item.fromPosistion && item.toPosition) {
-        this.canvasContext.moveTo(item.fromPosistion.x, item.fromPosistion.y);
+      if (item.fromPosition && item.toPosition) {
+        this.canvasContext.moveTo(item.fromPosition.x, item.fromPosition.y);
         this.canvasContext.lineTo(item.toPosition.x, item.toPosition.y);
         this.canvasContext.stroke();
       }
@@ -294,15 +330,17 @@ export class DrawingComponent implements OnDestroy {
       const erased = this.canvasStorage
         .filter(s => s.deleted === null)
         .filter(s => {
-          const path = { from: s.fromPosistion, to: s.toPosition };
-          return getDistanceBetweenSegments(path.from.x, path.from.y, path.to!.x, path.to!.y, erase.fromPosistion.x, erase.fromPosistion.y, erase.toPosition!.x, erase.toPosition!.y) < 10;
-      });
-      for (let j = 0; j < erased.length; j++) {
-        const storage = this.canvasStorage.find(s => s.id === erased[j].id);
-        if (storage) {
-          storage.deleted = timeStamp;
+          const path = { from: s.fromPosition, to: s.toPosition };
+          return getDistanceBetweenSegments(path.from.x, path.from.y, path.to!.x, path.to!.y, erase.fromPosition.x, erase.fromPosition.y, erase.toPosition!.x, erase.toPosition!.y) < 10;
+        })
+        .map(s => s.id);
+      
+      this.canvasStorage = this.canvasStorage.map(s => {
+        if (erased.includes(s.id)) {
+          s.deleted = timeStamp;
         }
-      }
+        return s;
+      });
     }
     this.canvasSetup();
   }
@@ -332,6 +370,7 @@ export class DrawingComponent implements OnDestroy {
       pageId: guid(),
     } as DrawPageCreateDTO;
     this.drawingService.createPage$(value).subscribe(_ => {
+      this.canvasStorage = [];
       this.pageId$.next(value.pageId);
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, value.pageId], { queryParams: { [appRoutes.Edit]: true }});
     });
@@ -342,11 +381,14 @@ export class DrawingComponent implements OnDestroy {
       collectionId: this.collectionId,
       pageId: this.pageId$.value,
       dataUrl,
+      canvasStorage: this.canvasStorage,
+      stepperPosition: this.currentStepperPoint,
     } as DrawPageEditDTO;
     this.drawingService.updatePage$(value).subscribe();
   }
 
   editPage(pageId: string, editingPersonName: string | null) {
+    this.canvasStorage = [];
     this.pageId$.next(pageId);
     if (!!editingPersonName) {
       const dialog$ = this.dialog.open(DrawNotifyComponent, {
@@ -372,12 +414,14 @@ export class DrawingComponent implements OnDestroy {
       }
     });
     dialog$.afterClosed().subscribe(_ => {
+      this.canvasStorage = [];
       this.pageId$.next(previousId);
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, previousId]);
     });
   }
 
   openPage(pageId: string) {
+    this.canvasStorage = [];
     this.pageId$.next(pageId);
     if (this.formControlEditMode.value) {
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }});
@@ -414,6 +458,7 @@ export class DrawingComponent implements OnDestroy {
     } else {
       this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.pageId$.value]);
     }
+    this.canvasStorage = [];
     this.pageId$.next(this.pageId$.value);
   }
 
@@ -428,6 +473,61 @@ export class DrawingComponent implements OnDestroy {
   selectedModeIcon() {
     const mode = this.modes.find(m => m.key === this.formControlMode.value);
     return mode?.value;
+  }
+
+  stepBackward() {
+    const point = new Date(this.currentStepperPoint ?? new Date());
+    const filtered = this.canvasStorage.filter(s => new Date(!s.deleted || s.created > s.deleted ? s.created : s.deleted) < point);
+    if (filtered.length === 0) {
+      return;
+    }
+    const lastChanged = filtered.sort((a, b) => new Date(!b.deleted || b.created > b.deleted ? b.created : b.deleted).getTime() - new Date(!a.deleted || a.created > a.deleted ? a.created : a.deleted).getTime())[0];
+    const lastChangedTime = new Date(!lastChanged.deleted || lastChanged.created > lastChanged.deleted ? lastChanged.created : lastChanged.deleted);
+    const pointRange = new Date(lastChangedTime.getTime() - 500);
+    const idsToRevert = filtered.filter(s => new Date(!s.deleted || s.created > s.deleted ? s.created : s.deleted) > pointRange).map(s => s.id);
+    this.canvasStorage = this.canvasStorage.map(s => {
+      if (idsToRevert.includes(s.id)) {
+        if (!s.deleted) {
+          s.deleted = s.created;
+        } else {
+          s.created = s.deleted > s.created ? s.deleted : s.created;
+          s.deleted = null;
+        }
+      }
+      return s;
+    });
+    this.canvasRestoreStorage();
+    this.currentStepperPoint = pointRange;
+    const canvas = this.canvas?.nativeElement as HTMLCanvasElement;
+    this.updatePage(canvas.toDataURL());
+  }
+
+  stepForward() {
+    const point = new Date(this.currentStepperPoint ?? new Date());
+    const filtered = this.canvasStorage.filter(s => new Date(!s.deleted || s.created > s.deleted ? s.created : s.deleted) > point);
+    if (filtered.length === 0) {
+      return;
+    }
+    const lastChanged = filtered.sort((a, b) => new Date(!a.deleted || a.created > a.deleted ? a.created : a.deleted).getTime() - new Date(!b.deleted || b.created > b.deleted ? b.created : b.deleted).getTime())[0];
+    const lastChangedTime = new Date(!lastChanged.deleted || lastChanged.created > lastChanged.deleted ? lastChanged.created : lastChanged.deleted);
+    const pointRange = new Date(lastChangedTime.getTime() + 500);
+    const idsToRevert = filtered.filter(s => new Date(!s.deleted || s.created > s.deleted ? s.created : s.deleted) < pointRange).map(s => s.id);
+    this.canvasStorage = this.canvasStorage.map(s => {
+      if (idsToRevert.includes(s.id)) {
+        if (!s.deleted) {
+          s.deleted = s.created;
+        } else {
+          s.created = s.deleted > s.created ? s.deleted : s.created;
+          s.deleted = null;
+        }
+      }
+      return s;
+    }
+    );
+    this.canvasRestoreStorage();
+    const canvas = this.canvas?.nativeElement as HTMLCanvasElement;
+    this.updatePage(canvas.toDataURL());
+    this.currentStepperPoint = pointRange;
   }
 
   ngOnDestroy(): void {

@@ -1,9 +1,10 @@
 todo
-- Draw -> adjust backend to store segments
-- Create entities
 
-- Fix bugs in Frontend
-- Implement Text
+open features:
+- step forward
+- step backward
+- text
+- enhance multi user
 
 -> DrawCollections GET (-), POST (upsert), DELETE (collectionId)
 -> DrawPages GET (collectionId), POST (collectionId), PUT (collectionId, pageId, dataUrl), DELETE (collectionId, pageId)
