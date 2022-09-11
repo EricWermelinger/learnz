@@ -226,6 +226,29 @@ export class DrawingComponent implements OnDestroy {
       this.eraseSegmentsBuffer = [];
     });
 
+    const textAdd$ = mouseDown$.pipe(
+      filter(_ => this.formControlMode.value === 'Text'),
+      map(point => this.canvasMapPoints(canvas.getBoundingClientRect(), [point, point]))
+    ).subscribe(positions => {
+      var input = document.createElement('textarea');
+      const calculatedX = positions.fromPosition.x + 40;
+      const calculatedY = positions.fromPosition.y + 124;
+      const maxWidth = this.CANVAS_SIZE - calculatedX;
+      const maxHeight = this.CANVAS_SIZE - calculatedY;
+      input.style.position = 'absolute';
+      input.style.left = calculatedX + 'px';
+      input.style.top = calculatedY + 'px';
+      input.style.width = '40px';
+      input.style.height = '20px';
+      input.style.border = '1px solid black';
+      input.style.backgroundColor = 'white';
+      input.style.color = 'black';
+      input.onkeyup = () => {
+        this.canvasFitTextareaToText(input, maxWidth, maxHeight);
+      };
+      canvas.parentNode?.appendChild(input);
+    });
+
     merge(
       draw$,
       line$,
@@ -351,6 +374,26 @@ export class DrawingComponent implements OnDestroy {
 
   canvasChangeMode() {
     this.modeLinePreviousPoint = null;
+  }
+
+  canvasFitTextareaToText(textarea: HTMLTextAreaElement, maxHeight: number, maxWidth: number) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.style.width = 'auto';
+    textarea.style.width = textarea.scrollWidth + 'px';
+    if (textarea.offsetWidth > maxWidth) {
+      textarea.style.overflowX = 'scroll';
+      textarea.style.width = maxWidth + 'px';
+    } else {
+      textarea.style.overflowX = 'hidden';
+    }
+    if (textarea.offsetHeight > maxHeight) {
+      textarea.style.overflowY = 'scroll';
+      textarea.style.height = maxHeight + 'px';
+    } else {
+      textarea.style.overflowY = 'hidden';
+    }
+    console.log(textarea.style.height, textarea.style.width);
   }
 
   createPage() {
