@@ -1,8 +1,6 @@
 todo
 
 open features:
-- step forward
-- step backward
 - text
 - enhance multi user
 

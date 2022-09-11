@@ -71,7 +71,6 @@ import { TestEndConfirmDialogComponent } from './Pages/test/test-end-confirm-dia
 import { DrawingComponent } from './Pages/draw/drawing/drawing.component';
 import { DrawSettingsComponent } from './Pages/draw/draw-settings/draw-settings.component';
 import { DrawDeleteConfirmComponent } from './Pages/draw/draw-delete-confirm/draw-delete-confirm.component';
-import { DrawNotifyComponent } from './Pages/draw/draw-notify/draw-notify.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -138,7 +137,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     DrawingComponent,
     DrawSettingsComponent,
     DrawDeleteConfirmComponent,
-    DrawNotifyComponent,
   ],
   imports: [
     BrowserModule,

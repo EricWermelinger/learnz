@@ -1,7 +1,7 @@
 <div *ngIf="info$ | async as info">
     <div *ngIf="getActivePage(info.pages) as activePage" class="header">
         <h2>{{ info.name }}</h2>
-        <mat-slide-toggle *ngIf="activePage.editable" [formControl]="formControlEditMode" class="slide" (change)="changeEditMode($event.checked, activePage.editingPersonName)">{{ 'draw.editMode' | translate }}</mat-slide-toggle>
+        <mat-slide-toggle *ngIf="activePage.editable" [formControl]="formControlEditMode" class="slide" (change)="navigateEditMode($event.checked)">{{ 'draw.editMode' | translate }}</mat-slide-toggle>
         <div *ngIf="formControlEditMode.value" class="mode-picker">
             <mat-icon>{{ selectedModeIcon() }}</mat-icon>
             <mat-select [formControl]="formControlMode" (valueChange)="canvasChangeMode()">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="action-bar">
                     <div class="action">
-                        <mat-icon *ngIf="page.editable" (click)="editPage(page.pageId, page.editingPersonName)" class="pointer">edit</mat-icon>
+                        <mat-icon *ngIf="page.editable" (click)="editPage(page.pageId)" class="pointer">edit</mat-icon>
                     </div>
                     <div class="action">
                         <mat-icon *ngIf="page.deletable" (click)="deletePage(page.pageId, info.pages)" class="pointer">delete</mat-icon>

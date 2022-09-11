@@ -138,6 +138,14 @@ public class DrawCollections : Controller
         Guid? userId = groupCollection == null ? guid : null;
 
         var pages = await _dataContext.DrawPages.Where(dpg => dpg.DrawCollectionId == collectionId).ToListAsync();
+        foreach (var page in pages)
+        {
+            var existingStorages = await _dataContext.DrawCanvasStorages.Where(dcs => dcs.DrawPageId == page.Id).ToListAsync();
+            var existingStoragePoints = await _dataContext.DrawCanvasStoragePoints.Where(dcp => dcp.DrawCanvasStoragesFrom.Any(dcs => dcs.DrawPageId == page.Id)).ToListAsync();
+            _dataContext.DrawCanvasStorages.RemoveRange(existingStorages);
+            _dataContext.DrawCanvasStoragePoints.RemoveRange(existingStoragePoints);
+        }
+
         _dataContext.DrawPages.RemoveRange(pages);
         await _dataContext.SaveChangesAsync();
 

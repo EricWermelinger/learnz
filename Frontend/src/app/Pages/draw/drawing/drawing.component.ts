@@ -7,11 +7,10 @@ import { DrawingService } from './drawing.service';
 import { v4 as guid } from 'uuid';
 import { DrawPageCreateDTO } from 'src/app/DTOs/Draw/DrawPageCreateDTO';
 import { DrawPageEditDTO } from 'src/app/DTOs/Draw/DrawPageEditDTO';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DrawDeleteConfirmComponent } from '../draw-delete-confirm/draw-delete-confirm.component';
 import { FormControl } from '@angular/forms';
 import { DrawDrawingDTO } from 'src/app/DTOs/Draw/DrawDrawingDTO';
-import { DrawNotifyComponent } from '../draw-notify/draw-notify.component';
 import { DrawCanvasType, getDrawCanvasColors, getDrawCanvasTypeWithIcons } from 'src/app/Enums/DrawCanvasType';
 import { DrawCanvasStorageDTO } from 'src/app/DTOs/Draw/DrawCanvasStorageDTO';
 import { getCanvasStandardColor, getDistanceBetweenSegments } from 'src/app/Framework/Helpers/CanvasHelper';
@@ -48,8 +47,6 @@ export class DrawingComponent implements OnDestroy {
   modeLineLastEndedPoint: Event | null = null;
   eraseSegmentsBuffer: DrawCanvasStorageDTO[] = [];
   setupDone = false;
-
-  newUserMakingChangesNameDialogRef: MatDialogRef<DrawNotifyComponent> | null = null;
 
   canvasStorage: DrawCanvasStorageDTO[] = [];
   currentStepperPoint: Date = new Date();
@@ -92,24 +89,12 @@ export class DrawingComponent implements OnDestroy {
 
     this.info$.pipe(
       filter(_ => !!this.formControlEditMode.value),
-      map(info => info.newUserMakingChangesName),
-      distinctUntilChanged(),
-      filter(name => !!name),
-      filter(_ => this.newUserMakingChangesNameDialogRef == null),
-    ).subscribe(name => {
-      this.newUserMakingChangesNameDialogRef = this.dialog.open(DrawNotifyComponent, {
-        data: {
-          newUserMakingChangesName: name,
-          currentUserMakingChangesName: null,
-        },
-      });
-      this.newUserMakingChangesNameDialogRef!.afterClosed().subscribe(_ => {
-        this.info$ = this.drawingService.getPages$(this.collectionId, !!this.formControlEditMode.value).pipe(
-          takeUntil(this.destroyed$),
-        );
-        this.newUserMakingChangesNameDialogRef = null;
-        this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, this.pageId$.value]);
-      });
+      filter(info => !!info.changedBy),
+      switchMap(_ => this.drawingService.getSegments$(this.pageId$.value!)),
+    ).subscribe(storage => {
+      this.canvasStorage = storage.segments ?? [];
+      this.currentStepperPoint = storage.stepperPosition;
+      this.canvasRestoreStorage();
     });
 
     combineLatest([
@@ -285,13 +270,14 @@ export class DrawingComponent implements OnDestroy {
     if (!this.canvasContext) {
       return;
     }
-    this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
     if (storage.fromPosition && storage.toPosition) {
+      this.canvasContext.beginPath();
       this.canvasContext.moveTo(storage.fromPosition.x, storage.fromPosition.y);
       this.canvasContext.lineTo(storage.toPosition.x, storage.toPosition.y);
       this.canvasContext.stroke();
       this.canvasStorage.push(storage);
+      this.canvasContext.closePath();
     }
   }
 
@@ -303,20 +289,23 @@ export class DrawingComponent implements OnDestroy {
     }
     const white = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-white');
     this.canvasContext!.fillStyle = white;
+    this.canvasContext!.clearRect(0, 0, canvas.width, canvas.height);
     this.canvasContext!.fillRect(0, 0, canvas.width, canvas.height);
     if (storage.length === 0) {
       return;
     }
-    this.canvasContext.beginPath();
-    this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
     for (let i = 0; i < storage.length; i++) {
       const item = storage[i];
       if (item.fromPosition && item.toPosition) {
+        this.canvasContext.strokeStyle = item.color;
+        this.canvasContext.beginPath();
         this.canvasContext.moveTo(item.fromPosition.x, item.fromPosition.y);
         this.canvasContext.lineTo(item.toPosition.x, item.toPosition.y);
         this.canvasContext.stroke();
+        this.canvasContext.closePath();
       }
     }
+    this.canvasContext.strokeStyle = this.formControlColor.value ?? getCanvasStandardColor();
   }
 
   canvasEraseOnMove(eraseAll: DrawCanvasStorageDTO[]) {
@@ -387,20 +376,10 @@ export class DrawingComponent implements OnDestroy {
     this.drawingService.updatePage$(value).subscribe();
   }
 
-  editPage(pageId: string, editingPersonName: string | null) {
+  editPage(pageId: string) {
     this.canvasStorage = [];
     this.pageId$.next(pageId);
-    if (!!editingPersonName) {
-      const dialog$ = this.dialog.open(DrawNotifyComponent, {
-        data: {
-          newUserMakingChangesName: null,
-          currentUserMakingChangesName: editingPersonName,
-        },
-      });
-      dialog$.afterClosed().subscribe(_ => this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }}));
-    } else {
-      this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }});
-    }
+    this.router.navigate([appRoutes.App, appRoutes.Draw, this.collectionId, pageId], { queryParams: { [appRoutes.Edit]: true }});
   }
 
   deletePage(pageId: string, pages: DrawPageGetDTO[]) {
@@ -436,20 +415,6 @@ export class DrawingComponent implements OnDestroy {
       return undefined;
     }
     return filtered[0];
-  }
-
-  changeEditMode(editMode: boolean, editingPersonName: string | null) {
-    if (!!editingPersonName) {
-      const dalog$ = this.dialog.open(DrawNotifyComponent, {
-        data: {
-          newUserMakingChangesName: null,
-          currentUserMakingChangesName: editingPersonName,
-        },
-      });
-      dalog$.afterClosed().subscribe(_ => this.navigateEditMode(editMode));
-    } else {
-      this.navigateEditMode(editMode);
-    }
   }
 
   navigateEditMode(editMode: boolean) {

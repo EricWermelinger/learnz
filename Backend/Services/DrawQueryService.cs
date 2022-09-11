@@ -93,12 +93,16 @@ public class DrawQueryService : IDrawQueryService
         var pages = await PagesWithoutPolicy(collectionId);
         var result = await PagesApplyPolicy(isOwn, pages, userId);
         var name = await PageCollectionName(collectionId);
+        var changedBy = await _dataContext.DrawPages.Where(dpg => dpg.DrawCollectionId == collectionId)
+                                                    .OrderByDescending(dpg => dpg.Changed)
+                                                    .Select(dpg => new { UserName = dpg.ChangedBy.Username, UserId = dpg.ChangedById })
+                                                    .FirstAsync();
         return new DrawDrawingDTO
         {
             Name = name ?? "",
             Pages = result ?? new List<DrawPageGetDTO>(),
             Editable = result != null && result.ElementAt(0).Editable,
-            NewUserMakingChangesName = null
+            ChangedBy = userId == changedBy.UserId ? null : changedBy.UserName
         };
     }
 
@@ -196,12 +200,13 @@ public class DrawQueryService : IDrawQueryService
         }
     }
 
-    public async Task TriggerWebsocketPages(Guid collectionChangedId)
+    public async Task TriggerWebsocketPages(Guid collectionChangedId, Guid changedBy)
     {
         var usersToNotify = await _dataContext.DrawCollections.Where(drc => drc.Id == collectionChangedId)
                                                                 .Select(drc => drc.DrawGroupCollections.Any() ? drc.DrawGroupCollections.First().Group.GroupMembers.Select(grm => grm.UserId).ToList() : new List<Guid> { drc.OwnerId })
                                                                 .FirstOrDefaultAsync();
         var pages = await PagesWithoutPolicy(collectionChangedId);
+        var changedByUsername = await _dataContext.Users.Where(usr => usr.Id == changedBy).Select(usr => usr.Username).FirstAsync();
         if (usersToNotify != null)
         {
             foreach (Guid userToNotify in usersToNotify)
@@ -217,29 +222,13 @@ public class DrawQueryService : IDrawQueryService
                             Pages = pagesPolicy ?? new List<DrawPageGetDTO>(),
                             Name = await PageCollectionName(collectionChangedId) ?? "",
                             Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable,
-                            NewUserMakingChangesName = null
+                            ChangedBy = userToNotify == changedBy ? null : changedByUsername
                         };
                         await _hubService.SendMessageToUser(nameof(DrawPages), data, userToNotify, collectionChangedId);
                     }
                 }
             }
         }
-    }
-
-    public async Task TriggerWebsocketNewUserEditing(Guid collectionChangedId, Guid previousUserId, Guid newUserId)
-    {
-        string userNameNewUser = (await _dataContext.Users.FirstAsync(usr => usr.Id == newUserId)).Username;
-        var pages = await PagesWithoutPolicy(collectionChangedId);
-        var isOwn = await PagesIsOwn(previousUserId, collectionChangedId);
-        var pagesPolicy = await PagesApplyPolicy(isOwn, pages, previousUserId);
-        var data = new DrawDrawingDTO
-        {
-            Pages = pagesPolicy ?? new List<DrawPageGetDTO>(),
-            Name = await PageCollectionName(collectionChangedId) ?? "",
-            Editable = pagesPolicy != null && pagesPolicy.ElementAt(0).Editable,
-            NewUserMakingChangesName = userNameNewUser
-        };
-        await _hubService.SendMessageToUser(nameof(DrawPages), data, previousUserId, collectionChangedId);
     }
 
     public async Task AdjustChangedOnCollection(Guid collectionId, Guid changedById)

@@ -55,7 +55,7 @@ public class DrawPages : Controller
             await _drawQueryService.AdjustChangedOnCollection(request.CollectionId, guid);
             var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == request.CollectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
             await _drawQueryService.TriggerWebsocketCollections(request.CollectionId, groupId, groupId == Guid.Empty ? guid : null);
-            await _drawQueryService.TriggerWebsocketPages(request.CollectionId);
+            await _drawQueryService.TriggerWebsocketPages(request.CollectionId, guid);
         }
         return Ok();
     }
@@ -86,12 +86,6 @@ public class DrawPages : Controller
         if (!isPrivateCollectionOwner)
         {
             return BadRequest(ErrorKeys.DrawNotAccessible);
-        }
-
-        bool currentlyOtherUserEditing = existingPage.Changed.AddMinutes(1) > timestamp && existingPage.ChangedById != guid;
-        if (currentlyOtherUserEditing)
-        {
-            await _drawQueryService.TriggerWebsocketNewUserEditing(request.CollectionId, existingPage.ChangedById, guid);
         }
 
         existingPage.Changed = timestamp;
@@ -152,7 +146,7 @@ public class DrawPages : Controller
         await _drawQueryService.AdjustChangedOnCollection(request.CollectionId, guid);
         var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == request.CollectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
         await _drawQueryService.TriggerWebsocketCollections(request.CollectionId, groupId, groupId == Guid.Empty ? guid : null);
-        await _drawQueryService.TriggerWebsocketPages(request.CollectionId);
+        await _drawQueryService.TriggerWebsocketPages(request.CollectionId, guid);
         return Ok();
     }
 
@@ -174,7 +168,7 @@ public class DrawPages : Controller
         await _drawQueryService.AdjustChangedOnCollection(collectionId, guid);
         var groupId = await _dataContext.DrawGroupCollections.Where(dgc => dgc.DrawCollectionId == collectionId).Select(dgc => dgc.GroupId).FirstOrDefaultAsync();
         await _drawQueryService.TriggerWebsocketCollections(collectionId, groupId, groupId == Guid.Empty ? guid : null);
-        await _drawQueryService.TriggerWebsocketPages(collectionId);
+        await _drawQueryService.TriggerWebsocketPages(collectionId, guid);
         return Ok();
     }
 }
