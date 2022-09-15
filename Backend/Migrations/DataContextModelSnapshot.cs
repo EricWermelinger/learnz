@@ -455,6 +455,153 @@ namespace Learnz.Migrations
                     b.ToTable("CreateSets");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.DrawCanvasStorage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DrawPageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FromPositionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ToPositionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DrawPageId");
+
+                    b.HasIndex("FromPositionId");
+
+                    b.HasIndex("ToPositionId");
+
+                    b.ToTable("DrawCanvasStorages");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawCanvasStoragePoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("X")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DrawCanvasStoragePoints");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawCollection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Changed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ChangedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedById");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("DrawCollections");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawGroupCollection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DrawCollectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DrawGroupPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DrawCollectionId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("DrawGroupCollections");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawPage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Changed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ChangedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DataUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DrawCollectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StepperPosition")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedById");
+
+                    b.HasIndex("DrawCollectionId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("DrawPages");
+                });
+
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
                     b.Property<Guid>("Id")
@@ -730,8 +877,18 @@ namespace Learnz.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MaxTime")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SetId")
                         .HasColumnType("uniqueidentifier");
@@ -740,6 +897,8 @@ namespace Learnz.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("SetId");
 
@@ -791,7 +950,7 @@ namespace Learnz.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TestUsers");
+                    b.ToTable("TestOfUsers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.TestQuestion", b =>
@@ -854,11 +1013,16 @@ namespace Learnz.Migrations
                     b.Property<Guid>("TestOfUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("TestQuestionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TestOfUserId");
 
-                    b.ToTable("TestQuestionUsers");
+                    b.HasIndex("TestQuestionId");
+
+                    b.ToTable("TestQuestionOfUsers");
                 });
 
             modelBuilder.Entity("Learnz.Entities.TogetherAsk", b =>
@@ -1250,6 +1414,98 @@ namespace Learnz.Migrations
                     b.Navigation("ModifiedBy");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.DrawCanvasStorage", b =>
+                {
+                    b.HasOne("Learnz.Entities.DrawPage", "DrawPage")
+                        .WithMany("DrawCanvasStorages")
+                        .HasForeignKey("DrawPageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.DrawCanvasStoragePoint", "FromPosition")
+                        .WithMany("DrawCanvasStoragesFrom")
+                        .HasForeignKey("FromPositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.DrawCanvasStoragePoint", "ToPosition")
+                        .WithMany("DrawCanvasStoragesTo")
+                        .HasForeignKey("ToPositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DrawPage");
+
+                    b.Navigation("FromPosition");
+
+                    b.Navigation("ToPosition");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawCollection", b =>
+                {
+                    b.HasOne("Learnz.Entities.User", "ChangedBy")
+                        .WithMany("DrawCollectionsChangedBy")
+                        .HasForeignKey("ChangedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "Owner")
+                        .WithMany("DrawCollectionsOwner")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChangedBy");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawGroupCollection", b =>
+                {
+                    b.HasOne("Learnz.Entities.DrawCollection", "DrawCollection")
+                        .WithMany("DrawGroupCollections")
+                        .HasForeignKey("DrawCollectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.Group", "Group")
+                        .WithMany("DrawGroupCollections")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DrawCollection");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawPage", b =>
+                {
+                    b.HasOne("Learnz.Entities.User", "ChangedBy")
+                        .WithMany("DrawPagesChangedBy")
+                        .HasForeignKey("ChangedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.DrawCollection", "DrawCollection")
+                        .WithMany("DrawPages")
+                        .HasForeignKey("DrawCollectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Learnz.Entities.User", "Owner")
+                        .WithMany("DrawPagesOwner")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChangedBy");
+
+                    b.Navigation("DrawCollection");
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
                     b.HasOne("Learnz.Entities.User", "Admin")
@@ -1388,11 +1644,19 @@ namespace Learnz.Migrations
 
             modelBuilder.Entity("Learnz.Entities.Test", b =>
                 {
+                    b.HasOne("Learnz.Entities.User", "Owner")
+                        .WithMany("TestOwners")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Learnz.Entities.CreateSet", "Set")
                         .WithMany("Tests")
                         .HasForeignKey("SetId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Owner");
 
                     b.Navigation("Set");
                 });
@@ -1454,7 +1718,15 @@ namespace Learnz.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Learnz.Entities.TestQuestion", "TestQuestion")
+                        .WithMany("TestQuestionOfUsers")
+                        .HasForeignKey("TestQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("TestOfUser");
+
+                    b.Navigation("TestQuestion");
                 });
 
             modelBuilder.Entity("Learnz.Entities.TogetherAsk", b =>
@@ -1598,8 +1870,29 @@ namespace Learnz.Migrations
                     b.Navigation("Tests");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.DrawCanvasStoragePoint", b =>
+                {
+                    b.Navigation("DrawCanvasStoragesFrom");
+
+                    b.Navigation("DrawCanvasStoragesTo");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawCollection", b =>
+                {
+                    b.Navigation("DrawGroupCollections");
+
+                    b.Navigation("DrawPages");
+                });
+
+            modelBuilder.Entity("Learnz.Entities.DrawPage", b =>
+                {
+                    b.Navigation("DrawCanvasStorages");
+                });
+
             modelBuilder.Entity("Learnz.Entities.Group", b =>
                 {
+                    b.Navigation("DrawGroupCollections");
+
                     b.Navigation("GroupFiles");
 
                     b.Navigation("GroupMembers");
@@ -1642,6 +1935,11 @@ namespace Learnz.Migrations
                     b.Navigation("TestQuestionOfUsers");
                 });
 
+            modelBuilder.Entity("Learnz.Entities.TestQuestion", b =>
+                {
+                    b.Navigation("TestQuestionOfUsers");
+                });
+
             modelBuilder.Entity("Learnz.Entities.User", b =>
                 {
                     b.Navigation("ChallengeOwners");
@@ -1654,6 +1952,14 @@ namespace Learnz.Migrations
 
                     b.Navigation("CreateSetModified");
 
+                    b.Navigation("DrawCollectionsChangedBy");
+
+                    b.Navigation("DrawCollectionsOwner");
+
+                    b.Navigation("DrawPagesChangedBy");
+
+                    b.Navigation("DrawPagesOwner");
+
                     b.Navigation("GroupAdmin");
 
                     b.Navigation("GroupMessages");
@@ -1665,6 +1971,8 @@ namespace Learnz.Migrations
                     b.Navigation("LearnzFileOwner");
 
                     b.Navigation("TestOfUsers");
+
+                    b.Navigation("TestOwners");
 
                     b.Navigation("TogetherAskAskedUsers");
 

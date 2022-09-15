@@ -8,6 +8,7 @@ import { CreateSetEditComponent } from './Pages/create/create-set-edit/create-se
 import { CreateComponent } from './Pages/create/create.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { DrawComponent } from './Pages/draw/draw.component';
+import { DrawingComponent } from './Pages/draw/drawing/drawing.component';
 import { GroupChatComponent } from './Pages/group/group-chat/group-chat.component';
 import { GroupFilesComponent } from './Pages/group/group-files/group-files.component';
 import { GroupComponent } from './Pages/group/group.component';
@@ -56,6 +57,7 @@ const routes: Routes = [
       { path: `${appRoutes.Test}/${appRoutes.TestSetting}/:${appRoutes.TestId}`, component: TestSettingsComponent },
       { path: `${appRoutes.Test}/${appRoutes.TestStepper}/:${appRoutes.TestId}`, component: TestStepperComponent },
       { path: appRoutes.Draw, component: DrawComponent },
+      { path: `${appRoutes.Draw}/:${appRoutes.DrawCollectionId}/:${appRoutes.DrawPageId}`, component: DrawingComponent },
       { path: appRoutes.Settings, component: SettingsComponent },
     ],
   },

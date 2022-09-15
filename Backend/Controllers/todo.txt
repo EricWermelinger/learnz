@@ -1,49 +1,5 @@
 ﻿todo:
 
-create:
-create implement last sets by: set modified, set learned, set tested, set challenged and check for policy
-
-Test:
-
-Create by Dialog
-Overview for open / closed
-Stepper
-Result
-
-TestOpen - ok
-- GET
-TestClosed - ok
-- GET
-TestGroupTestCreate - ok
-- POST: in: GroupId, SetId, TestId, Name, MaxTime
-TestGroupTestVisibility - ok
-- POST: TestId, Visible
-TestCreate - ok
-- POST: in: SetId, TestId, Name, MaxTime
-TestStart - ok
-- POST: TestId
-TestEnd - ok
-- POST: TestId
-TestQuestion - ok
-- GET: List of Questions
-- POST: QuestionId, TestId, Answer
-TestResult - ok
-- GET
-
-TestGroupAdjustUserPoints
-- POST: UserId, QuestionId, TestId, true / false, Points - List<QuestionId, Pose: bool, Points>
-TestSettings
-- GET: Questions (all of set), Visible, Name, Active, MaxTime...
-- POST: Same as Get
-
-create group test: -> open private set for group
-get test: recent tests, group test, recently learned, own, public (by policy) filter by subject (main & second) & title
-start test
-get questions
-answer question
-finish try
-get result (when group test, only points, till access allowance is given)
-
 draw:
 
 dashboard:

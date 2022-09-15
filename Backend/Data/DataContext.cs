@@ -322,6 +322,66 @@ public class DataContext : DbContext
             .WithMany(tou => tou.TestQuestionOfUsers)
             .HasForeignKey(tqu => tqu.TestQuestionId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawGroupCollection>()
+            .HasOne(drg => drg.Group)
+            .WithMany(grp => grp.DrawGroupCollections)
+            .HasForeignKey(drg => drg.GroupId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawGroupCollection>()
+            .HasOne(drg => drg.DrawCollection)
+            .WithMany(drc => drc.DrawGroupCollections)
+            .HasForeignKey(drg => drg.DrawCollectionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCollection>()
+            .HasOne(drc => drc.Owner)
+            .WithMany(usr => usr.DrawCollectionsOwner)
+            .HasForeignKey(drc => drc.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCollection>()
+            .HasOne(drc => drc.ChangedBy)
+            .WithMany(usr => usr.DrawCollectionsChangedBy)
+            .HasForeignKey(drc => drc.ChangedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawPage>()
+            .HasOne(drp => drp.DrawCollection)
+            .WithMany(drc => drc.DrawPages)
+            .HasForeignKey(drp => drp.DrawCollectionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawPage>()
+            .HasOne(drp => drp.Owner)
+            .WithMany(usr => usr.DrawPagesOwner)
+            .HasForeignKey(drp => drp.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawPage>()
+            .HasOne(drp => drp.ChangedBy)
+            .WithMany(usr => usr.DrawPagesChangedBy)
+            .HasForeignKey(drp => drp.ChangedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.DrawPage)
+            .WithMany(drp => drp.DrawCanvasStorages)
+            .HasForeignKey(dcs => dcs.DrawPageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.FromPosition)
+            .WithMany(drp => drp.DrawCanvasStoragesFrom)
+            .HasForeignKey(dcs => dcs.FromPositionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<DrawCanvasStorage>()
+            .HasOne(dcs => dcs.ToPosition)
+            .WithMany(drp => drp.DrawCanvasStoragesTo)
+            .HasForeignKey(dcs => dcs.ToPositionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
@@ -366,4 +426,10 @@ public class DataContext : DbContext
     public virtual DbSet<TestQuestion> TestQuestions { get; set; }
     public virtual DbSet<TestQuestionOfUser> TestQuestionOfUsers { get; set; }
     public virtual DbSet<TestOfUser> TestOfUsers { get; set; }
+
+    public virtual DbSet<DrawGroupCollection> DrawGroupCollections { get; set; }
+    public virtual DbSet<DrawCollection> DrawCollections { get; set; }
+    public virtual DbSet<DrawPage> DrawPages { get; set; }
+    public virtual DbSet<DrawCanvasStorage> DrawCanvasStorages { get; set; }
+    public virtual DbSet<DrawCanvasStoragePoint> DrawCanvasStoragePoints { get; set; }
 }

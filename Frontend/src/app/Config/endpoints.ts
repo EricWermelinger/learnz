@@ -8,6 +8,9 @@ export const endpoints = {
     CreateOwnSets: 'createOwnSets',
     CreateSetHeader: 'createSetHeader',
     CreateSetQuestions: 'createSetQuestions',
+    DrawCollections: 'drawCollections',
+    DrawPages: 'drawPages',
+    DrawSegments: 'drawSegments',
     FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',
@@ -26,19 +29,19 @@ export const endpoints = {
     LearnQuestionAnswerWrite: 'learnQuestionAnswerWrite',
     LearnQuestionSetCorrect: 'learnQuestionSetCorrect',
     LearnSessionQuestions: 'learnSessionQuestions',
-    TestClosed: 'testClosed', // get -> overview
-    TestCreate: 'testCreate', // post -> create dialog
-    TestEnd: 'testEnd', // post -> stepper
-    TestGroupAdjustUserPoints: 'testGroupAdjustUserPoints', // post -> result
-    TestGroupTestCreate: 'testGroupTestCreate', // post -> create dialog
-    TestOpen: 'testOpen', // get -> overview
-    TestPossibleGroups: 'testPossibleGroups', // get -> create dialog
-    TestQuestions: 'testQuestions', // get / post -> stepper
-    TestResult: 'testResult', // get -> result
-    TestResultOverview: 'testResultOverview', // get -> result overview
-    TestSettings: 'testSettings', // get / post -> settings
-    TestStart: 'testStart', // post -> overview
-    TestVisibility: 'testVisibility', // post -> result overview
+    TestClosed: 'testClosed',
+    TestCreate: 'testCreate',
+    TestEnd: 'testEnd',
+    TestGroupAdjustUserPoints: 'testGroupAdjustUserPoints',
+    TestGroupTestCreate: 'testGroupTestCreate',
+    TestOpen: 'testOpen',
+    TestPossibleGroups: 'testPossibleGroups',
+    TestQuestions: 'testQuestions',
+    TestResult: 'testResult',
+    TestResultOverview: 'testResultOverview',
+    TestSettings: 'testSettings',
+    TestStart: 'testStart',
+    TestVisibility: 'testVisibility',
     TogetherAskUser: 'togetherAskUser',
     TogetherChat: 'togetherChat',
     TogetherConnectUser: 'togetherConnectUser',

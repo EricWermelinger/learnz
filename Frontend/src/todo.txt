@@ -1,5 +1,4 @@
-todo
-test result overview design
-test create validator wrong
-test group tests
-test everything and fix
+open ToDos:
+enhance draw with text option
+- change in DrawCanvasType
+- drawing component
