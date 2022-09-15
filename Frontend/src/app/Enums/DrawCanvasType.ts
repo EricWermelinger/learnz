@@ -7,7 +7,7 @@ export function getDrawCanvasType() {
     let types: KeyValue<DrawCanvasType, number>[] = [
         { key: 'Draw', value: 1 },
         { key: 'Line', value: 2 },
-        { key: 'Text', value: 3 },
+        // { key: 'Text', value: 3 },
         { key: 'Erase', value: 4 }
     ];
     return types;
@@ -17,7 +17,7 @@ export function getDrawCanvasTypeWithIcons() {
     let types: KeyValue<DrawCanvasType, string>[] = [
         { key: 'Draw', value: 'edit' },
         { key: 'Line', value: 'minimize' },
-        { key: 'Text', value: 'text_fields' },
+        // { key: 'Text', value: 'text_fields' },
         { key: 'Erase', value: 'delete' }
     ];
     return types;

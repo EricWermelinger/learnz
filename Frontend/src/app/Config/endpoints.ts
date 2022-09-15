@@ -8,9 +8,9 @@ export const endpoints = {
     CreateOwnSets: 'createOwnSets',
     CreateSetHeader: 'createSetHeader',
     CreateSetQuestions: 'createSetQuestions',
-    DrawCollections: 'drawCollections', // todo get - draw, post - setting, delete - delete confirm
-    DrawPages: 'drawPages', // todo get - drawing, post - drawing, put - drawing, delete - delete confirm
-    DrawSegments: 'drawSegments', // todo get / post
+    DrawCollections: 'drawCollections',
+    DrawPages: 'drawPages',
+    DrawSegments: 'drawSegments',
     FileChangePolicy: 'fileChangePolicy',
     FileUploadDownload: 'fileUploadDownload',
     FileUploadDownloadAnonymous: 'fileUploadDownloadAnonymous',

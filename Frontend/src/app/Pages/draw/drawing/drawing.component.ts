@@ -46,6 +46,9 @@ export class DrawingComponent implements OnDestroy {
   modeLinePreviousPoint: Event | null = null;
   modeLineLastEndedPoint: Event | null = null;
   eraseSegmentsBuffer: DrawCanvasStorageDTO[] = [];
+  activeTextareaId: string | null = null;
+  activeTextareaTop: number | null = null;
+  activeTextareaLeft: number | null = null;
   setupDone = false;
 
   canvasStorage: DrawCanvasStorageDTO[] = [];
@@ -226,27 +229,58 @@ export class DrawingComponent implements OnDestroy {
       this.eraseSegmentsBuffer = [];
     });
 
-    const textAdd$ = mouseDown$.pipe(
+    const text$ = mouseDown$.pipe(
       filter(_ => this.formControlMode.value === 'Text'),
       map(point => this.canvasMapPoints(canvas.getBoundingClientRect(), [point, point]))
     ).subscribe(positions => {
-      var input = document.createElement('textarea');
-      const calculatedX = positions.fromPosition.x + 40;
-      const calculatedY = positions.fromPosition.y + 124;
-      const maxWidth = this.CANVAS_SIZE - calculatedX;
-      const maxHeight = this.CANVAS_SIZE - calculatedY;
-      input.style.position = 'absolute';
-      input.style.left = calculatedX + 'px';
-      input.style.top = calculatedY + 'px';
-      input.style.width = '40px';
-      input.style.height = '20px';
-      input.style.border = '1px solid black';
-      input.style.backgroundColor = 'white';
-      input.style.color = 'black';
-      input.onkeyup = () => {
-        this.canvasFitTextareaToText(input, maxWidth, maxHeight);
-      };
-      canvas.parentNode?.appendChild(input);
+      // todo check if clicked on existing textarea
+      if (this.activeTextareaId === null) {
+        var input = document.createElement('textarea');
+        this.activeTextareaLeft = positions.fromPosition.x;
+        this.activeTextareaTop = positions.fromPosition.y;
+        const calculatedX = positions.fromPosition.x + 40;
+        const calculatedY = positions.fromPosition.y + 124;
+        const maxWidth = this.CANVAS_SIZE - calculatedX;
+        const maxHeight = this.CANVAS_SIZE - calculatedY;
+        const defaultWidth = 200;
+        const defaultHeight = 100;
+        const newId = 'textarea_' + guid();
+        input.id = newId;
+        input.style.position = 'absolute';
+        input.style.left = calculatedX + 'px';
+        input.style.top = calculatedY + 'px';
+        input.style.width = defaultWidth > maxWidth ? maxWidth + 'px' : defaultWidth + 'px';
+        input.style.height = defaultHeight > maxHeight ? maxHeight + 'px' : defaultHeight + 'px';
+        input.style.maxWidth = maxWidth + 'px';
+        input.style.maxHeight = maxHeight + 'px';
+        input.style.border = '1px solid black';
+        input.style.backgroundColor = this.canvasDefaultBackgroundColor();
+        input.style.color = this.formControlColor.value ?? getCanvasStandardColor();
+        // const textChange$ = fromEvent(input, 'input').pipe(
+        //   takeUntil(this.textAreaSaved$),
+        //   takeUntil(this.destroyed$),
+        //   map((event: any) => event.target.value as string),
+        //   distinctUntilChanged(),
+        //   debounceTime(500),
+        // ).subscribe(
+        //   // todo save
+        // );
+        canvas.parentNode?.appendChild(input);
+        this.activeTextareaId = newId;
+      } else {
+        if (this.activeTextareaId && this.activeTextareaLeft && this.activeTextareaTop) {
+          const input = document.getElementById(this.activeTextareaId);
+          if (input) {
+            const text = (input as HTMLTextAreaElement).value;
+            this.canvasContext!.fillStyle = this.formControlColor.value ?? getCanvasStandardColor();
+            this.canvasContext!.font = '20px Arial';
+            this.canvasContext!.fillText(text, this.activeTextareaLeft, this.activeTextareaTop);
+            input.remove();
+            // todo save
+          }
+        }
+        this.activeTextareaId = null;
+      }
     });
 
     merge(
@@ -304,14 +338,18 @@ export class DrawingComponent implements OnDestroy {
     }
   }
 
+  canvasDefaultBackgroundColor() {
+    const white = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-white');
+    return white;
+  }
+
   canvasRestoreStorage() {
     const canvas = this.canvas?.nativeElement;
     const storage = this.canvasStorage.filter(storage => !storage.deleted);
     if (!this.canvasContext || !canvas) {
       return;
     }
-    const white = getComputedStyle(document.documentElement).getPropertyValue('--learnz-light-white');
-    this.canvasContext!.fillStyle = white;
+    this.canvasContext!.fillStyle = this.canvasDefaultBackgroundColor();
     this.canvasContext!.clearRect(0, 0, canvas.width, canvas.height);
     this.canvasContext!.fillRect(0, 0, canvas.width, canvas.height);
     if (storage.length === 0) {
@@ -374,26 +412,6 @@ export class DrawingComponent implements OnDestroy {
 
   canvasChangeMode() {
     this.modeLinePreviousPoint = null;
-  }
-
-  canvasFitTextareaToText(textarea: HTMLTextAreaElement, maxHeight: number, maxWidth: number) {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-    textarea.style.width = 'auto';
-    textarea.style.width = textarea.scrollWidth + 'px';
-    if (textarea.offsetWidth > maxWidth) {
-      textarea.style.overflowX = 'scroll';
-      textarea.style.width = maxWidth + 'px';
-    } else {
-      textarea.style.overflowX = 'hidden';
-    }
-    if (textarea.offsetHeight > maxHeight) {
-      textarea.style.overflowY = 'scroll';
-      textarea.style.height = maxHeight + 'px';
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-    console.log(textarea.style.height, textarea.style.width);
   }
 
   createPage() {
