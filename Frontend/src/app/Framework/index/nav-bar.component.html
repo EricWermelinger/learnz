@@ -1,6 +1,6 @@
 <div class="menu-items">
     <ng-container *ngIf="routes$ | async as routes">
-        <button *ngFor="let route of routes" (click)="route.isParent ? selectParent(route) : navigate(route.navigation)" type="button" mat-flat-button [color]="isActive(route) ? '' : 'primary'"
+        <button *ngFor="let route of routes" (click)="route.isParent ? selectParent(route) : navigate(route.navigation, route.isTeachu)" type="button" mat-flat-button [color]="isActive(route) ? '' : 'primary'"
             [ngClass]="{ 'layer-2': route.layer === 2 }">
             <mat-icon>{{ route.icon }}</mat-icon>
             <span>{{ route.key | translate }}</span>

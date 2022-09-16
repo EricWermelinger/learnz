@@ -19,7 +19,7 @@ export class TokenService {
     this.setToken(token.token);
     this.setRefreshToken(token.refreshToken);
     this.setExpired(token.refreshExpires);
-    this.router.navigate([appRoutes.App, appRoutes.Dashboard]);
+    this.router.navigate([appRoutes.App, appRoutes.Create]);
   }
 
   clearToken() {

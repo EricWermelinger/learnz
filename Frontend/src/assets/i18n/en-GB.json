@@ -130,7 +130,8 @@
         "maxEvaluated":"Answer at Maximum evaluated",
         "evaluateQuestion":"Evaluate Question",
         "errorOccured":"Error Occured while evaluating",
-        "noSet":"No Set so found"
+        "noSet":"No Set was found",
+        "noSets":"No Sets found"
     },
     "learn":{
         "learn":"Learn",
@@ -400,5 +401,15 @@
         "errorOccured":"Error Occured",
         "input":"Input",
         "output":"Output"
+    },
+    "teachuRoutes":{
+        "Dashboard":"Dashboard",
+        "SchoolInfos":"School Infos",
+        "Timetable":"Timetable",
+        "Classlist":"Classlist",
+        "Grades":"Grades",
+        "Absences":"Absences",
+        "Chat":"Chat",
+        "UserSettings":"User Settings"
     }
 }
